@@ -1,0 +1,17 @@
+---
+// ./components/PlanarMechanicsContributors.astro
+import CachedGitHubContributors from './CachedGitHubContributors.astro';
+---
+<div class="planar-mechanics-contributors">
+  <CachedGitHubContributors 
+    owner="SiliconWit" 
+    repo="planar-mechanics" 
+    maxDisplay={7}
+  />
+</div>
+<style>
+  .planar-mechanics-contributors {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+// src/components/DiscordWidget.astro
+// A component that adds the Discord widget to a page
+---
+
+<div id="discord-widget-container"></div>
+
+<script>
+  // Make sure this only runs once per page
+  if (!window.discordWidgetInitialized) {
+    window.discordWidgetInitialized = true;
+    
+    // Create and add the script
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@widgetbot/crate@3';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+    
+    // Function to initialize the widget
+    const initializeWidget = () => {
+      if (typeof Crate !== 'undefined') {
+        new Crate({
+          server: '1068085077327753246',
+          channel: '1371264727124021279'
+        });
+        console.log('Discord widget initialized successfully');
+      } else {
+        // If Crate is not yet available, try again after a short delay
+        setTimeout(initializeWidget, 500);
+      }
+    };
+    
+    // If script is already loaded, initialize immediately
+    if (typeof Crate !== 'undefined') {
+      initializeWidget();
+    } else {
+      // Otherwise wait for script to load
+      script.onload = initializeWidget;
+    }
+  }
+</script>
