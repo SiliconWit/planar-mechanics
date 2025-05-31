@@ -1,0 +1,178 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+    SCOTCH YOKE MECHANISM DIAGRAM
+    
+    This SVG illustrates a scotch yoke mechanism for educational purposes.
+    The scotch yoke converts rotary motion (crank) to linear motion (slider).
+    
+    Key Components:
+    - Crank: Rotates about fixed center O with radius r
+    - Yoke: Vertical slot that guides the crank pin horizontally
+    - Slider: Moves linearly along horizontal guide rails
+    - Connecting rods: Transfer motion from crank pin to slider
+    
+    Coordinate System:
+    - Origin O at (250, 300) in SVG coordinates
+    - Initial crank position: Vertical (A₀)
+    - Final crank position: θ degrees clockwise from vertical (A₁)
+  -->
+  
+  <!-- Background with light gray color -->
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <!-- Grid pattern for measurement reference -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0e0e0" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#grid)"/>
+  
+  <!-- Main title of the diagram -->
+  <text x="400" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333">
+    Scotch Yoke Mechanism
+  </text>
+  
+  <!-- CRANK ASSEMBLY GROUP - Contains the rotating crank and its motion path -->
+  <g transform="translate(250, 300)">
+    <!-- 
+      Note: This group is positioned at (250, 300) which becomes the origin O
+      All coordinates within this group are relative to this origin
+    -->
+    
+    <!-- Dotted circle showing the complete locus/path of crank pin A -->
+    <!-- Radius = 75 units, helps visualize the complete circular motion -->
+    <circle cx="0" cy="0" r="75" fill="none" stroke="#888" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
+    
+    <!-- Fixed center O - the pivot point of the crank -->
+    <circle cx="0" cy="0" r="4" fill="#000"/>
+    <text x="-15" y="-10" font-family="Arial, sans-serif" font-size="14" fill="#000">O</text>
+    
+    <!-- INITIAL CRANK POSITION (A₀) -->
+    <!-- Dashed line from O to A₀, representing starting position (vertical upward) -->
+    <line x1="0" y1="0" x2="0" y2="-75" stroke="#666" stroke-width="2" stroke-dasharray="5,5"/>
+    <!-- Crank pin at initial position A₀ -->
+    <circle cx="0" cy="-75" r="3" fill="#666"/>
+    <text x="-25" y="-75" font-family="Arial, sans-serif" font-size="12" fill="#666">A₀ (Initial)</text>
+    
+    <!-- FINAL CRANK POSITION (A₁) -->
+    <!-- Solid red line from O to A₁, representing final position after θ rotation -->
+    <!-- Position calculated as: x = r*sin(θ), y = -r*cos(θ) where θ = 60° -->
+    <!-- For θ = 60°: x = 75*sin(60°) = 65, y = -75*cos(60°) = -37.5 -->
+    <line x1="0" y1="0" x2="65" y2="-37.5" stroke="#d32f2f" stroke-width="3"/>
+    <!-- Crank pin at final position A₁ -->
+    <circle cx="65" cy="-37.5" r="4" fill="#d32f2f"/>
+    <text x="70" y="-40" font-family="Arial, sans-serif" font-size="12" fill="#d32f2f" font-weight="bold">A₁ (Final)</text>
+    
+    <!-- Crank radius label -->
+    <text x="25" y="5" font-family="Arial, sans-serif" font-size="12" fill="#d32f2f">r</text>
+    
+    <!-- ANGLE MEASUREMENT -->
+    <!-- Arc showing the rotation angle θ from initial to final position -->
+    <!-- Arc radius = 25 (smaller than crank for clarity) -->
+    <!-- Arc from 0° to 60° (θ) clockwise -->
+    <path d="M 0,-25 A 25,25 0 0,1 21.65,-12.5" fill="none" stroke="#2196f3" stroke-width="2"/>
+    <text x="15" y="-22" font-family="Arial, sans-serif" font-size="12" fill="#2196f3">θ</text>
+    
+    <!-- VERTICAL DISPLACEMENT MEASUREMENT -->
+    <!-- Shows the vertical displacement y of crank pin from A₀ to A₁ -->
+    <!-- y = -75 - (-37.5) = -37.5 (negative indicates downward movement) -->
+    <line x1="-10" y1="-75" x2="-10" y2="-37.5" stroke="#4caf50" stroke-width="2" stroke-dasharray="3,3"/>
+    <text x="-35" y="-56" font-family="Arial, sans-serif" font-size="12" fill="#4caf50" font-weight="bold">y</text>
+    <!-- Arrow heads showing direction of measurement -->
+    <polygon points="-10,-75 -13,-70 -7,-70" fill="#4caf50"/>
+    <polygon points="-10,-37.5 -13,-42.5 -7,-42.5" fill="#4caf50"/>
+    
+    <!-- CONNECTING RODS FROM CRANK TO YOKE -->
+    <!-- These represent the mechanical connection between crank pin and yoke -->
+    
+    <!-- Initial connecting rod (dashed) - from A₀ horizontally to yoke -->
+    <!-- Note: Both rods are at same height as A₁ for this mechanism type -->
+    <line x1="0" y1="-37.5" x2="65" y2="-37.5" stroke="#666" stroke-width="2" stroke-dasharray="5,5"/>
+    
+    <!-- Final connecting rod (solid) - from A₁ horizontally to yoke -->
+    <!-- This is just a point since A₁ is directly connected to yoke center -->
+    <line x1="65" y1="-37.5" x2="65" y2="-37.5" stroke="#9c27b0" stroke-width="3"/>
+    <text x="90" y="-50" font-family="Arial, sans-serif" font-size="12" fill="#9c27b0">Connecting Rod</text>
+    
+  </g>
+  
+  <!-- YOKE AND SLIDER ASSEMBLY GROUP -->
+  <!-- Positioned so yoke center aligns exactly with final crank pin position A₁ -->
+  <g transform="translate(315, 262.5)">
+    <!-- 
+      Note: This group is positioned at (315, 262.5) which aligns the yoke center
+      with the final crank pin position A₁ at (315, 262.5) in SVG coordinates
+    -->
+    
+    <!-- YOKE - Vertical slot that guides the crank pin -->
+    <!-- Made nearly transparent to show internal mechanism clearly -->
+    <rect x="-15" y="-100" width="30" height="200" fill="#e0e0e0" fill-opacity="0.1" stroke="#666" stroke-width="1" stroke-opacity="0.3"/>
+    <text x="-35" y="-110" font-family="Arial, sans-serif" font-size="12" fill="#666" opacity="0.5">Yoke</text>
+    
+    <!-- SLIDER POSITIONS -->
+    <!-- Both sliders are positioned at the center level of the horizontal guide rails -->
+    
+    <!-- Initial slider position (closer to yoke) -->
+    <!-- Semi-transparent gray to indicate it's the starting position -->
+    <rect x="20" y="-10" width="50" height="20" fill="#666" stroke="#000" stroke-width="1" opacity="0.4"/>
+    <text x="20" y="30" font-family="Arial, sans-serif" font-size="12" fill="#666">Initial Slider Position</text>
+    
+    <!-- Final slider position (further from yoke) -->
+    <!-- Orange color with low opacity to show final position -->
+    <rect x="85" y="-10" width="50" height="20" fill="#ff9800" stroke="#000" stroke-width="2" opacity="0.4"/>
+    <text x="85" y="45" font-family="Arial, sans-serif" font-size="12" fill="#ff9800" font-weight="bold">Final Slider Position</text>
+    
+    <!-- HORIZONTAL CONNECTING RODS FROM YOKE TO SLIDERS -->
+    <!-- These transfer the horizontal motion from yoke to the sliders -->
+    
+    <!-- Rod to initial slider position (dashed) -->
+    <line x1="15" y1="0" x2="20" y2="0" stroke="#666" stroke-width="2" stroke-dasharray="5,5"/>
+    
+    <!-- Rod to final slider position (solid orange) -->
+    <line x1="15" y1="0" x2="85" y2="0" stroke="#ff9800" stroke-width="3"/>
+    
+    <!-- HORIZONTAL DISPLACEMENT MEASUREMENT -->
+    <!-- Shows the horizontal displacement x of slider from initial to final position -->
+    <!-- x = horizontal distance between initial and final slider positions -->
+    <line x1="45" y1="-30" x2="110" y2="-30" stroke="#f44336" stroke-width="2" stroke-dasharray="3,3"/>
+    <text x="70" y="-40" font-family="Arial, sans-serif" font-size="12" fill="#f44336" font-weight="bold">x</text>
+    <!-- Arrow heads showing direction of displacement -->
+    <polygon points="45,-30 50,-27 50,-33" fill="#f44336"/>
+    <polygon points="110,-30 105,-27 105,-33" fill="#f44336"/>
+    
+  </g>
+  
+  <!-- HORIZONTAL GUIDE RAILS -->
+  <!-- These constrain the slider to move only horizontally -->
+  <!-- Positioned to center on the slider positions -->
+  <line x1="380" y1="272.5" x2="480" y2="272.5" stroke="#333" stroke-width="3"/>
+  <line x1="380" y1="252.5" x2="480" y2="252.5" stroke="#333" stroke-width="3"/>
+  <text x="485" y="267.5" font-family="Arial, sans-serif" font-size="12" fill="#333">Horizontal Guide Rails</text>
+  
+  <!-- REFERENCE LINES -->
+  <!-- Additional visual aids for understanding the mechanism geometry -->
+  <g transform="translate(250, 400)">
+    <!-- Vertical reference lines showing alignment between crank positions and mechanism -->
+    <line x1="0" y1="-175" x2="0" y2="-112.5" stroke="#ccc" stroke-width="1" stroke-dasharray="2,2"/>
+    <line x1="65" y1="-137.5" x2="65" y2="-112.5" stroke="#ccc" stroke-width="1" stroke-dasharray="2,2"/>
+  </g>
+  
+  <!-- 
+    MECHANISM OPERATION SUMMARY:
+    
+    1. Crank rotates from A₀ (vertical) to A₁ (θ degrees clockwise)
+    2. Crank pin moves along circular path (shown by dotted circle)
+    3. Vertical displacement y = r - r*cos(θ) = r(1 - cos(θ))
+    4. Horizontal displacement x = r*sin(θ)
+    5. Yoke constrains crank pin to move horizontally at slider level
+    6. Slider moves horizontally by distance x along guide rails
+    
+    Key Relationships:
+    - x (slider displacement) = r*sin(θ)
+    - y (crank pin vertical displacement) = r(1 - cos(θ))
+    - Slider motion is purely horizontal
+    - Crank motion is circular
+  -->
+
+</svg>

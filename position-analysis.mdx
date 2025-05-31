@@ -1,18 +1,25 @@
 ---
 title: "Introduction to Planar Mechanics and Position Analysis"
-description: "Fundamental concepts of planar mechanics and position analysis with applications relevant to mechatronics systems and mechanisms"
+description: "Fundamental concepts of planar mechanics and position analysis with applications relevant to mechatronic systems and mechanisms."
+contributors: "sam-macharia,jack-kojiro,new-person6"
+pubDate: 2024-01-08
+tags: ["mechanisms", "kinematics", "mechatronics", "planar-mechanics", "position-analysis"]
+excerpt: "Get started with the essentials of planar kinematics, exploring how mechanical systems are modeled and analyzed for position and motion—key to understanding linkages, mechanisms, and robotic arms."
 ---
 import PlanarMechanicsComments from './components/PlanarMechanicsComments.astro';
 import DiscordWidget from './components/DiscordWidget.astro';
-import PlanarMechanicsContributors from './components/PlanarMechanicsContributors.astro';
+
 import TailwindWrapper from '../../../../components/TailwindWrapper';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import { Card, CardGrid } from '@astrojs/starlight/components';
-
+import UniversalContributors from '../../../../components/UniversalContributors.astro';
 import CrankSliderDemo from './components/demos/CrankSliderDemo';
 import FourBarLinkageDemo from './components/demos/FourBarLinkageDemo';
 
-<PlanarMechanicsContributors />
+<UniversalContributors 
+  contributors={frontmatter.contributors}
+  repoName="solid-mechanics"
+/>
 
 ## Learning Objectives
 
