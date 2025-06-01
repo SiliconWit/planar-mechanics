@@ -1,0 +1,219 @@
+---
+title: "Velocity Analysis in Planar Mechanisms"
+description: "Understanding velocity analysis techniques for planar mechanisms including graphical and analytical methods"
+contributors: "sam-macharia,jack-kojiro"
+tags: ["planar-mechanics", "velocity-analysis", "kinematics", "mechanisms"]
+excerpt: "Master velocity analysis of planar mechanisms using vector methods, instant centers, and graphical techniques for four-bar linkages, slider-crank mechanisms, and other common mechanical systems."
+pubDate: 2025-06-01
+---
+
+import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../components/TawkWidget.astro';
+import UniversalContributors from '../../../../components/UniversalContributors.astro';
+import Copyright from '../../../../components/Copyright.astro';
+import BionicText from '../../../../components/BionicText.astro';
+import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<UniversalContributors 
+  contributors={frontmatter.contributors}
+/>
+
+## Learning Objectives
+
+By the end of this lecture, you should be able to:
+
+* Apply velocity analysis principles to planar mechanisms
+* Use graphical methods to determine velocities in linkage systems
+* Calculate velocities using analytical vector methods
+* Locate and utilize instant centers for velocity analysis
+* Analyze velocity transmission in gear trains and cam systems
+
+:::tip[Key Concept]
+Velocity analysis in planar mechanisms involves determining the velocities of all points and links in a mechanism when the input velocity is known. This is fundamental for understanding mechanism performance and designing efficient mechanical systems.
+:::
+
+## Introduction to Velocity Analysis
+
+Velocity analysis is a crucial aspect of kinematic analysis in mechanical engineering. When analyzing planar mechanisms, we need to determine how velocities are transmitted through the mechanism from the input to various output points.
+
+### Fundamental Principles
+
+The velocity of any point on a rigid body can be expressed as:
+$$\vec{v}_B = \vec{v}_A + \vec{\omega} \times \vec{r}_{AB}$$
+
+Where:
+* $\vec{v}_B$ is the velocity of point B
+* $\vec{v}_A$ is the velocity of point A (reference point)
+* $\vec{\omega}$ is the angular velocity of the rigid body
+* $\vec{r}_{AB}$ is the position vector from A to B
+
+## Graphical Velocity Analysis
+
+Graphical methods provide intuitive understanding of velocity relationships in mechanisms.
+
+### Velocity Vector Diagrams
+
+The velocity diagram represents all velocities in a mechanism to scale. Key principles:
+
+1. **Velocity vectors** are drawn to scale from a common origin
+2. **Relative velocities** between points on the same link form closed polygons
+3. **Velocity diagrams** must satisfy the constraint that points on rigid links maintain constant separation
+
+### Four-Bar Linkage Example
+
+Consider a four-bar linkage ABCD where link AB rotates with angular velocity $\omega_2$:
+
+1. **Input velocity**: $v_B = \omega_2 \cdot r_{AB}$ (perpendicular to AB)
+2. **Constraint equations**: 
+   * Point C moves on link BC: $\vec{v}_C = \vec{v}_B + \vec{v}_{CB}$
+   * Point C moves on link DC: $\vec{v}_C = \vec{v}_D + \vec{v}_{CD}$
+3. **Solution**: The intersection of these constraints gives $\vec{v}_C$
+
+## Analytical Velocity Analysis
+
+Analytical methods use mathematical equations to solve for velocities systematically.
+
+### Vector Loop Method
+
+For a four-bar mechanism, the position loop equation is:
+$$\vec{r}_2 + \vec{r}_3 = \vec{r}_1 + \vec{r}_4$$
+
+Differentiating with respect to time:
+$$\vec{v}_2 + \vec{v}_3 = \vec{v}_4$$
+
+In component form:
+$$-\omega_2 r_2 \sin\theta_2 - \omega_3 r_3 \sin\theta_3 = -\omega_4 r_4 \sin\theta_4$$
+$$\omega_2 r_2 \cos\theta_2 + \omega_3 r_3 \cos\theta_3 = \omega_4 r_4 \cos\theta_4$$
+
+### Solution Process
+
+1. **Known quantities**: $\omega_2$ (input), all link lengths, all positions
+2. **Unknown quantities**: $\omega_3$ and $\omega_4$
+3. **Solution**: Solve the system of linear equations for angular velocities
+
+## Instant Centers of Velocity
+
+An instant center is a point that has zero velocity at a given instant.
+
+### Properties of Instant Centers
+
+* Every rigid body in planar motion has an instant center
+* The instant center is the point about which the body appears to rotate
+* All points on the body have velocities perpendicular to lines connecting them to the instant center
+
+### Kennedy's Theorem
+
+For three bodies with relative motion, their three instant centers lie on a straight line.
+
+### Applications
+
+Instant centers simplify velocity analysis by:
+* Providing geometric relationships between velocities
+* Eliminating the need for complex vector calculations
+* Offering insight into mechanism behavior
+
+## Slider-Crank Mechanism Analysis
+
+The slider-crank mechanism is fundamental in engine and compressor design.
+
+### Velocity Analysis Steps
+
+1. **Crank velocity**: $v_B = \omega_2 \cdot r_2$
+2. **Connecting rod constraint**: Point B moves on circular arc, point C moves linearly
+3. **Velocity relationships**: 
+   $$v_{Bx} = v_B \cos\theta_2$$
+   $$v_{By} = v_B \sin\theta_2$$
+
+### Piston Velocity
+
+The piston velocity can be derived as:
+$$v_C = \omega_2 r_2 \left[\sin\theta_2 + \frac{r_2}{r_3}\frac{\sin 2\theta_2}{2\sqrt{1-\left(\frac{r_2}{r_3}\sin\theta_2\right)^2}}\right]$$
+
+## Cam and Follower Systems
+
+Velocity analysis in cam systems involves understanding the motion transfer from cam to follower.
+
+### Velocity Relationships
+
+For a cam rotating with angular velocity $\omega_{cam}$:
+* **Follower displacement**: $s = f(\theta)$
+* **Follower velocity**: $v = \frac{ds}{dt} = \frac{ds}{d\theta} \cdot \omega_{cam}$
+
+### Design Considerations
+
+* Velocity profiles affect dynamic forces
+* Smooth velocity transitions reduce vibration
+* Maximum velocities determine system requirements
+
+## Gear Train Velocity Analysis
+
+Gear trains transmit motion through meshing gears with specific velocity relationships.
+
+### Fundamental Gear Relations
+
+For two meshing gears:
+$$\frac{\omega_1}{\omega_2} = \frac{N_2}{N_1} = \frac{r_2}{r_1}$$
+
+Where N is the number of teeth and r is the pitch radius.
+
+### Compound Gear Trains
+
+For multiple gear stages:
+$$\omega_{output} = \omega_{input} \times \prod \frac{N_{driving}}{N_{driven}}$$
+
+## Applications in Mechatronic Systems
+
+Velocity analysis is crucial for:
+
+* **Robot manipulators**: End-effector velocity control
+* **Manufacturing equipment**: Synchronizing multiple motion axes
+* **Automotive systems**: Engine timing and transmission design
+* **Precision instruments**: Maintaining accurate motion profiles
+
+## Example Problems
+
+### Example 1: Four-Bar Linkage Velocity
+
+Given a four-bar linkage with:
+* Link AB = 50 mm, rotating at 100 rpm
+* Link BC = 120 mm
+* Link CD = 80 mm
+* Fixed link AD = 100 mm
+* Current position: θ₂ = 45°
+
+Find the angular velocity of link BC.
+
+<details>
+<summary>Solution</summary>
+
+**Step 1**: Convert input speed
+$$\omega_2 = 100 \text{ rpm} = \frac{100 \times 2\pi}{60} = 10.47 \text{ rad/s}$$
+
+**Step 2**: Calculate input velocity
+$$v_B = \omega_2 \times r_{AB} = 10.47 \times 0.05 = 0.524 \text{ m/s}$$
+
+**Step 3**: Apply velocity analysis equations
+Using the vector loop method and solving the constraint equations:
+$$\omega_3 = 4.36 \text{ rad/s}$$
+
+</details>
+
+## Key Takeaways
+
+* **Velocity analysis** is fundamental for understanding mechanism performance
+* **Graphical methods** provide intuitive understanding of velocity relationships
+* **Analytical methods** offer precise solutions for complex mechanisms
+* **Instant centers** simplify velocity calculations and provide design insights
+* **Applications** span from traditional machinery to modern mechatronic systems
+
+## Further Reading
+
+* "Theory of Machines and Mechanisms" by Uicker, Pennock, and Shigley
+* "Kinematics and Dynamics of Machinery" by Wilson and Sadler
+* "Mechanism Design: Analysis and Synthesis" by Erdman, Sandor, and Kota
+
+<PlanarMechanicsComments />
+<TawkWidget />
+<Copyright />
