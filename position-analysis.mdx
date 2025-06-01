@@ -6,8 +6,8 @@ pubDate: 2024-01-08
 tags: ["mechanisms", "kinematics", "mechatronics", "planar-mechanics", "position-analysis"]
 excerpt: "Get started with the essentials of planar kinematics, exploring how mechanical systems are modeled and analyzed for position and motion—key to understanding linkages, mechanisms, and robotic arms."
 ---
-import PlanarMechanicsComments from './components/PlanarMechanicsComments.astro';
-import DiscordWidget from './components/DiscordWidget.astro';
+import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../components/TawkWidget.astro';
 
 import TailwindWrapper from '../../../../components/TailwindWrapper';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
@@ -18,7 +18,7 @@ import FourBarLinkageDemo from './components/demos/FourBarLinkageDemo';
 
 <UniversalContributors 
   contributors={frontmatter.contributors}
-  repoName="solid-mechanics"
+  repoName="planar-mechanics"
 />
 
 ## Learning Objectives
@@ -427,4 +427,4 @@ Provide a sketch of your design with all dimensions clearly labeled.
 In the next lecture, we will explore velocity analysis in planar mechanisms, building on the position analysis concepts covered today. We will examine techniques like the instantaneous center method and relative velocity method, which are essential for understanding how mechanism components move in relation to each other.
 
 <PlanarMechanicsComments />
-<DiscordWidget />
+<TawkWidget />
