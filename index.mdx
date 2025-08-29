@@ -1,0 +1,155 @@
+---
+title: Planar Mechanics
+description: Understanding kinematic and dynamic analysis of planar mechanisms in mechatronic systems for robotic arms, manufacturing equipment, and automated machinery
+---
+
+import Copyright from '../../../../components/Copyright.astro';
+import { Card, CardGrid, Badge } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+
+**Planar Mechanics**, also called **2D Kinematics**, **Planar Mechanism Analysis**, or **Two-Dimensional Machine Design**, is the branch of engineering that studies motion and force transmission in planar mechanical systems. This fundamental discipline provides the analytical foundation for designing precise, reliable mechatronic systems from robotic arms and manufacturing equipment to automated machinery and automotive components.
+
+This course explores how mechanical systems move and transmit forces in two-dimensional space—knowledge essential for designing sophisticated mechatronic systems that require controlled motion, precise positioning, and optimized force transmission.
+
+## Lesson Structure & Approach
+
+Each lesson follows our systems-based pedagogical approach:
+
+<Steps>
+1. **🔧 Real-World System Problem**
+   Begin with complete mechatronic systems (robotic arms, manufacturing equipment, automotive systems) facing specific kinematic and dynamic challenges.
+
+2. **📚 Fundamental Theory**
+   Develop the mathematical and kinematic principles needed to analyze and solve the planar motion problem.
+
+3. **🎯 System Application**
+   Apply theory to the original system with step-by-step kinematic solutions and design verification.
+
+4. **🛠️ Design Guidelines**
+   Extract practical rules and best practices for professional planar mechanism design.
+</Steps>
+
+## Learning Path
+
+<Steps>
+1. **Build Kinematic Foundations**
+   Master joint analysis and degrees of freedom that form the basis for all planar mechanism design.
+
+2. **Understand Position Relationships**
+   Learn geometric constraints and position analysis for complex linkage systems.
+
+3. **Apply Motion Analysis**
+   Use velocity and acceleration analysis methods for dynamic system optimization.
+
+4. **Design Real Systems**
+   Apply planar mechanics principles to advanced mechatronic challenges including cam systems and force optimization.
+</Steps>
+
+## Course Structure
+
+This course is organized around recurring mechatronic systems for coherent knowledge building:
+
+<Tabs>
+  <TabItem label="Foundation & Analysis">
+    <Steps>
+    1. **[Kinematic Joints and Constraint Analysis](./kinematic-joints-constraint-analysis)**
+       > Master [**joint types**](./kinematic-joints-constraint-analysis) and [**degrees of freedom**](./kinematic-joints-constraint-analysis) through modular robotic arm design, covering Grübler's equation and joint selection guidelines.
+    
+    2. **[Position Analysis of Planar Linkages](./position-analysis-planar-linkages)**
+       > Learn [**vector loop equations**](./position-analysis-planar-linkages) and [**geometric constraints**](./position-analysis-planar-linkages) through four-bar linkage suspension system optimization.
+    
+    3. **[Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers)**
+       > Explore [**velocity polygons**](./velocity-analysis-instantaneous-centers) and [**relative motion**](./velocity-analysis-instantaneous-centers) in crank-slider engine/compressor mechanisms.
+    </Steps>
+  </TabItem>
+  <TabItem label="Dynamics & Synthesis">
+    <Steps>
+    1. **[Acceleration Analysis and Dynamic Forces](./acceleration-analysis-dynamic-forces)**
+       > Study [**acceleration polygons**](./acceleration-analysis-dynamic-forces) and [**dynamic loading**](./acceleration-analysis-dynamic-forces) through Geneva mechanism indexing systems.
+    
+    2. **[Cam-Follower Systems and Motion Programming](./cam-follower-systems-motion-programming)**
+       > Design [**cam profiles**](./cam-follower-systems-motion-programming) and [**motion laws**](./cam-follower-systems-motion-programming) for CNC machine tool automation.
+    
+    3. **[Force Analysis and Mechanism Synthesis](./force-analysis-mechanism-synthesis)**
+       > Master [**static force analysis**](./force-analysis-mechanism-synthesis) and [**mechanism synthesis**](./force-analysis-mechanism-synthesis) for multi-DOF robotic manipulator systems.
+    </Steps>
+  </TabItem>
+</Tabs>
+
+## Primary Focus Systems
+
+Throughout this course, we analyze five core mechatronic systems from multiple perspectives:
+
+<CardGrid>
+  <Card title="Crank-Slider Mechanisms" icon="rocket">
+    **Applications:** Engines, compressors, linear actuators
+    **Analysis:** Lessons 1, 3, 4 - Position → Velocity → Acceleration
+  </Card>
+  <Card title="Four-Bar Linkages" icon="setting">
+    **Applications:** Robotic arms, automotive suspensions, manufacturing fixtures
+    **Analysis:** Lessons 1, 2, 6 - DOF → Position → Force synthesis
+  </Card>
+  <Card title="Geneva Mechanisms" icon="puzzle">
+    **Applications:** Indexing tables, conveyor systems, packaging automation
+    **Analysis:** Lessons 1, 4 - Constraints → Dynamic forces
+  </Card>
+  <Card title="Cam-Follower Systems" icon="document">
+    **Applications:** Valve timing, CNC automation, manufacturing processes
+    **Analysis:** Lessons 5, 6 - Motion programming → Force optimization
+  </Card>
+</CardGrid>
+
+## Why Planar Mechanics Matters for Mechatronics
+
+<CardGrid>
+  <Card title="Motion Control" icon="rocket">
+    Design mechanisms that convert rotary motor motion to precise linear or complex trajectories.
+  </Card>
+  <Card title="Force Transmission" icon="setting">
+    Optimize linkage geometry for maximum force transfer with minimal actuator requirements.
+  </Card>
+  <Card title="System Integration" icon="puzzle">
+    Integrate kinematic analysis with motor sizing and control system design for complete solutions.
+  </Card>
+  <Card title="Performance Optimization" icon="warning">
+    Minimize vibration, maximize speed, and ensure smooth operation in automated systems.
+  </Card>
+</CardGrid>
+
+## Expected Learning Outcomes
+
+By completing this course, students will be able to:
+
+<Steps>
+1. **Analyze** any planar mechanism for position, velocity, and acceleration behavior
+2. **Design** mechanisms for specific motion requirements and performance criteria
+3. **Optimize** mechanism geometry for force transmission and dynamic performance
+4. **Select** appropriate mechanisms for diverse mechatronic applications
+5. **Integrate** kinematic analysis with motor sizing and control system design
+</Steps>
+
+## Interactive Learning Tools
+
+Each lesson includes specialized interactive components:
+
+- **Joint DOF Calculator** - Real-time constraint analysis
+- **Four-Bar Position Visualizer** - Geometric relationship explorer
+- **Crank-Slider Velocity Animator** - Motion profile visualization
+- **Geneva Mechanism Plotter** - Acceleration curve analysis
+- **Cam Profile Designer** - Motion programming tool
+- **Robot Force Calculator** - Integrated system analysis
+
+## Prerequisites
+
+Vector mechanics, basic calculus, and elementary physics concepts. Familiarity with engineering graphics and coordinate systems recommended.
+
+## Key Resources
+
+- **Textbooks**: "Theory of Machines and Mechanisms" (Uicker, Pennock & Shigley), "Kinematics and Dynamics of Machinery" (Wilson & Sadler)
+- **Software**: MATLAB/Simulink, SolidWorks Motion, Working Model
+- **Standards**: ASME, ISO mechanism design standards
+
+Ready to begin? Navigate to the first lesson to start your journey into planar mechanics!
+
+<Copyright />

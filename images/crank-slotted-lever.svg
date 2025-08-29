@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="500" height="350" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background grid for reference (optional) -->
+  <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+    <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#f0f0f0" stroke-width="0.5"/>
+  </pattern>
+  <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+    <rect width="100" height="100" fill="url(#smallGrid)"/>
+    <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+  </pattern>
+  <rect width="100%" height="100%" fill="white"/>
+  
+  <!-- Title -->
+  <text x="250" y="30" font-family="Arial" font-size="16" text-anchor="middle" font-weight="bold">Crank and Slotted Lever Mechanism</text>
+  
+  <!-- Fixed components -->
+  <circle cx="150" cy="175" r="5" fill="#1F2937"/> <!-- Point A (Fixed Center) -->
+  <text x="135" y="160" font-family="Arial" font-size="14" text-anchor="middle">A</text>
+  
+  <!-- Fixed base -->
+  <rect x="130" y="225" width="40" height="20" fill="#9CA3AF"/>
+  
+  <!-- Slotted lever in Position 1 -->
+  <line x1="150" y1="175" x2="372" y2="130" stroke="#6366F1" stroke-width="3"/>
+  <text x="265" y="140" font-family="Arial" font-size="12" text-anchor="middle">Extreme Position 1</text>
+  
+  <!-- Slotted lever in Position 2 -->
+  <line x1="150" y1="175" x2="345" y2="225" stroke="#6366F1" stroke-width="3"/>
+  <text x="255" y="215" font-family="Arial" font-size="12" text-anchor="middle">Extreme Position 2</text>
+  
+  <!-- Crank in Position 1 -->
+  <line x1="150" y1="175" x2="270" y2="130" stroke="#EF4444" stroke-width="3"/>
+  <circle cx="270" cy="130" r="5" fill="#1F2937"/> <!-- Point B1 -->
+  <text x="275" y="125" font-family="Arial" font-size="14" text-anchor="middle">B₁</text>
+  
+  <!-- Crank in Position 2 -->
+  <line x1="150" y1="175" x2="245" y2="225" stroke="#EF4444" stroke-width="3" stroke-dasharray="5,3"/>
+  <circle cx="245" cy="225" r="5" fill="#1F2937"/> <!-- Point B2 -->
+  <text x="235" y="240" font-family="Arial" font-size="14" text-anchor="middle">B₂</text>
+  
+  <!-- Slot path/block -->
+  <circle cx="270" cy="130" r="7" fill="white" stroke="#10B981" stroke-width="2"/>
+  <circle cx="245" cy="225" r="7" fill="white" stroke="#10B981" stroke-width="2" stroke-dasharray="3,2"/>
+  
+  <!-- Angle marking -->
+  <path d="M 190,175 A 40,40 0 0,1 168,142" stroke="#EF4444" stroke-width="1" fill="none"/>
+  <text x="185" y="155" font-family="Arial" font-size="12" text-anchor="middle">α/2</text>
+  
+  <!-- Angle marking for second position -->
+  <path d="M 190,175 A 40,40 0 0,0 168,208" stroke="#EF4444" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+  <text x="185" y="195" font-family="Arial" font-size="12" text-anchor="middle">α/2</text>
+  
+  <!-- Dimensions -->
+  <line x1="150" y1="245" x2="270" y2="245" stroke="#000000" stroke-width="1" marker-end="url(#arrowhead)" marker-start="url(#arrowhead)"/>
+  <text x="210" y="260" font-family="Arial" font-size="12" text-anchor="middle">CB₁ (Crank Radius)</text>
+  
+  <line x1="110" y1="175" x2="110" y2="130" stroke="#000000" stroke-width="1" marker-end="url(#arrowhead)" marker-start="url(#arrowhead)"/>
+  <text x="90" y="155" font-family="Arial" font-size="12" text-anchor="middle">AC</text>
+  
+  <!-- Sliding block path -->
+  <line x1="270" y1="130" x2="372" y2="130" stroke="#10B981" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="245" y1="225" x2="345" y2="225" stroke="#10B981" stroke-width="1" stroke-dasharray="3,2"/>
+  
+  <!-- Legend -->
+  <rect x="380" y="130" width="15" height="15" fill="#EF4444"/>
+  <text x="400" y="142" font-family="Arial" font-size="11" text-anchor="start">Crank</text>
+  
+  <rect x="380" y="155" width="15" height="15" fill="#6366F1"/>
+  <text x="400" y="167" font-family="Arial" font-size="11" text-anchor="start">Slotted Lever</text>
+  
+  <rect x="380" y="180" width="15" height="15" fill="#10B981"/>
+  <text x="400" y="192" font-family="Arial" font-size="11" text-anchor="start">Sliding Block</text>
+  
+  <!-- Arrowheads for dimension lines -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#000000"/>
+    </marker>
+  </defs>
+</svg>

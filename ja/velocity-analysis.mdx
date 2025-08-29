@@ -1,0 +1,219 @@
+---
+title: "Heimen Kiko no Sokudo Kaiseki (Velocity Analysis in Planar Mechanisms)"
+description: "Heimen kiko no sokudo kaiseki gijutsu no rikai - zukeiteki oyobi kaiseki-teki shuho wo fukumu"
+contributors: "sam-macharia,jack-kojiro"
+tags: ["planar-mechanics", "velocity-analysis", "kinematics", "mechanisms", "japanese"]
+excerpt: "Yon-bar renketu, slider-crank kiko, sono hoka no ippan-teki na kikai system ni okeru vector hoho, shunkan chushin, zukeiteki gijutsu wo shiyo shita heimen kiko no sokudo kaiseki wo masuta suru."
+pubDate: 2025-08-29
+---
+
+import PlanarMechanicsComments from '../../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../../components/TawkWidget.astro';
+import UniversalContentContributors from '../../../../../components/UniversalContentContributors.astro';
+import Copyright from '../../../../../components/Copyright.astro';
+import BionicText from '../../../../../components/BionicText.astro';
+import TailwindWrapper from '../../../../../components/TailwindWrapper.jsx';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+
+<UniversalContentContributors 
+  contributors={frontmatter.contributors}
+/>
+
+## Gakushu Mokuhyo (Learning Objectives)
+
+Kono kogi no owari made ni, anata wa tsugi no koto ga dekiru you ni naru:
+
+* Heimen kiko ni sokudo kaiseki no genri wo tekiyo suru
+* Renketu system no sokudo wo kettei suru tame no zukeiteki hoho wo shiyo suru
+* Kaiseki-teki vector hoho wo shiyo shite sokudo wo keisan suru
+* Sokudo kaiseki no tame no shunkan chushin wo hakken shi riyou suru
+* Gear train ya cam system ni okeru sokudo densho wo kaiseki suru
+
+:::tip[Jutsu-yona Gainen (Key Concept)]
+Heimen kiko no sokudo kaiseki wa, nyuryoku sokudo ga shirarete iru toki ni, kiko no subete no ten to link no sokudo wo kettei suru koto wo fukumu. Kore wa kiko no performance wo rikai shi, koritsu-teki na kikai system wo sekkei suru tame no kiso desu.
+:::
+
+## Sokudo Kaiseki no Josetsu (Introduction to Velocity Analysis)
+
+Sokudo kaiseki wa, kikai kogaku ni okeru undo-gaku kaiseki no juyo-na sokumen desu. Heimen kiko wo kaiseki suru toki, nyuryoku kara samazama na shutsuryoku ten made sokudo ga dono you ni densho sareru ka wo kettei suru hitsuyou ga arimasu.
+
+### Kihon Genri (Fundamental Principles)
+
+Goutai no nin-no ten no sokudo wa tsugi no you ni hyogen dekimasu:
+$$\vec{v}_B = \vec{v}_A + \vec{\omega} \times \vec{r}_{AB}$$
+
+Koko de:
+* $\vec{v}_B$ wa ten B no sokudo
+* $\vec{v}_A$ wa ten A no sokudo (kijun ten)
+* $\vec{\omega}$ wa goutai no kakusokudo
+* $\vec{r}_{AB}$ wa A kara B e no ichi vector
+
+## Zukeiteki Sokudo Kaiseki (Graphical Velocity Analysis)
+
+Zukeiteki hoho wa, kiko ni okeru sokudo kankei no chokkan-teki rikai wo teikyou shimasu.
+
+### Sokudo Vector Zu (Velocity Vector Diagrams)
+
+Sokudo zu wa, kiko no subete no sokudo wo scale ni shitagatte hyoji shimasu. Omona genri:
+
+1. **Sokudo vector** wa kyotsu no genten kara scale ni shitagatte egakaremasu
+2. **Onaji link ue no ten-kan no sotai sokudo** wa heisa polygon wo keisei shimasu
+3. **Sokudo zu** wa, goutai link ue no ten ga ittei no bunri wo iji suru to iu seiyaku wo mitasu hitsuyou ga arimasu
+
+### Yon-Bar Renketu no Rei (Four-Bar Linkage Example)
+
+Link AB ga kakusokudo $\omega_2$ de kaiten suru yon-bar renketu ABCD wo kangaete mimashou:
+
+1. **Nyuryoku sokudo**: $v_B = \omega_2 \cdot r_{AB}$ (AB ni suichoku)
+2. **Seiyaku shiki**: 
+   * Ten C wa link BC ue de undo: $\vec{v}_C = \vec{v}_B + \vec{v}_{CB}$
+   * Ten C wa link DC ue de undo: $\vec{v}_C = \vec{v}_D + \vec{v}_{CD}$
+3. **Kaiho**: Korera no seiyaku no kosaten ga $\vec{v}_C$ wo ataemasu
+
+## Kaiseki-teki Sokudo Kaiseki (Analytical Velocity Analysis)
+
+Kaiseki-teki hoho wa, sokudo wo taikei-teki ni kaiketsu suru tame ni suugaku-teki shiki wo shiyo shimasu.
+
+### Vector Loop Hoho (Vector Loop Method)
+
+Yon-bar kiko no baai, ichi loop shiki wa:
+$$\vec{r}_2 + \vec{r}_3 = \vec{r}_1 + \vec{r}_4$$
+
+Jikan ni tsuite bibun suru to:
+$$\vec{v}_2 + \vec{v}_3 = \vec{v}_4$$
+
+Yoso keitai de:
+$$-\omega_2 r_2 \sin\theta_2 - \omega_3 r_3 \sin\theta_3 = -\omega_4 r_4 \sin\theta_4$$
+$$\omega_2 r_2 \cos\theta_2 + \omega_3 r_3 \cos\theta_3 = \omega_4 r_4 \cos\theta_4$$
+
+### Kaiho Katei (Solution Process)
+
+1. **Kichi no ryo**: $\omega_2$ (nyuryoku), subete no link nagasa, subete no ichi
+2. **Mishiryou**: $\omega_3$ to $\omega_4$
+3. **Kaiho**: Kakusokudo no tame no ichi-ji renkitsu shiki kei wo kaiketsu
+
+## Sokudo no Shunkan Chushin (Instant Centers of Velocity)
+
+Shunkan chushin wa, aru shunkan ni zero sokudo wo motsu ten desu.
+
+### Shunkan Chushin no Seishitsu (Properties of Instant Centers)
+
+* Heimen undo no subete no goutai wa shunkan chushin wo motsu
+* Shunkan chushin wa, tai ga sono mawari ni kaiten suru you ni mieru ten
+* Tai no subete no ten wa, sore wo shunkan chushin ni tsunagu sen ni suichoku na sokudo wo motsu
+
+### Kennedy no Teiri (Kennedy's Theorem)
+
+Sotai undo wo motsu mitsu no tai ni tsuite, sorera no mitsu no shunkan chushin wa chokusen ue ni aru.
+
+### Oyo (Applications)
+
+Shunkan chushin wa tsugi ni yotte sokudo kaiseki wo kantan ni shimasu:
+* Sokudo-kan no kika-gaku-teki kankei wo teikyou
+* Fukuzatsu na vector keisan no hitsuyou wo nakusu
+* Kiko no kodo ni taisuru dojiki wo teikyou
+
+## Slider-Crank Kiko Kaiseki (Slider-Crank Mechanism Analysis)
+
+Slider-crank kiko wa, engine to compressor no sekkei no kiso desu.
+
+### Sokudo Kaiseki Step
+
+1. **Crank sokudo**: $v_B = \omega_2 \cdot r_2$
+2. **Connecting rod seiyaku**: Ten B wa en-ko ue de undo, ten C wa chokusen-teki ni undo
+3. **Sokudo kankei**: 
+   $$v_{Bx} = v_B \cos\theta_2$$
+   $$v_{By} = v_B \sin\theta_2$$
+
+### Piston Sokudo
+
+Piston sokudo wa tsugi no you ni yudou dekimasu:
+$$v_C = \omega_2 r_2 \left[\sin\theta_2 + \frac{r_2}{r_3}\frac{\sin 2\theta_2}{2\sqrt{1-\left(\frac{r_2}{r_3}\sin\theta_2\right)^2}}\right]$$
+
+## Cam to Follower System
+
+Cam system no sokudo kaiseki wa, cam kara follower e no undo densho no rikai wo fukumimasu.
+
+### Sokudo Kankei (Velocity Relationships)
+
+Kakusokudo $\omega_{cam}$ de kaiten suru cam no baai:
+* **Follower heni**: $s = f(\theta)$
+* **Follower sokudo**: $v = \frac{ds}{dt} = \frac{ds}{d\theta} \cdot \omega_{cam}$
+
+### Sekkei Koryou (Design Considerations)
+
+* Sokudo profile wa doritsu-ryoku ni eikyo wo ataeru
+* Namedaka na sokudo sen'i wa shindo wo gensho saseru
+* Saidai sokudo wa system yoken wo kettei suru
+
+## Gear Train Sokudo Kaiseki (Gear Train Velocity Analysis)
+
+Gear train wa, kamiau gear wo toshite tokutei no sokudo kankei de undo wo densho shimasu.
+
+### Kihon Gear Kankei (Fundamental Gear Relations)
+
+Futatsu no kamiau gear no baai:
+$$\frac{\omega_1}{\omega_2} = \frac{N_2}{N_1} = \frac{r_2}{r_1}$$
+
+Koko de N wa ha no kazu, r wa pitch hankei desu.
+
+### Fukugo Gear Train (Compound Gear Trains)
+
+Fukusuu no gear dan no baai:
+$$\omega_{output} = \omega_{input} \times \prod \frac{N_{driving}}{N_{driven}}$$
+
+## Mechatronic System ni okeru Oyo (Applications in Mechatronic Systems)
+
+Sokudo kaiseki wa tsugi no tame ni juyo desu:
+
+* **Robot manipulator**: End-effector sokudo seigyo
+* **Seizou setsubi**: Fukusuu no undo-jiku no doucho
+* **Jidosha system**: Engine timing to transmission sekkei
+* **Seimitsu kiki**: Seikaku na undo profile no iji
+
+## Rei Mondai (Example Problems)
+
+### Rei 1: Yon-Bar Renketu Sokudo
+
+Tsugi no joken no yon-bar renketu:
+* Link AB = 50 mm, 100 rpm de kaiten
+* Link BC = 120 mm
+* Link CD = 80 mm
+* Kotei link AD = 100 mm
+* Genzai no ichi: θ₂ = 45°
+
+Link BC no kakusokudo wo motomeru.
+
+<details>
+<summary>Kaiho (Solution)</summary>
+
+**Step 1**: Nyuryoku sokudo henkan
+$$\omega_2 = 100 \text{ rpm} = \frac{100 \times 2\pi}{60} = 10.47 \text{ rad/s}$$
+
+**Step 2**: Nyuryoku sokudo keisan
+$$v_B = \omega_2 \times r_{AB} = 10.47 \times 0.05 = 0.524 \text{ m/s}$$
+
+**Step 3**: Sokudo kaiseki shiki tekiyo
+Vector loop hoho to seiyaku shiki kaiketsu wo shiyo:
+$$\omega_3 = 4.36 \text{ rad/s}$$
+
+</details>
+
+## Omona Point (Key Takeaways)
+
+* **Sokudo kaiseki** wa kiko performance rikai no kiso
+* **Zukeiteki hoho** wa sokudo kankei no chokkan-teki rikai wo teikyou
+* **Kaiseki-teki hoho** wa fukuzatsu na kiko no seikaku na kaiho wo teikyou
+* **Shunkan chushin** wa sokudo keisan wo kantan ni shi, sekkei dojiki wo teikyou
+* **Oyo** wa dentou-teki kikai kara gendai mechatronic system made oyobu
+
+## Sanko Bunken (Further Reading)
+
+* "Theory of Machines and Mechanisms" by Uicker, Pennock, and Shigley
+* "Kinematics and Dynamics of Machinery" by Wilson and Sadler  
+* "Mechanism Design: Analysis and Synthesis" by Erdman, Sandor, and Kota
+
+<PlanarMechanicsComments />
+<TawkWidget />
+<Copyright />
