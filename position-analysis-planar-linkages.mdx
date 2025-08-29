@@ -7,9 +7,18 @@ tags: ["planar-mechanics", "position-analysis", "four-bar-linkage", "vector-loop
 excerpt: "Master position analysis of planar mechanisms by optimizing a four-bar linkage suspension system, covering vector loop equations, geometric constraints, and analytical solution methods."
 ---
 
+import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../components/TawkWidget.astro';
+import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
 import Copyright from '../../../../components/Copyright.astro';
-import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+import BionicText from '../../../../components/BionicText.astro';
+import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+
+<UniversalContentContributors 
+  contributors={frontmatter.contributors}
+/>
 
 ## 🎯 Learning Objectives
 
@@ -22,7 +31,9 @@ By the end of this lesson, you will be able to:
 
 ## 🔧 Real-World System Problem: Four-Bar Linkage Suspension System
 
-Modern vehicles and manufacturing equipment require sophisticated suspension systems that maintain optimal geometry throughout their range of motion. Whether it's a Formula 1 race car navigating high-speed corners or a precision manufacturing machine maintaining tool alignment, **four-bar linkages** are the foundation of advanced mechanical systems.
+<BionicText method="advanced" intensity="medium" class="highlight">
+Modern vehicles and manufacturing equipment require sophisticated suspension systems that maintain optimal geometry throughout their range of motion. Whether it's a Formula 1 race car navigating high-speed corners or a precision manufacturing machine maintaining tool alignment, four-bar linkages are the foundation of advanced mechanical systems.
+</BionicText>
 
 ### System Challenge: Adaptive Suspension Geometry
 
@@ -223,8 +234,8 @@ For θ₂ = 45° (mid-travel position):
     
     **Suspension Geometry Evaluation:**
     
-    ✅ **Camber Control**: Maintains ±1° throughout travel
-    ✅ **Track Stability**: <2.5mm variation (excellent)
+    ✅ **Camber Control**: Maintains \pm1° throughout travel
+    ✅ **Track Stability**: less than 2.5mm variation (excellent)
     ✅ **Smooth Motion**: No binding conditions detected
     ✅ **Packaging**: Fits within 400×300mm envelope
     
@@ -469,4 +480,6 @@ Modern position analysis leverages:
 
 **Coming Next**: In Lesson 3, we'll build on position analysis to explore velocity analysis and instantaneous centers in crank-slider mechanisms, essential for engine and compressor design optimization.
 
+<PlanarMechanicsComments />
+<TawkWidget />
 <Copyright />

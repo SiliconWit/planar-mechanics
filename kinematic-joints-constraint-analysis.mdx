@@ -7,9 +7,18 @@ tags: ["planar-mechanics", "kinematics", "joints", "DOF", "grublers-equation", "
 excerpt: "Master fundamental concepts of kinematic joints and constraint analysis by designing a modular robotic arm assembly system, covering joint types, degrees of freedom, and Grübler's equation."
 ---
 
+import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../components/TawkWidget.astro';
+import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
 import Copyright from '../../../../components/Copyright.astro';
-import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+import BionicText from '../../../../components/BionicText.astro';
+import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+
+<UniversalContentContributors 
+  contributors={frontmatter.contributors}
+/>
 
 ## 🎯 Learning Objectives
 
@@ -22,8 +31,9 @@ By the end of this lesson, you will be able to:
 
 ## 🔧 Real-World System Problem: Modular Robotic Arm Assembly System
 
+<BionicText method="advanced" intensity="medium" class="highlight">
 Consider a manufacturing facility that needs flexible automation - one day assembling electronic components, the next day handling automotive parts, and later packaging consumer goods. Traditional fixed robotic systems cannot adapt to this variety of tasks.
-
+</BionicText>
 The solution? **Modular robotic arms** with interchangeable joint modules that can be reconfigured for different applications.
 
 ### System Challenge: Joint Selection for Reconfigurable Robots
@@ -169,6 +179,9 @@ Let's return to our modular robotic arm challenge and apply Grübler's equation 
 
 ### Configuration 1: Simple 2-DOF Robot Arm
 
+<details>
+<summary>**Click to reveal calculations**</summary>
+
 <Steps>
 1. **System Description:**
    - 2 rotating links (upper arm, forearm)
@@ -188,7 +201,12 @@ Let's return to our modular robotic arm challenge and apply Grübler's equation 
    ✅ **Controllable**: Two-input system matches two actuators
 </Steps>
 
+</details>
+
 ### Configuration 2: 3-DOF Robot with Wrist Rotation
+
+<details>
+<summary>**Click to reveal calculations**</summary>
 
 <Steps>
 1. **System Description:**
@@ -209,7 +227,12 @@ Let's return to our modular robotic arm challenge and apply Grübler's equation 
    ✅ **Versatility**: Suitable for complex manipulation tasks
 </Steps>
 
+</details>
+
 ### Configuration 3: Hybrid Robot with Linear Actuator
+
+<details>
+<summary>**Click to reveal calculations**</summary>
 
 <Steps>
 1. **System Description:**
@@ -229,6 +252,8 @@ Let's return to our modular robotic arm challenge and apply Grübler's equation 
    ✅ **Extended reach**: Prismatic joint increases workspace
    ✅ **Force advantages**: Linear actuators can provide high forces
 </Steps>
+
+</details>
 
 ## 🛠️ Design Guidelines for Joint Selection
 
@@ -304,7 +329,7 @@ Let's design a complete industrial robot arm for our modular system:
 - **Task**: 3D positioning + 3D orientation (6 DOF total)
 - **Payload**: 10 kg
 - **Reach**: 800 mm
-- **Precision**: ±0.1 mm
+- **Precision**: \pm0.1 mm
 
 ### Joint Configuration Design
 
@@ -327,11 +352,11 @@ Let's design a complete industrial robot arm for our modular system:
   <TabItem label="Joint Functions">
     
     **Joint 1 (Base Rotation):** Platform rotation - 360° capability
-    **Joint 2 (Shoulder):** Vertical arm positioning - ±180° range  
-    **Joint 3 (Elbow):** Forearm positioning - ±150° range
-    **Joint 4 (Wrist Roll):** End-effector rotation - ±360° capability
-    **Joint 5 (Wrist Pitch):** End-effector tilt - ±90° range
-    **Joint 6 (Wrist Yaw):** Final orientation - ±180° range
+    **Joint 2 (Shoulder):** Vertical arm positioning - \pm180° range  
+    **Joint 3 (Elbow):** Forearm positioning - \pm150° range
+    **Joint 4 (Wrist Roll):** End-effector rotation - \pm360° capability
+    **Joint 5 (Wrist Pitch):** End-effector tilt - \pm90° range
+    **Joint 6 (Wrist Yaw):** Final orientation - \pm180° range
     
   </TabItem>
   <TabItem label="Design Verification">
@@ -394,4 +419,6 @@ This joint analysis methodology applies to:
 
 **Coming Next**: In Lesson 2, we'll use these joint concepts to analyze position relationships in four-bar linkage suspension systems, exploring vector loop equations and geometric constraints.
 
+<PlanarMechanicsComments />
+<TawkWidget />
 <Copyright />

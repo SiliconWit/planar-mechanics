@@ -7,9 +7,18 @@ tags: ["planar-mechanics", "cam-design", "follower-systems", "motion-programming
 excerpt: "Master cam-follower system design by developing precise motion profiles for CNC machine tool feed systems, covering cam synthesis, follower motion laws, and pressure angle optimization."
 ---
 
+import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../components/TawkWidget.astro';
+import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
 import Copyright from '../../../../components/Copyright.astro';
-import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+import BionicText from '../../../../components/BionicText.astro';
+import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+
+<UniversalContentContributors 
+  contributors={frontmatter.contributors}
+/>
 
 ## 🎯 Learning Objectives
 
@@ -22,7 +31,9 @@ By the end of this lesson, you will be able to:
 
 ## 🔧 Real-World System Problem: CNC Machine Tool Cam-Driven Feed System
 
-Modern CNC machining requires precise, programmable motion control for optimal cutting performance. While most modern machines use servo drives, specialized applications still rely on **cam-follower systems** for their mechanical simplicity, reliability, and ability to provide complex motion profiles without electronic control. Understanding cam design principles is essential for both legacy system maintenance and specialized new applications where mechanical systems excel.
+<BionicText method="advanced" intensity="medium" class="highlight">
+Modern CNC machining requires precise, programmable motion control for optimal cutting performance. While most modern machines use servo drives, specialized applications still rely on cam-follower systems for their mechanical simplicity, reliability, and ability to provide complex motion profiles without electronic control. Understanding cam design principles is essential for both legacy system maintenance and specialized new applications where mechanical systems excel.
+</BionicText>
 
 ### System Challenge: Precision Tool Feed Control
 
@@ -36,7 +47,7 @@ Modern CNC machining requires precise, programmable motion control for optimal c
 **Design Goal:** Create a cam-driven tool feed system that provides optimal cutting motion profiles for various materials while maintaining precision and minimizing tool wear.
 
 **Key Requirements:**
-- **Precise Motion Control**: ±0.01mm positioning accuracy
+- **Precise Motion Control**: \pm0.01mm positioning accuracy
 - **Smooth Operation**: Minimize vibration and tool chatter
 - **Variable Feed Rates**: Accommodate different materials and cutting conditions
 - **High Reliability**: 24/7 operation with minimal maintenance
@@ -175,7 +186,7 @@ Let's design a cam-follower system for a precision CNC tool feed application.
 - **Cycle Time**: 2 seconds (rapid + feed + return)
 - **Feed Rate**: 100 mm/min during cutting
 - **Return Rate**: 300 mm/min (rapid positioning)
-- **Precision**: ±0.01 mm positioning accuracy
+- **Precision**: \pm0.01 mm positioning accuracy
 
 ### Step 1: Motion Program Development
 
@@ -265,7 +276,7 @@ Let's design a cam-follower system for a precision CNC tool feed application.
     
     **Material**: Hardened steel (HRC 58-62)
     **Surface Finish**: Ra 0.4 μm maximum
-    **Profile Tolerance**: ±0.005 mm
+    **Profile Tolerance**: \pm0.005 mm
     **Manufacturing Method**: CNC grinding after heat treatment
     
     **Quality Control:**
@@ -287,12 +298,12 @@ Let's design a cam-follower system for a precision CNC tool feed application.
 **Motion Characteristics:**
 - **Maximum Velocity**: 8.3 mm/s (during rapid phases)
 - **Maximum Acceleration**: 52 mm/s² (smooth transitions)
-- **Positioning Accuracy**: ±0.008 mm (exceeds specification)
+- **Positioning Accuracy**: \pm0.008 mm (exceeds specification)
 - **Cycle Time**: 2.0 seconds (meets requirement)
 
 **Force Analysis:**
 - **Maximum Contact Force**: 180 N (including cutting loads)
-- **Side Forces**: <3% of contact force (excellent efficiency)
+- **Side Forces**: less than 3% of contact force (excellent efficiency)
 - **Bearing Loads**: Well within capacity of selected bearings
 
 **Design Validation:**
@@ -372,9 +383,9 @@ For specialized applications, custom motion laws can be developed:
 - **Plastics**: Low-load, quiet operation applications
 
 **Quality Control Requirements:**
-- **Profile accuracy**: Typically ±0.01-0.05 mm
+- **Profile accuracy**: Typically \pm0.01-0.05 mm
 - **Surface finish**: Ra 0.2-0.8 μm depending on application  
-- **Hardness uniformity**: ±2 HRC across cam surface
+- **Hardness uniformity**: \pm2 HRC across cam surface
 - **Dynamic balancing**: Essential for high-speed operation
 </Card>
 
@@ -587,4 +598,6 @@ plt.show()
 
 **Coming Next**: In Lesson 6, we'll complete our planar mechanics journey with force analysis and mechanism synthesis for multi-DOF robotic manipulator systems, where we'll integrate all previous concepts into complete system design methodologies.
 
+<PlanarMechanicsComments />
+<TawkWidget />
 <Copyright />

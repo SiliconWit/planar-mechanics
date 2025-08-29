@@ -7,9 +7,18 @@ tags: ["planar-mechanics", "acceleration-analysis", "geneva-mechanism", "dynamic
 excerpt: "Master acceleration analysis and dynamic force prediction by designing Geneva mechanism indexing systems for precise positioning without vibration in automated packaging and assembly equipment."
 ---
 
+import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../components/TawkWidget.astro';
+import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
 import Copyright from '../../../../components/Copyright.astro';
-import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+import BionicText from '../../../../components/BionicText.astro';
+import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+
+<UniversalContentContributors 
+  contributors={frontmatter.contributors}
+/>
 
 ## 🎯 Learning Objectives
 
@@ -22,7 +31,9 @@ By the end of this lesson, you will be able to:
 
 ## 🔧 Real-World System Problem: Geneva Mechanism Indexing System
 
-In modern automated manufacturing - from pharmaceutical packaging to electronic assembly - precision indexing is critical. Products must be moved from station to station with exact positioning, minimal vibration, and repeatable accuracy. The **Geneva mechanism** is the gold standard for intermittent motion systems, but high-speed operation introduces challenging dynamic forces that can cause vibration, wear, and positioning errors.
+<BionicText method="advanced" intensity="medium" class="highlight">
+In modern automated manufacturing - from pharmaceutical packaging to electronic assembly - precision indexing is critical. Products must be moved from station to station with exact positioning, minimal vibration, and repeatable accuracy. The Geneva mechanism is the gold standard for intermittent motion systems, but high-speed operation introduces challenging dynamic forces that can cause vibration, wear, and positioning errors.
+</BionicText>
 
 ### System Challenge: High-Speed Precision Indexing
 
@@ -33,11 +44,11 @@ In modern automated manufacturing - from pharmaceutical packaging to electronic 
 - Can we optimize for both precision and production throughput?
 
 <Card title="🎯 Precision Indexing System Challenge" icon="rocket">
-**Design Goal:** Create a Geneva mechanism indexing system that operates at 300 RPM while maintaining ±0.1mm positioning accuracy and minimal vibration.
+**Design Goal:** Create a Geneva mechanism indexing system that operates at 300 RPM while maintaining \pm0.1mm positioning accuracy and minimal vibration.
 
 **Key Requirements:**
 - **High-Speed Operation**: 300 RPM input speed (5 Hz indexing)
-- **Precision Positioning**: ±0.1mm repeatability
+- **Precision Positioning**: \pm0.1mm repeatability
 - **Smooth Motion**: Minimize acceleration peaks and jerk
 - **Low Vibration**: Reduce dynamic forces transmitted to base structure
 </Card>
@@ -179,7 +190,7 @@ Let's analyze a Geneva mechanism indexing system used in automated packaging equ
     $$\alpha_{geneva} = \frac{d\omega_{geneva}}{dt} = \omega_{drive}^2 \cdot \frac{R^2\sin\phi}{r \cdot (R^2\cos^2\phi + r^2)^{3/2}}$$
     
     **Peak Angular Acceleration:**
-    - Occurs at φ = ±30° (during engagement/disengagement)
+    - Occurs at φ = \pm30° (during engagement/disengagement)
     - $\alpha_{max} = 31.4^2 \times \frac{60^2 \times \sin(30°)}{80 \times (60^2\cos^2(30°) + 80^2)^{3/2}}$
     - $\alpha_{max} = 982 \times \frac{1800}{80 \times 140.6} = 157.3$ rad/s²
     
@@ -413,7 +424,7 @@ axes[1,1].set_title('Inertial Force')
 
 **System Requirements:**
 - **Production Rate**: 600 bottles/minute (10 Hz)
-- **Indexing Accuracy**: ±0.05mm
+- **Indexing Accuracy**: \pm0.05mm
 - **Product Mass**: 0.2 kg per bottle
 - **Stations**: 12 (30° indexing increments)
 
@@ -436,7 +447,7 @@ axes[1,1].set_title('Inertial Force')
    - Active vibration dampening system implemented
 
 4. **Performance Validation:**
-   - Prototype testing confirmed <±0.03mm accuracy
+   - Prototype testing confirmed ±0.03mm accuracy
    - Vibration levels 60% below specification limits
    - 50% increase in production rate over previous system
 </Steps>
@@ -498,4 +509,6 @@ axes[1,1].set_title('Inertial Force')
 
 **Coming Next**: In Lesson 5, we'll explore cam-follower systems and motion programming for CNC machine tools, where we'll design custom motion profiles and optimize pressure angles for automated manufacturing processes.
 
+<PlanarMechanicsComments />
+<TawkWidget />
 <Copyright />

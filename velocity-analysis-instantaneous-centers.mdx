@@ -7,9 +7,18 @@ tags: ["planar-mechanics", "velocity-analysis", "instantaneous-centers", "crank-
 excerpt: "Master velocity analysis of planar mechanisms by optimizing crank-slider engine and compressor systems, covering velocity polygons, instantaneous centers, and relative motion analysis."
 ---
 
+import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
+import TawkWidget from '../../../../components/TawkWidget.astro';
+import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
 import Copyright from '../../../../components/Copyright.astro';
-import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+import BionicText from '../../../../components/BionicText.astro';
+import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+
+<UniversalContentContributors 
+  contributors={frontmatter.contributors}
+/>
 
 ## 🎯 Learning Objectives
 
@@ -22,7 +31,9 @@ By the end of this lesson, you will be able to:
 
 ## 🔧 Real-World System Problem: Crank-Slider Engine/Compressor Mechanism
 
-Whether it's the engine in your car, the compressor in your air conditioning system, or the pump in a hydraulic system, **crank-slider mechanisms** are the workhorses of mechanical engineering. These systems convert rotational motion from motors into linear motion for pistons - but the devil is in the details of how velocity varies throughout the cycle.
+<BionicText method="advanced" intensity="medium" class="highlight">
+Whether it's the engine in your car, the compressor in your air conditioning system, or the pump in a hydraulic system, crank-slider mechanisms are the workhorses of mechanical engineering. These systems convert rotational motion from motors into linear motion for pistons - but the devil is in the details of how velocity varies throughout the cycle.
+</BionicText>
 
 ### System Challenge: Piston Velocity Optimization
 
@@ -467,4 +478,6 @@ plt.title('Crank-Slider Velocity Profile')
 
 **Coming Next**: In Lesson 4, we'll extend our analysis to acceleration and dynamic forces in Geneva mechanism indexing systems, essential for understanding inertial loading and vibration control in automated machinery.
 
+<PlanarMechanicsComments />
+<TawkWidget />
 <Copyright />
