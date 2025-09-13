@@ -2,7 +2,7 @@
 title: "Lesson 3: Velocity Analysis and Instantaneous Centers"
 description: "Understanding velocity polygons and instantaneous centers through crank-slider engine and compressor mechanism analysis"
 contributors: "sam-macharia,jack-kojiro"
-pubDate: 2025-08-30
+pubDate: 2025-09-13
 tags: ["planar-mechanics", "velocity-analysis", "instantaneous-centers", "crank-slider", "velocity-polygons", "engine-design"]
 excerpt: "Master velocity analysis of planar mechanisms by optimizing crank-slider engine and compressor systems, covering velocity polygons, instantaneous centers, and relative motion analysis."
 ---
@@ -10,11 +10,12 @@ excerpt: "Master velocity analysis of planar mechanisms by optimizing crank-slid
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
 import TawkWidget from '../../../../components/TawkWidget.astro';
 import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
+import InArticleAd from '../../../../components/InArticleAd.astro';
 import Copyright from '../../../../components/Copyright.astro';
 import BionicText from '../../../../components/BionicText.astro';
 import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
-import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps, LinkButton } from '@astrojs/starlight/components';
 
 <UniversalContentContributors 
   contributors={frontmatter.contributors}
@@ -108,6 +109,9 @@ To optimize our crank-slider system, we need systematic methods for analyzing ve
 ### Method 2: Instantaneous Centers (Analytical Method)
 
 **Instantaneous centers** are points that have zero velocity at any given instant - the "instant centers of rotation."
+
+
+<InArticleAd />
 
 <Card title="🎯 Instantaneous Center Theory" icon="document">
 **Definition:** The instantaneous center (IC) is the point about which a body appears to rotate at any given instant.
@@ -289,6 +293,9 @@ This relationship is crucial for:
 - **Energy efficiency analysis**
 
 ## 🎯 Design Optimization Applications
+
+
+<InArticleAd />
 
 ### Engine Design Optimization
 
@@ -478,6 +485,7 @@ plt.title('Crank-Slider Velocity Profile')
 
 **Coming Next**: In Lesson 4, we'll extend our analysis to acceleration and dynamic forces in Geneva mechanism indexing systems, essential for understanding inertial loading and vibration control in automated machinery.
 
+<InArticleAd />
 <PlanarMechanicsComments />
 <TawkWidget />
 <Copyright />

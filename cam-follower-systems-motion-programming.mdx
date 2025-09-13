@@ -2,7 +2,7 @@
 title: "Lesson 5: Cam-Follower Systems and Motion Programming"
 description: "Understanding cam design principles and follower motion laws through CNC machine tool cam-driven feed system optimization"
 contributors: "sam-macharia,jack-kojiro"
-pubDate: 2025-08-30
+pubDate: 2025-09-13
 tags: ["planar-mechanics", "cam-design", "follower-systems", "motion-programming", "CNC-systems", "pressure-angles"]
 excerpt: "Master cam-follower system design by developing precise motion profiles for CNC machine tool feed systems, covering cam synthesis, follower motion laws, and pressure angle optimization."
 ---
@@ -10,11 +10,12 @@ excerpt: "Master cam-follower system design by developing precise motion profile
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
 import TawkWidget from '../../../../components/TawkWidget.astro';
 import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
+import InArticleAd from '../../../../components/InArticleAd.astro';
 import Copyright from '../../../../components/Copyright.astro';
 import BionicText from '../../../../components/BionicText.astro';
 import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
-import { Card, CardGrid, Badge, Steps } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps, LinkButton } from '@astrojs/starlight/components';
 
 <UniversalContentContributors 
   contributors={frontmatter.contributors}
@@ -157,6 +158,9 @@ Different applications require different motion characteristics. Standard **moti
 </Tabs>
 
 ### Pressure Angle and Force Analysis
+
+
+<InArticleAd />
 
 The **pressure angle** (φ) is the angle between the cam-follower contact force and the direction of follower motion.
 
@@ -391,6 +395,9 @@ For specialized applications, custom motion laws can be developed:
 
 ## 📊 Computational Cam Design
 
+
+<InArticleAd />
+
 ### Modern Design Software
 
 <Tabs>
@@ -598,6 +605,7 @@ plt.show()
 
 **Coming Next**: In Lesson 6, we'll complete our planar mechanics journey with force analysis and mechanism synthesis for multi-DOF robotic manipulator systems, where we'll integrate all previous concepts into complete system design methodologies.
 
+<InArticleAd />
 <PlanarMechanicsComments />
 <TawkWidget />
 <Copyright />
