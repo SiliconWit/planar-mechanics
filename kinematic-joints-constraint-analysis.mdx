@@ -2,7 +2,7 @@
 title: "Lesson 1: Kinematic Joints and Constraint Analysis"
 description: "Understanding joint types, degrees of freedom, and constraint relationships through modular robotic arm design using Grübler's equation"
 contributors: "sam-macharia,jack-kojiro"
-pubDate: 2025-09-15
+pubDate: 2025-09-06
 tags: ["planar-mechanics", "kinematics", "joints", "DOF", "grublers-equation", "robotic-arms", "constraints"]
 excerpt: "Master fundamental concepts of kinematic joints and constraint analysis by designing a modular robotic arm assembly system, covering joint types, degrees of freedom, and Grübler's equation."
 ---
@@ -10,6 +10,7 @@ excerpt: "Master fundamental concepts of kinematic joints and constraint analysi
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
 import TawkWidget from '../../../../components/TawkWidget.astro';
 import UniversalContentContributors from '../../../../components/UniversalContentContributors.astro';
+import InArticleAd from '../../../../components/InArticleAd.astro';
 import Copyright from '../../../../components/Copyright.astro';
 import BionicText from '../../../../components/BionicText.astro';
 import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
@@ -63,6 +64,9 @@ Companies like **Universal Robots**, **KUKA**, and **ABB** use modular approache
 :::
 
 ## 📚 Fundamental Theory: Kinematic Joints and Constraints
+
+<InArticleAd />
+
 
 To solve our modular robot challenge, we need to understand how joints work and how they constrain motion.
 
@@ -143,6 +147,7 @@ In planar mechanisms, we have several fundamental joint types:
 - Z-rotation (about axis perpendicular to plane)
 
 **Constrained System:** 3n - 2j₁ - j₂ DOF
+
 Where:
 - n = number of moving bodies
 - j₁ = number of single-DOF joints (revolute, prismatic)
@@ -256,6 +261,9 @@ Let's return to our modular robotic arm challenge and apply Grübler's equation 
 </details>
 
 ## 🛠️ Design Guidelines for Joint Selection
+
+<InArticleAd />
+
 
 Based on our analysis, here are practical guidelines for modular robotic systems:
 
@@ -419,6 +427,7 @@ This joint analysis methodology applies to:
 
 **Coming Next**: In Lesson 2, we'll use these joint concepts to analyze position relationships in four-bar linkage suspension systems, exploring vector loop equations and geometric constraints.
 
+<InArticleAd />
 <PlanarMechanicsComments />
 <TawkWidget />
 <Copyright />
