@@ -12,6 +12,8 @@ sidebar:
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Contributors Welcome](https://img.shields.io/badge/contributors-welcome-orange)
 
+**Read this course at:** [https://siliconwit.com/education/planar-mechanics/](https://siliconwit.com/education/planar-mechanics/)
+
 A course on kinematic and dynamic analysis of planar mechanisms for mechatronic systems. Covers joint types and constraint analysis, position analysis of linkages, velocity analysis with instantaneous centers, acceleration and dynamic forces, cam-follower systems, and force analysis with mechanism synthesis.
 
 ## Lessons
