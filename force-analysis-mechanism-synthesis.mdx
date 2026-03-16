@@ -15,7 +15,7 @@ import Copyright from '../../../../components/Copyright.astro';
 import BionicText from '../../../../components/BionicText.astro';
 import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
-import { Card, CardGrid, Badge, Steps, LinkButton } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/starlight/components';
 
 <UniversalContentContributors 
   contributors={frontmatter.contributors}
@@ -23,7 +23,9 @@ import { Card, CardGrid, Badge, Steps, LinkButton } from '@astrojs/starlight/com
 
 
 
-## 🎯 Learning Objectives
+Kinematic analysis tells you where a mechanism moves and how fast; force analysis tells you what it takes to make it move and what loads it imposes on its joints and frame. Without force analysis, you cannot size bearings, select actuators, or verify that the structure can handle the loads. Mechanism synthesis goes further: instead of analyzing a given mechanism, you start with a desired motion or force requirement and work backward to find the link lengths, joint locations, and actuator sizes that satisfy it. In this lesson you will perform static force analysis on multi-DOF robotic manipulators using virtual work principles, then synthesize mechanisms to meet specified motion and force requirements. #ForceAnalysis #MechanismSynthesis #ActuatorSizing
+
+## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
@@ -32,7 +34,7 @@ By the end of this lesson, you will be able to:
 3. **Size** actuators based on mechanism force requirements and mechanical advantage
 4. **Synthesize** complete mechanisms using integrated position, velocity, and force analysis
 
-## 🔧 Real-World System Problem: Multi-DOF Robotic Manipulator System
+## Real-World System Problem: Multi-DOF Robotic Manipulator System
 
 <InArticleAd />
 
@@ -76,7 +78,7 @@ Complete mechanism design requires:
 - **Actuator Selection**: Right-sizing motors and drives for performance and efficiency
 - **System Integration**: Balancing all design requirements for optimal performance
 
-## 📚 Fundamental Theory: Static Force Analysis and Mechanism Synthesis
+## Fundamental Theory: Static Force Analysis and Mechanism Synthesis
 
 <InArticleAd />
 
@@ -138,7 +140,7 @@ $$\sum F_i \delta x_i + \sum T_j \delta \theta_j = 0$$
    $$F_{input} \cdot v_{input} = F_{output} \cdot v_{output}$$
 </Steps>
 
-## 🎯 System Application: 3-DOF Robot Force Analysis
+## System Application: 3-DOF Robot Force Analysis
 
 <InArticleAd />
 
@@ -265,7 +267,7 @@ Let's analyze and design a complete 3-DOF robotic manipulator system.
 **System Power**: 5 kW total (motors sized for worst-case conditions)
 </Card>
 
-## 🛠️ Advanced Force Analysis Techniques
+## Advanced Force Analysis Techniques
 
 <InArticleAd />
 
@@ -376,7 +378,7 @@ Modern mechanism design uses computational optimization:
   </TabItem>
 </Tabs>
 
-## 📊 Computational Force Analysis and Synthesis
+## Computational Force Analysis and Synthesis
 
 <InArticleAd />
 
@@ -544,7 +546,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-## 🎯 Complete Design Case Study: Medical Assistance Robot
+## Complete Design Case Study: Medical Assistance Robot
 
 <InArticleAd />
 
@@ -608,7 +610,7 @@ plt.show()
 - Training time reduced through intuitive control interface
 </Card>
 
-## 📋 Summary and Professional Integration
+## Summary and Professional Integration
 
 <InArticleAd />
 

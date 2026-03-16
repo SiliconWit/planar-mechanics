@@ -15,7 +15,7 @@ import Copyright from '../../../../components/Copyright.astro';
 import BionicText from '../../../../components/BionicText.astro';
 import TailwindWrapper from '../../../../components/TailwindWrapper.jsx';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
-import { Card, CardGrid, Badge, Steps, LinkButton } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/starlight/components';
 
 <UniversalContentContributors 
   contributors={frontmatter.contributors}
@@ -23,7 +23,9 @@ import { Card, CardGrid, Badge, Steps, LinkButton } from '@astrojs/starlight/com
 
 
 
-## 🎯 Learning Objectives
+Knowing that a mechanism has the right number of degrees of freedom (Lesson 1) tells you it can move, but not where it moves. A four-bar linkage with the same topology can produce wildly different coupler curves depending on link lengths, and a suspension linkage that looks fine in one position may hit a singularity or interfere with the chassis at full travel. Position analysis answers the question: given the input angle, where is every point on every link? In this lesson you will formulate vector loop equations, solve them analytically, and optimize a four-bar linkage suspension system. #PositionAnalysis #FourBarLinkage #VectorLoops
+
+## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
@@ -32,7 +34,7 @@ By the end of this lesson, you will be able to:
 3. **Optimize** four-bar linkage geometry for specific motion requirements
 4. **Apply** position analysis to real suspension and manufacturing systems
 
-## 🔧 Real-World System Problem: Four-Bar Linkage Suspension System
+## Real-World System Problem: Four-Bar Linkage Suspension System
 
 <InArticleAd />
 
@@ -74,7 +76,7 @@ Four-bar linkages are fundamental building blocks found in:
 - **Aerospace**: Landing gear systems, control surface actuators
 - **Medical Devices**: Surgical robots, rehabilitation equipment
 
-## 📚 Fundamental Theory: Vector Loop Equations and Geometric Constraints
+## Fundamental Theory: Vector Loop Equations and Geometric Constraints
 
 <InArticleAd />
 
@@ -148,7 +150,7 @@ $$b\sin\theta_2 + c\sin\theta_3 - d\sin\theta_4 = 0$$
 - a, b, c, d = Known link lengths
 </Card>
 
-## 🎯 System Application: Suspension Linkage Position Analysis
+## System Application: Suspension Linkage Position Analysis
 
 <InArticleAd />
 
@@ -274,7 +276,7 @@ For θ₂ = 45° (mid-travel position):
   </TabItem>
 </Tabs>
 
-## 🛠️ Advanced Position Analysis Techniques
+## Advanced Position Analysis Techniques
 
 <InArticleAd />
 
@@ -339,7 +341,7 @@ $$y_P = y_B + r_P \sin(\theta_3 + \alpha)$$
 **Application:** In suspension systems, the coupler point represents the wheel center position.
 </Card>
 
-## 🎯 Design Guidelines for Position Analysis
+## Design Guidelines for Position Analysis
 
 <InArticleAd />
 
@@ -406,7 +408,7 @@ $$y_P = y_B + r_P \sin(\theta_3 + \alpha)$$
    - Conduct performance testing
 </Steps>
 
-## 📊 Practical Applications and Case Studies
+## Practical Applications and Case Studies
 
 <InArticleAd />
 
@@ -453,7 +455,7 @@ $$y_P = y_B + r_P \sin(\theta_3 + \alpha)$$
 - Optimized door swing path
 - Integrated check mechanisms
 
-## 📋 Summary and Next Steps
+## Summary and Next Steps
 
 <InArticleAd />
 
