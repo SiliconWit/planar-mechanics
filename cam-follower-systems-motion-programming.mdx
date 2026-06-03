@@ -5,7 +5,7 @@ contributors: "sam-macharia,andrew-kibor,jack-kojiro"
 pubDate: 2025-09-10
 tags: ["planar-mechanics", "cam-design", "motion-programming", "svaj-diagrams", "cycloidal-motion", "pressure-angle"]
 excerpt: "Program a follower motion with the SVAJ diagrams, lay out the cam profile graphically by inversion, and size the base circle from the pressure angle, comparing harmonic and cycloidal motion laws for smoothness."
-heroImage: "https://cdn.siliconwit.com/education/parametric-mechanical-CAD-with-FreeCAD/cam-and-follower-mechanism.gif"
+heroImage: "https://cdn.siliconwit.com/product-development/2d-mechanisms-analyzer/cam-follower-mechanism-simulator.png"
 ---
 
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
@@ -119,8 +119,12 @@ where $R_b$ is the **base-circle** radius (the smallest radius of the cam). A la
 
 This is the central worked example. We program a rise and draw its displacement, velocity, and acceleration to scale, the graphical heart of cam design.
 
-<Card title="Build it and explore" icon="rocket">
-The cam-follower is best built and turned in CAD: the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) lesson in the Parametric Mechanical CAD course models exactly this system. For a mechanism that produces pure simple-harmonic follower motion, see the [Scotch-Yoke Mechanism](/education/parametric-mechanical-cad-freecad/scotch-yoke-mechanism/), the physical generator of the SHM law compared below.
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/cam-follower-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Cam and Follower Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Cam and Follower Experiments](/education/mechanism-design-simulation/cam-follower-experiments/) lab ([siwit.co/CFM](https://siwit.co/CFM)), which plots this SVAJ chain and compares the motion laws. Build the cam as a part in the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) CAD lesson; for pure simple-harmonic follower motion, see the [Scotch-Yoke Mechanism](/education/parametric-mechanical-cad-freecad/scotch-yoke-mechanism/).
 </Card>
 
 :::note[System Problem Statement]
@@ -182,6 +186,23 @@ Plot the three curves to scale against cam angle. Choose a vertical scale for ea
 
 </details>
 
+### Step 3: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/CFM](https://siwit.co/CFM)), set a cycloidal rise of $h = 25$ mm over $\beta = 90\degree$ with a knife-edge follower, and read the velocity and acceleration charts. ✅
+
+2. **Read the peaks.** Velocity peaks at about $31.8$ mm/rad at mid-rise and acceleration at about $63.7$ mm/rad², matching the hand calculation. The acceleration starts and ends the rise at zero, so the summary reports the fundamental law as obeyed. ✅
+
+3. **Break the law.** Switch the rise to simple harmonic: the peak acceleration drops to about $50$ mm/rad², but the acceleration now steps where the rise meets the dwell and the summary flags the fundamental-law violation. ✅
+
+</Steps>
+
+</details>
+
 :::note[Engineering Insight]
 The motion law is chosen before any cam shape is drawn, because the law sets the dynamics. Cycloidal motion is the workhorse for high-speed cams precisely because its acceleration vanishes at the ends, so the jerk stays finite. The scotch-yoke linked above is the mechanism that produces pure SHM, useful to feel the difference: smooth in the middle, but with that acceleration step at the extremes.
 :::
@@ -194,7 +215,7 @@ The motion law is chosen before any cam shape is drawn, because the law sets the
 With the motion programmed, the cam profile is laid out graphically by **inversion**: imagine the cam fixed and the follower walking around it. At each cam angle the follower sits a distance $s(\theta)$ beyond the base circle, and the locus of those points is the cam profile.
 
 <Card title="Build it and explore" icon="rocket">
-Lay the profile out on paper as below, then reproduce it in CAD with the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) lesson, which generates the same profile from the same motion program.
+The [Cam and Follower Simulator](/product-development/cam-follower-mechanism-simulator/) draws this pitch curve and cam profile live as you set the program, so you can check your hand layout against it. Then reproduce the profile in CAD with the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) lesson, which generates the same profile from the same motion program.
 </Card>
 
 :::note[System Problem Statement]
@@ -284,6 +305,21 @@ The base circle is not free: too small and the pressure angle grows until the fo
 
 </details>
 
+### Step 2: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the pressure-angle check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/CFM](https://siwit.co/CFM)) with the cycloidal rise and a knife-edge follower, set the base radius to $30$ mm, and read the pressure-angle chart: the peak is about $37.8\degree$, above the $30\degree$ guide line. ✅
+
+2. **Enlarge the base circle.** Raise the base radius to $45$ mm and the peak pressure angle falls to about $29.4\degree$, just under the guide, matching the hand iteration. ✅
+
+</Steps>
+
+</details>
+
 :::note[Engineering Insight]
 The pressure angle ties the motion program to the cam's physical size. A faster rise (smaller $\beta$) or a taller lift (larger $h$) steepens the profile and raises the pressure angle, forcing a larger base circle. Cam design is the balance between a compact cam and a transmissible pressure angle, settled on exactly the kind of plot above.
 :::
@@ -331,7 +367,7 @@ The pressure angle ties the motion program to the cam's physical size. A faster 
 
 ### A Note on Tools
 
-The SVAJ diagrams, cam profile, and pressure-angle curves here were drawn from the motion equations and reproduced with a few lines of Python (NumPy). To turn the profile into a part, build it in the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) CAD lesson, which sweeps the same program into a solid cam.
+The SVAJ diagrams, cam profile, and pressure-angle curves here were drawn from the motion equations and reproduced with a few lines of Python (NumPy). To do all of it interactively, the **[Cam and Follower Mechanism Simulator](/product-development/cam-follower-mechanism-simulator/)** plots the live SVAJ chain, flags any motion law that violates the fundamental law, sizes the base circle against the pressure angle, and checks the radius of curvature for undercutting, the same analysis this lesson does by hand. The [Cam and Follower Experiments](/education/mechanism-design-simulation/cam-follower-experiments) turn it into structured, Python-verified exercises. To turn the profile into a part, build it in the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) CAD lesson, which sweeps the same program into a solid cam.
 
 Next, [Force Analysis and Mechanism Synthesis](./force-analysis-mechanism-synthesis) returns to the linkages and closes the course: free-body diagrams and force polygons give the joint reactions, the transmission angle measures force quality, and synthesis runs the whole process backward to design a mechanism that meets a force and motion specification.
 
