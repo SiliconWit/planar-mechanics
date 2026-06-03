@@ -1,10 +1,11 @@
 ---
 title: "Lesson 5: Cam-Follower Systems and Motion Programming"
-description: "Understanding cam design principles and follower motion laws through CNC machine tool cam-driven feed system optimization"
+description: "Design the motion you want, then the cam that produces it. SVAJ motion laws, the displacement diagram, graphical cam-profile layout, and pressure-angle sizing, with cycloidal and harmonic motion compared."
 contributors: "sam-macharia,andrew-kibor,jack-kojiro"
 pubDate: 2025-09-10
-tags: ["planar-mechanics", "cam-design", "follower-systems", "motion-programming", "CNC-systems", "pressure-angles"]
-excerpt: "Master cam-follower system design by developing precise motion profiles for CNC machine tool feed systems, covering cam synthesis, follower motion laws, and pressure angle optimization."
+tags: ["planar-mechanics", "cam-design", "motion-programming", "svaj-diagrams", "cycloidal-motion", "pressure-angle"]
+excerpt: "Program a follower motion with the SVAJ diagrams, lay out the cam profile graphically by inversion, and size the base circle from the pressure angle, comparing harmonic and cycloidal motion laws for smoothness."
+heroImage: "https://cdn.siliconwit.com/education/parametric-mechanical-CAD-with-FreeCAD/cam-and-follower-mechanism.gif"
 ---
 
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
@@ -23,608 +24,316 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-Linkages convert one motion type into another, but they are limited to the paths their geometry allows. When you need a follower to rise, dwell, and return on a schedule you define, with a specific velocity profile and bounded acceleration, a cam is the only practical solution. The price of that flexibility is design complexity: choose the wrong motion law and the follower bounces off the cam at high speed; exceed the maximum pressure angle and the side forces jam the follower in its guide. In this lesson you will design cam profiles for CNC machine tool feed systems, selecting motion laws that keep acceleration smooth and pressure angles safe. #CamDesign #MotionProgramming #CNCSystems
+Every mechanism so far was a linkage you were handed and then analysed. The cam inverts the problem: you decide the exact motion the follower must make, its rise, its dwell, its return, and then you design the curved surface that delivers it. The danger is in the curve. Choose a motion law whose acceleration jumps, and the follower receives an infinite jerk at that instant: a hammer blow that wears the contact, makes noise, and shakes the machine at high speed. The whole craft of cam design is shaping the motion so that nothing jumps. In this lesson you program the motion with SVAJ diagrams, lay out the cam profile by hand, and size the base circle from the pressure angle. #CamDesign #MotionProgramming #Cycloidal
 
 ## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
-1. **Design** cam profiles for specified follower motion requirements
-2. **Select** appropriate follower motion laws for different applications
-3. **Optimize** pressure angles to minimize force transmission losses
-4. **Integrate** cam-follower systems into automated manufacturing equipment
+1. **Program** a follower motion with the SVAJ diagrams (displacement, velocity, acceleration, jerk)
+2. **Compare** motion laws and explain why cycloidal motion is smooth where harmonic motion is not
+3. **Lay out** the cam profile graphically by the inversion method
+4. **Size** the base circle from the pressure angle
 
-## Real-World System Problem: CNC Machine Tool Cam-Driven Feed System
-
-<InArticleAd />
-
-
-<BionicText method="advanced" intensity="medium" class="highlight">
-Modern CNC machining requires precise, programmable motion control for optimal cutting performance. While most modern machines use servo drives, specialized applications still rely on cam-follower systems for their mechanical simplicity, reliability, and ability to provide complex motion profiles without electronic control. Understanding cam design principles is essential for both legacy system maintenance and specialized new applications where mechanical systems excel.
-</BionicText>
-
-### System Challenge: Precision Tool Feed Control
-
-**Critical Engineering Problem:**
-- How do we achieve precise, repeatable tool feed motions for optimal cutting?
-- What cam profile provides the smoothest motion with minimal vibration?
-- How do we optimize force transmission while maintaining accuracy?
-- Can we design cams that adapt to different materials and cutting conditions?
-
-<Card title="⚙️ Precision CNC Feed System Challenge" icon="rocket">
-**Design Goal:** Create a cam-driven tool feed system that provides optimal cutting motion profiles for various materials while maintaining precision and minimizing tool wear.
-
-**Key Requirements:**
-- **Precise Motion Control**: \pm0.01mm positioning accuracy
-- **Smooth Operation**: Minimize vibration and tool chatter
-- **Variable Feed Rates**: Accommodate different materials and cutting conditions
-- **High Reliability**: 24/7 operation with minimal maintenance
-</Card>
-
-:::note[Industrial Context]
-Companies like **DMG Mori**, **Haas**, and **Okuma** use sophisticated motion control, but cam-follower principles remain vital for:
-- **Specialty Machines**: Custom manufacturing equipment
-- **High-Speed Operations**: Where mechanical systems excel over servo response
-- **Fail-Safe Systems**: Mechanical backup for critical operations
-- **Cost-Sensitive Applications**: Where simplicity and reliability matter most
-:::
-
-### Why Cam-Follower Systems Matter in Mechatronics
-
-Cam-follower systems are fundamental in:
-- **Manufacturing**: CNC feed systems, automated assembly, packaging machinery
-- **Automotive**: Engine valve timing, fuel injection systems, transmission controls
-- **Textiles**: Weaving machines, knitting equipment, printing presses
-- **Medical Devices**: Precise dosing systems, surgical instrument control
-
-## Fundamental Theory: Cam Design and Motion Programming
+## Real-World System Problem: A Motion You Cannot Make from a Linkage
 
 <InArticleAd />
 
 
-To design optimal cam-follower systems, we need systematic approaches to convert desired motion into cam geometry.
+An engine valve must snap open, stay fully open while gas flows, then close, all in a fixed fraction of a crank revolution, and repeat without fail millions of times. A packaging machine must advance a film, pause precisely while a print head fires, then advance again. These are **dwell** motions: the output must hold still for part of the cycle and move on a programmed schedule for the rest. A linkage cannot dwell cleanly, but a cam can: its profile is a stored motion program that the follower reads off as the cam turns.
 
-### What is Cam Design?
+The cam-follower contact is the **higher pair** from the [joint classification](./kinematic-joints-constraint-analysis): line contact that both rolls and slides, removing only one degree of freedom. That single contact is where all the force passes, so the shape of the cam decides both the motion and whether the follower is driven smoothly or hammered.
 
-**Cam design** is the process of determining the cam profile shape that produces a specified follower motion pattern.
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1rem 0' }}>
+  <TailwindWrapper>
+	![A rotating cam driving a translating follower through line contact](https://cdn.siliconwit.com/education/parametric-mechanical-CAD-with-FreeCAD/cam-and-follower-mechanism.gif)
+  </TailwindWrapper>
+</div>
 
-<Card title="🎯 Cam Design Definition" icon="document">
-**Cam Design** answers the fundamental question:
+### The Cam Design Problem
 
-*"What cam shape will produce the desired follower motion, and how do we optimize it for real-world performance?"*
+> **Engineering Question:** Given the motion the follower must make (its rises, dwells, and returns), what surface produces it, and is that motion smooth enough to run at speed?
 
-**Key Design Elements:**
-- **Motion Specification**: Desired follower displacement, velocity, acceleration
-- **Cam Profile Geometry**: Mathematical curve that produces the motion
-- **Pressure Angle Optimization**: Force transmission efficiency
-- **Manufacturing Considerations**: Practical constraints and tolerances
-</Card>
-
-### Follower Motion Laws
-
-Different applications require different motion characteristics. Standard **motion laws** provide proven solutions:
-
-<Tabs>
-  <TabItem label="Uniform Motion">
-    
-    **Constant Velocity Motion:**
-    - **Displacement**: $s = vt$
-    - **Velocity**: $v = constant$  
-    - **Acceleration**: $a = 0$
-    
-    **Characteristics:**
-    - Sharp transitions at start/end
-    - Infinite acceleration at boundaries
-    - Simple to implement
-    
-    **Applications**: Low-speed, non-critical positioning
-    
-  </TabItem>
-  <TabItem label="Parabolic Motion">
-    
-    **Constant Acceleration Motion:**
-    - **Acceleration Phase**: $s = \frac{1}{2}at^2$
-    - **Deceleration Phase**: $s = vt - \frac{1}{2}at^2$
-    - **Velocity**: $v = at$ (acceleration), $v = constant - at$ (deceleration)
-    
-    **Characteristics:**
-    - Smooth velocity transitions
-    - Finite acceleration values
-    - Good for moderate speeds
-    
-    **Applications**: General-purpose positioning, moderate-speed operations
-    
-  </TabItem>
-  <TabItem label="Harmonic Motion">
-    
-    **Simple Harmonic Motion:**
-    - **Displacement**: $s = \frac{h}{2}(1 - \cos\frac{\pi\theta}{\beta})$
-    - **Velocity**: $v = \frac{\pi h \omega}{2\beta}\sin\frac{\pi\theta}{\beta}$
-    - **Acceleration**: $a = \frac{\pi^2 h \omega^2}{2\beta^2}\cos\frac{\pi\theta}{\beta}$
-    
-    **Characteristics:**
-    - Smooth acceleration curves
-    - No acceleration discontinuities
-    - Excellent for high-speed operation
-    
-    **Applications**: High-speed machinery, precision systems
-    
-  </TabItem>
-  <TabItem label="Cycloidal Motion">
-    
-    **Cycloidal Motion Law:**
-    - **Displacement**: $s = h(\frac{\theta}{\beta} - \frac{1}{2\pi}\sin\frac{2\pi\theta}{\beta})$
-    - **Velocity**: $v = \frac{h\omega}{\beta}(1 - \cos\frac{2\pi\theta}{\beta})$
-    - **Acceleration**: $a = \frac{2\pi h\omega^2}{\beta^2}\sin\frac{2\pi\theta}{\beta}$
-    
-    **Characteristics:**
-    - Smoothest motion profile
-    - Zero acceleration at boundaries
-    - Optimal for high-precision applications
-    
-    **Applications**: Precision machinery, high-speed automated equipment
-    
-  </TabItem>
-</Tabs>
-
-### Pressure Angle and Force Analysis
-
-The **pressure angle** (φ) is the angle between the cam-follower contact force and the direction of follower motion.
-
-<Card title="⚖️ Pressure Angle Significance" icon="document">
-**Pressure Angle Definition:**
-$$\tan\phi = \frac{dy/d\theta}{R_b + dx/d\theta}$$
-
-**Where:**
-- $R_b$ = Base circle radius
-- $dx/d\theta$, $dy/d\theta$ = Cam profile slope components
-
-**Force Relationships:**
-
-- **Useful Force**: $F_{useful} = F_{contact} \cos\phi$
-- **Side Force**: $F_{side} = F_{contact} \sin\phi$
-
-**Design Rule**: Keep φ < 30° for good force transmission efficiency
-</Card>
-
-## System Application: CNC Tool Feed Cam Design
-
-<InArticleAd />
-
-
-Let's design a cam-follower system for a precision CNC tool feed application.
-
-### System Specifications
-
-**CNC Feed System Requirements:**
-- **Feed Distance**: 25 mm per cycle
-- **Cycle Time**: 2 seconds (rapid + feed + return)
-- **Feed Rate**: 100 mm/min during cutting
-- **Return Rate**: 300 mm/min (rapid positioning)
-- **Precision**: \pm0.01 mm positioning accuracy
-
-### Step 1: Motion Program Development
-
-<details>
-<summary>**Click to reveal motion programming process**</summary>
-
-<Steps>
-
-1. **Cycle Breakdown:**
-   - **Phase 1** (0°-60°): Rapid approach using cycloidal motion
-   - **Phase 2** (60°-300°): Cutting feed using harmonic motion  
-   - **Phase 3** (300°-360°): Rapid return using cycloidal motion
-
-2. **Motion Law Selection:**
-   
-   **Rapid Phases**: Cycloidal motion for smoothness
-   - Zero acceleration at start/end
-   - Smooth velocity transitions
-   - Minimal vibration excitation
-   
-   **Cutting Phase**: Modified harmonic for controlled feed
-   - Constant velocity section for consistent cutting
-   - Smooth acceleration/deceleration transitions
-   - Optimized for surface finish
-
-3. **Mathematical Implementation:**
-   
-   **Rapid Approach (0° ≤ θ ≤ 60°):**
-   $$s_1 = 5(\frac{\theta}{60°} - \frac{1}{2\pi}\sin\frac{2\pi\theta}{60°})$$ mm
-   
-   **Cutting Feed (60° ≤ θ ≤ 300°):**  
-   $$s_2 = 5 + 20 \times \frac{\theta - 60°}{240°}$$ mm (linear feed)
-   
-   **Rapid Return (300° ≤ θ ≤ 360°):**
-   $$s_3 = 25 - 25(\frac{\theta - 300°}{60°} - \frac{1}{2\pi}\sin\frac{2\pi(\theta - 300°)}{60°})$$ mm
-
-</Steps>
-
-</details>
-
-### Step 2: Cam Profile Generation
-
-<details>
-<summary>**Click to reveal cam profile calculations**</summary>
-
-<Tabs>
-  <TabItem label="Profile Coordinates">
-    
-    **Cam Profile Generation Method:**
-    
-    Using the **inversion method** for translating follower:
-    
-    **X-Coordinate:**
-    $$x = (R_b + s) \sin\theta + \frac{ds/d\theta}{\cos\theta}$$
-    
-    **Y-Coordinate:**  
-    $$y = (R_b + s) \cos\theta$$
-    
-    **Where:**
-    - $R_b$ = 30 mm (base circle radius)
-    - $s(\theta)$ = Follower displacement function
-    - $ds/d\theta$ = Velocity function (scaled)
-    
-  </TabItem>
-  <TabItem label="Pressure Angle Analysis">
-    
-    **Pressure Angle Calculation:**
-    
-    $$\tan\phi = \frac{ds/d\theta}{R_b + s}$$
-    
-    **Critical Analysis Points:**
-    
-    | Cam Angle | Displacement | ds/dθ | Pressure Angle |
-    |-----------|--------------|-------|----------------|
-    | 30°       | 2.5 mm       | 0.13  | 0.4°           |
-    | 90°       | 5.0 mm       | 0.08  | 0.1°           |
-    | 180°      | 15.0 mm      | 0.08  | 0.1°           |
-    | 270°      | 20.0 mm      | 0.08  | 0.1°           |
-    | 330°      | 22.5 mm      | -0.21 | -0.4°          |
-    
-    ✅ **All pressure angles < 2°** - Excellent force transmission
-    
-  </TabItem>
-  <TabItem label="Manufacturing Specifications">
-    
-    **Cam Manufacturing Requirements:**
-    
-    **Material**: Hardened steel (HRC 58-62)
-    **Surface Finish**: Ra 0.4 μm maximum
-    **Profile Tolerance**: \pm0.005 mm
-    **Manufacturing Method**: CNC grinding after heat treatment
-    
-    **Quality Control:**
-    - CMM inspection of profile accuracy
-    - Surface roughness measurement
-    - Hardness verification
-    - Dynamic balancing for high-speed operation
-    
-  </TabItem>
-</Tabs>
-
-</details>
-
-### Step 3: System Integration and Optimization
-
-<Card title="⚙️ CNC Feed System Performance Analysis" icon="rocket">
-**Optimized System Performance:**
-
-**Motion Characteristics:**
-- **Maximum Velocity**: 8.3 mm/s (during rapid phases)
-- **Maximum Acceleration**: 52 mm/s² (smooth transitions)
-- **Positioning Accuracy**: \pm0.008 mm (exceeds specification)
-- **Cycle Time**: 2.0 seconds (meets requirement)
-
-**Force Analysis:**
-- **Maximum Contact Force**: 180 N (including cutting loads)
-- **Side Forces**: less than 3% of contact force (excellent efficiency)
-- **Bearing Loads**: Well within capacity of selected bearings
-
-**Design Validation:**
-✅ **Smooth Operation**: Cycloidal motion eliminates shock loading
-✅ **Precision**: Optimized base circle and motion laws achieve accuracy
-✅ **Efficiency**: Low pressure angles minimize power losses
-✅ **Manufacturability**: Profile within CNC grinding capabilities
-</Card>
-
-## Advanced Cam Design Techniques
-
-<InArticleAd />
-
-
-### Cam-Follower System Types
+### Why Cam-Follower Systems Matter
 
 <CardGrid>
-  <Card title="Translating Followers">
-    **Motion**: Linear translation
-    **Applications**: Tool feeds, valve actuators
-    **Advantages**: Simple force transmission, high precision
-    **Design**: Optimize base circle for pressure angle control
+  <Card title="Programmed motion" icon="rocket">
+  A cam stores an arbitrary motion law, including dwells, that no simple linkage can reproduce.
   </Card>
-  <Card title="Oscillating Followers">
-    **Motion**: Angular oscillation about pivot
-    **Applications**: Rocker arm systems, indexing mechanisms  
-    **Advantages**: Compact design, high mechanical advantage
-    **Design**: Account for changing geometry throughout motion
+  <Card title="Smoothness sets the speed limit" icon="warning">
+  An acceleration jump is an infinite jerk: impact, noise, and wear. The motion law caps how fast a cam can run.
   </Card>
-  <Card title="Roller Followers">
-    **Contact**: Rolling contact via roller bearing
-    **Applications**: High-speed, high-load systems
-    **Advantages**: Reduced wear, higher speeds possible
-    **Design**: Consider roller radius in profile generation
+  <Card title="Force transmission" icon="setting">
+  The pressure angle decides how much of the contact force does useful work. Too large and the follower jams.
   </Card>
-  <Card title="Flat-Face Followers">
-    **Contact**: Sliding contact with flat surface
-    **Applications**: Simple, cost-effective systems
-    **Advantages**: Easy manufacturing, robust operation
-    **Design**: Requires wider cam for same motion range
+  <Card title="A higher pair" icon="puzzle">
+  The single rolling-sliding contact carries all the load, so its geometry and the base-circle size govern stress and life.
   </Card>
 </CardGrid>
 
-### Advanced Motion Laws
+## Fundamental Theory: SVAJ and Motion Laws
 
-For specialized applications, custom motion laws can be developed:
+<InArticleAd />
 
-<Steps>
-1. **Polynomial Motion Laws**
-   - Custom curves using 3rd, 4th, or 5th order polynomials
-   - Boundary conditions specify position, velocity, acceleration
-   - Optimal for specific performance requirements
 
-2. **Spline-Based Profiles**
-   - Smooth curves through specified control points
-   - Excellent for complex, multi-segment motions
-   - CAD-integrated design and analysis
+### The Displacement Diagram and the SVAJ Family
 
-3. **Optimized Profiles**
-   - Computer-generated curves for minimum jerk, energy, or wear
-   - Multi-objective optimization possible
-   - Application-specific performance criteria
-</Steps>
+<Card title="S, V, A, J" icon="document">
+A cam motion is described by four diagrams against cam angle $\theta$:
 
-### Manufacturing Considerations
+- **S**, displacement $s(\theta)$, the follower position;
+- **V**, velocity $v = ds/d\theta$ (multiply by $\omega$ for time rate);
+- **A**, acceleration $a = d^2s/d\theta^2$ (multiply by $\omega^2$);
+- **J**, jerk $j = d^3s/d\theta^3$ (multiply by $\omega^3$), the rate of change of acceleration.
 
-<Card title="🏭 Practical Cam Manufacturing" icon="document">
-**Key Manufacturing Factors:**
-
-**Machining Method Selection:**
-- **CNC Milling**: Good for large cams, moderate precision
-- **CNC Grinding**: Highest precision, excellent surface finish
-- **Wire EDM**: Complex profiles, very high accuracy
-- **Turning**: Cylindrical cams, high productivity
-
-**Material Selection:**
-- **Tool Steels**: High wear resistance, heat treatable
-- **Case-Hardened Steels**: Tough core, hard surface
-- **Ceramics**: Extreme wear resistance, specialized applications
-- **Plastics**: Low-load, quiet operation applications
-
-**Quality Control Requirements:**
-
-- **Profile accuracy**: Typically \pm0.01-0.05 mm
-- **Surface finish**: Ra 0.2-0.8 μm depending on application  
-- **Hardness uniformity**: \pm2 HRC across cam surface
-- **Dynamic balancing**: Essential for high-speed operation
+The **fundamental law of cam design**: for a cam to run at speed, the displacement and its first two derivatives ($s$, $v$, $a$) must be **continuous** across the whole cycle, including the joins to the dwells. A discontinuity in acceleration means an infinite jerk and an impulsive contact force.
 </Card>
 
-## Computational Cam Design
+### Comparing the Motion Laws
+
+<Card title="Four Motion Laws for a Rise of Height h over Angle β" icon="document">
+| Motion law | Peak acceleration | Acceleration at the ends | Suitability |
+|------------|:-----------------:|--------------------------|-------------|
+| Uniform (constant velocity) | zero (infinite at ends) | infinite velocity jump | only with rounded ends |
+| Parabolic (constant accel) | $4h/\beta^2$ | jumps (finite, but step) | low speed |
+| Simple harmonic (SHM) | $\dfrac{\pi^2 h}{2\beta^2} \approx 4.93\,h/\beta^2$ | jumps from zero at a dwell | moderate speed |
+| Cycloidal | $\dfrac{2\pi h}{\beta^2} \approx 6.28\,h/\beta^2$ | zero at both ends | high speed, smoothest |
+
+Cycloidal motion has the **highest peak acceleration** of the four, yet it is the best for high speed because its acceleration **starts and ends at zero**, so it joins a dwell with no jump and no infinite jerk. Simple harmonic motion looks smooth but its acceleration is a cosine that is at full value at the ends, so where a rise meets a dwell the acceleration steps from a maximum to zero, an infinite jerk.
+</Card>
+
+### Pressure Angle and the Base Circle
+
+<Card title="Pressure Angle" icon="document">
+For a radial translating follower (no offset), the **pressure angle** $\phi$ between the contact normal and the follower motion is:
+
+$$\tan\phi = \frac{ds/d\theta}{R_b + s}$$
+
+where $R_b$ is the **base-circle** radius (the smallest radius of the cam). A large pressure angle means most of the contact force pushes sideways on the follower stem rather than driving it, which causes jamming and wear. The standard guide is to keep $\phi \le 30\degree$ for a translating follower. The denominator shows the fix: **a larger base circle lowers the pressure angle**, at the cost of a bigger cam.
+</Card>
+
+## Application 1: Program the Motion and Draw the SVAJ Diagram
 
 <InArticleAd />
 
 
-### Modern Design Software
+This is the central worked example. We program a rise and draw its displacement, velocity, and acceleration to scale, the graphical heart of cam design.
 
-<Tabs>
-  <TabItem label="Specialized Cam Software">
-    
-    **CamTrax64 (Dynacam):**
-    - Professional cam design and analysis
-    - Comprehensive motion law library
-    - Manufacturing output generation
-    
-    **Cam Express:**
-    - User-friendly interface for educational use
-    - Real-time profile visualization
-    - Basic optimization capabilities
-    
-  </TabItem>
-  <TabItem label="CAD Integration">
-    
-    **SolidWorks Cam:**
-    - Parametric cam design within CAD environment
-    - Motion simulation capabilities
-    - Manufacturing drawing generation
-    
-    **Autodesk Inventor:**
-    - Integrated cam design tools
-    - Assembly-level motion analysis
-    - Cam-follower force analysis
-    
-  </TabItem>
-  <TabItem label="Programming Approaches">
-    
-    **MATLAB Cam Toolbox:**
-    - Custom motion law development
-    - Advanced optimization algorithms
-    - Research and educational applications
-    
-    **Python/NumPy:**
-    - Open-source cam design tools
-    - Custom analysis capabilities
-    - Integration with manufacturing systems
-    
-  </TabItem>
-</Tabs>
+<Card title="Build it and explore" icon="rocket">
+The cam-follower is best built and turned in CAD: the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) lesson in the Parametric Mechanical CAD course models exactly this system. For a mechanism that produces pure simple-harmonic follower motion, see the [Scotch-Yoke Mechanism](/education/parametric-mechanical-cad-freecad/scotch-yoke-mechanism/), the physical generator of the SHM law compared below.
+</Card>
 
-### Programming Cam Design
+:::note[System Problem Statement]
+- **Configuration:** Radial translating follower, rise-dwell-fall-dwell cam
+- **Task:** Program a cycloidal rise and draw its S, V, A diagrams
+- **Specification:** rise $h = 25$ mm over $\beta = 90\degree$, then dwell $90\degree$, cycloidal fall $90\degree$, dwell $90\degree$
+- **Input:** constant cam speed $\omega$
 
-**Python Example for Cam Profile Generation:**
+**Key Question:** What motion law gives the rise with no acceleration jump at the dwells, and what are its peak velocity and acceleration?
+:::
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
+### Step 1: Draw the Displacement Diagram (S, V, A)
 
-def cycloidal_motion(theta, beta, h):
-    """Generate cycloidal motion displacement"""
-    theta_norm = theta / beta
-    s = h * (theta_norm - (1/(2*np.pi)) * np.sin(2*np.pi*theta_norm))
-    return s
+Plot the three curves to scale against cam angle. Choose a vertical scale for each (for example 1 cm = 5 mm of lift for $s$); the shapes are what matter.
 
-def cam_profile_coords(theta, s_theta, rb, follower_offset=0):
-    """Generate cam profile coordinates"""
-    # Calculate velocity (ds/dtheta)
-    dsdt = np.gradient(s_theta, theta)
-    
-    # Cam profile coordinates (inversion method)
-    x = (rb + s_theta) * np.sin(theta) + dsdt * np.cos(theta) + follower_offset * np.cos(theta)
-    y = (rb + s_theta) * np.cos(theta) - dsdt * np.sin(theta) - follower_offset * np.sin(theta)
-    
-    return x, y
+<details>
+<summary>**Click to reveal the cycloidal motion equations and diagram**</summary>
 
-def pressure_angle(theta, s_theta, rb):
-    """Calculate pressure angle"""
-    dsdt = np.gradient(s_theta, theta)
-    phi = np.arctan(dsdt / (rb + s_theta))
-    return phi * 180 / np.pi  # Convert to degrees
+<Steps>
 
-# Design parameters
-theta = np.linspace(0, 2*np.pi, 360)
-rb = 30  # Base circle radius (mm)
-h = 25   # Maximum displacement (mm)
-beta = 2*np.pi  # Motion occurs over full rotation
+1. **Displacement** of the cycloidal rise:
 
-# Generate motion profile
-s = cycloidal_motion(theta, beta, h)
+   $$s = h\left[\frac{\theta}{\beta} - \frac{1}{2\pi}\sin\frac{2\pi\theta}{\beta}\right]$$ ✅
 
-# Generate cam profile
-x_cam, y_cam = cam_profile_coords(theta, s, rb)
+2. **Velocity and acceleration** (per unit cam angle):
 
-# Calculate pressure angles
-phi = pressure_angle(theta, s, rb)
+   $$v = \frac{h}{\beta}\left[1 - \cos\frac{2\pi\theta}{\beta}\right], \qquad a = \frac{2\pi h}{\beta^2}\sin\frac{2\pi\theta}{\beta}$$ ✅
 
-# Plotting
-fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+3. **Read the diagram.** Plotted against $\theta/\beta$, displacement runs smoothly from 0 to $h$, velocity is a bell that starts and ends at zero, and acceleration is a full sine that **also starts and ends at zero**. Because the acceleration is zero at both ends, the rise joins the neighbouring dwells with no jump. ✅
 
-# Motion diagram
-axes[0,0].plot(theta*180/np.pi, s)
-axes[0,0].set_title('Follower Displacement')
-axes[0,0].set_xlabel('Cam Angle (degrees)')
-axes[0,0].set_ylabel('Displacement (mm)')
+</Steps>
 
-# Pressure angle
-axes[0,1].plot(theta*180/np.pi, phi)
-axes[0,1].set_title('Pressure Angle')
-axes[0,1].set_xlabel('Cam Angle (degrees)')
-axes[0,1].set_ylabel('Pressure Angle (degrees)')
-axes[0,1].axhline(y=30, color='r', linestyle='--', label='30° limit')
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Cycloidal rise SVAJ diagram: displacement rising 0 to 1, a bell-shaped velocity, and a full-sine acceleration that begins and ends at zero](./images/l5-svaj-cycloidal.svg)
+  </TailwindWrapper>
+</div>
 
-# Cam profile
-axes[1,0].plot(x_cam, y_cam)
-axes[1,0].set_title('Cam Profile')
-axes[1,0].set_xlabel('X (mm)')
-axes[1,0].set_ylabel('Y (mm)')
-axes[1,0].axis('equal')
+</details>
 
-# Velocity profile
-velocity = np.gradient(s, theta)
-axes[1,1].plot(theta*180/np.pi, velocity)
-axes[1,1].set_title('Follower Velocity')
-axes[1,1].set_xlabel('Cam Angle (degrees)')
-axes[1,1].set_ylabel('Velocity (mm/rad)')
+### Step 2: Find the Peak Velocity and Acceleration
 
-plt.tight_layout()
-plt.show()
-```
+<details>
+<summary>**Click to reveal the peaks and the comparison with SHM**</summary>
 
-## Specialized Applications
+<Steps>
+
+1. **Peak velocity** at mid-rise ($\theta = \beta/2$):
+
+   $$v_\text{max} = \frac{2h}{\beta} = \frac{2(25)}{\pi/2} = 31.8 \text{ mm/rad} \quad (\times\omega \text{ for mm/s})$$ ✅
+
+2. **Peak acceleration** at the quarter points:
+
+   $$a_\text{max} = \frac{2\pi h}{\beta^2} = \frac{2\pi(25)}{(\pi/2)^2} = 63.7 \text{ mm/rad}^2 \quad (\times\omega^2)$$ ✅
+
+3. **Compare with simple harmonic motion.** SHM over the same rise peaks at $a_\text{max} = \pi^2 h/(2\beta^2) = 50.0$ mm/rad², lower than cycloidal. Yet SHM acceleration is a cosine at full value at the start of the rise: where it meets the preceding dwell it jumps from 0 to 50, an infinite jerk. The cycloidal law trades a slightly higher peak acceleration for zero jumps, which is the right trade for a high-speed cam. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The motion law is chosen before any cam shape is drawn, because the law sets the dynamics. Cycloidal motion is the workhorse for high-speed cams precisely because its acceleration vanishes at the ends, so the jerk stays finite. The scotch-yoke linked above is the mechanism that produces pure SHM, useful to feel the difference: smooth in the middle, but with that acceleration step at the extremes.
+:::
+
+## Application 2: Lay Out the Cam Profile
 
 <InArticleAd />
 
 
-### Automotive Engine Cams
+With the motion programmed, the cam profile is laid out graphically by **inversion**: imagine the cam fixed and the follower walking around it. At each cam angle the follower sits a distance $s(\theta)$ beyond the base circle, and the locus of those points is the cam profile.
 
-**Valve Timing Optimization:**
-- **Performance Cams**: Aggressive profiles for maximum power
-- **Economy Cams**: Gentle profiles for fuel efficiency
-- **Variable Timing**: Adjustable cam phasing for optimal performance
+<Card title="Build it and explore" icon="rocket">
+Lay the profile out on paper as below, then reproduce it in CAD with the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) lesson, which generates the same profile from the same motion program.
+</Card>
 
-**Design Considerations:**
-- **High-Speed Operation**: Up to 8000 RPM (133 Hz)
-- **Wear Resistance**: Millions of cycles required
-- **Manufacturing Precision**: Sub-millimeter accuracy essential
+:::note[System Problem Statement]
+- **Configuration:** Radial translating follower, the rise-dwell-fall-dwell program from Application 1
+- **Task:** Lay out the cam pitch profile by inversion
+- **Geometry:** base circle $R_b = 45$ mm, rise $h = 25$ mm
+:::
 
-### Manufacturing Equipment Cams
+### Step 1: Lay Out the Pitch Curve by Inversion
 
-**Packaging Machinery:**
-- **Filling Systems**: Precise volume control through cam-driven pistons
-- **Sealing Equipment**: Force and position control for consistent seals
-- **Conveyor Systems**: Intermittent motion for processing stations
+<details>
+<summary>**Click to reveal the inversion construction**</summary>
 
-**Textile Machinery:**
-- **Weaving Looms**: Complex multi-cam systems for fabric patterns
-- **Knitting Machines**: High-speed needle actuation systems
-- **Printing Equipment**: Registration control for multi-color printing
+<Steps>
 
-## Summary and Design Guidelines
+1. **Draw the base circle** of radius $R_b = 45$ mm and mark the cam centre. Choose a length scale and mark it (for example 1 cm = 20 mm). ✅
+
+2. **Divide the cam angle** into convenient steps (every $30\degree$, say), measured **opposite** to the cam's rotation, because by inversion the follower travels backward around a fixed cam. ✅
+
+3. **Step off the displacement.** At each angle, read $s(\theta)$ from the displacement diagram of Application 1 and mark a point that distance radially beyond the base circle. During the rise the radius grows from $R_b$ to $R_b + h$; during the dwell it holds; during the fall it returns. ✅
+
+4. **Join the points** with a smooth curve. This is the **pitch curve**, the path of the follower centre. For a roller follower, the actual cam surface is offset inward from the pitch curve by the roller radius. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Cam pitch profile from a cycloidal rise-dwell-fall-dwell program: base circle dashed, with the profile swelling through the rise and dwell and returning on the fall](./images/l5-cam-profile.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Read the Profile
+
+<details>
+<summary>**Click to reveal what the profile shows**</summary>
+
+<Steps>
+
+1. **Pitch radius.** The profile radius at any angle is $R = R_b + s(\theta)$, so it is $R_b = 45$ mm through the low dwell and $R_b + h = 70$ mm through the high dwell. ✅
+
+2. **The dwells are circular arcs.** Where the follower holds still, the profile is a constant-radius arc (concentric with the base circle). The rise and fall are the shaped transitions between them. ✅
+
+3. **Roller offset.** Drawing the pitch curve first and offsetting by the roller radius is the standard route, and it is exactly what the CAD model does when you sweep the roller around the program. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The cam profile is just the displacement diagram wrapped around a circle. Every feature of the motion (the smooth rise, the flat dwell, the return) appears directly as a feature of the shape, which is why laying it out by hand builds the intuition that makes the CAD model meaningful rather than magic.
+:::
+
+## Application 3: Size the Base Circle from the Pressure Angle
+
+<InArticleAd />
+
+
+The base circle is not free: too small and the pressure angle grows until the follower jams. This is where the cam's size is actually decided.
+
+:::note[System Problem Statement]
+- **Configuration:** Radial translating follower, cycloidal rise $h = 25$ mm over $\beta = 90\degree$
+- **Task:** Check the pressure angle and choose a base circle that keeps it within the guide
+:::
+
+### Step 1: Plot the Pressure Angle and Iterate
+
+<details>
+<summary>**Click to reveal the pressure-angle check**</summary>
+
+<Steps>
+
+1. **Compute** $\tan\phi = (ds/d\theta)/(R_b + s)$ across the rise. With a first guess $R_b = 30$ mm, the pressure angle peaks at $\phi_\text{max} = 37.8\degree$, well above the $30\degree$ guide. The follower would jam. ✅
+
+2. **Increase the base circle.** Raising $R_b$ enlarges the denominator. At $R_b = 45$ mm the peak falls to $\phi_\text{max} = 29.4\degree$, just inside the guide. ✅
+
+3. **Read the trade-off** from the plot below: the larger base circle lowers the whole pressure-angle curve under the $30\degree$ line, at the cost of a physically larger cam. This is why Application 2 used $R_b = 45$ mm. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Pressure angle against cam angle for base circles of 30 and 45 mm; the 30 mm curve exceeds the 30 degree guide while the 45 mm curve stays below it](./images/l5-pressure-angle.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+:::note[Engineering Insight]
+The pressure angle ties the motion program to the cam's physical size. A faster rise (smaller $\beta$) or a taller lift (larger $h$) steepens the profile and raises the pressure angle, forcing a larger base circle. Cam design is the balance between a compact cam and a transmissible pressure angle, settled on exactly the kind of plot above.
+:::
+
+## Design Guidelines for Cam Design
+
+<InArticleAd />
+
+
+<CardGrid>
+  <Card title="Program first, shape second" icon="rocket">
+  Choose the motion law and draw the SVAJ diagrams before laying out any profile. The law sets the dynamics.
+  </Card>
+  <Card title="No acceleration jumps" icon="warning">
+  Keep displacement, velocity, and acceleration continuous across the dwells. Cycloidal motion does this; uniform and plain parabolic do not.
+  </Card>
+  <Card title="Size from the pressure angle" icon="setting">
+  Pick the base circle so the peak pressure angle stays within the guide (about $30\degree$ for a translating follower).
+  </Card>
+  <Card title="Pitch curve then roller offset" icon="puzzle">
+  Lay out the pitch curve from the program, then offset by the roller radius for the cutting profile.
+  </Card>
+</CardGrid>
+
+## Summary and Next Steps
 
 <InArticleAd />
 
 
 ### Key Concepts Mastered
 
-1. **Motion Law Selection**: Choosing appropriate motion profiles for different applications
-2. **Cam Profile Generation**: Converting motion specifications into manufacturable geometry
-3. **Pressure Angle Optimization**: Balancing force transmission efficiency with size constraints
-4. **System Integration**: Incorporating cam-follower systems into complete mechatronic solutions
+1. **SVAJ diagrams:** a cam motion is its displacement and the first three derivatives; for high speed, $s$, $v$, and $a$ must be continuous.
+2. **Motion laws:** cycloidal motion is smoothest because its acceleration starts and ends at zero, unlike simple harmonic motion which steps at the dwells.
+3. **Cam profile by inversion:** the profile radius is $R_b + s(\theta)$, the displacement diagram wrapped around the base circle.
+4. **Pressure angle:** $\tan\phi = (ds/d\theta)/(R_b + s)$ sizes the base circle; a larger base circle lowers the pressure angle.
 
-### Professional Design Principles
+### Cam Design at a Glance
 
-<CardGrid>
-  <Card title="Motion Programming" icon="rocket">
-    **Philosophy:** Select motion laws based on speed and precision requirements
-    **Method:** Use proven standard laws as foundation, customize as needed
-    **Validation:** Simulate complete motion cycles before manufacturing
-  </Card>
-  <Card title="Force Optimization" icon="setting">
-    **Goal:** Minimize pressure angles while maintaining reasonable cam size
-    **Trade-off:** Larger base circles reduce pressure angles but increase size
-    **Solution:** Optimize based on application-specific constraints
-  </Card>
-  <Card title="Manufacturing Integration" icon="puzzle">
-    **Design Rule:** Consider manufacturing capabilities during design phase
-    **Quality Control:** Plan inspection and testing procedures
-    **Cost Optimization:** Balance precision requirements with manufacturing cost
-  </Card>
-  <Card title="System Reliability" icon="warning">
-    **Maintenance:** Design for predictable wear patterns and replacement
-    **Failure Modes:** Consider cam wear, follower misalignment, lubrication
-    **Backup Systems:** Plan mechanical or electronic backup where critical
-  </Card>
-</CardGrid>
+| Quantity | Relation |
+|----------|----------|
+| Cycloidal displacement | $s = h[\theta/\beta - \tfrac{1}{2\pi}\sin(2\pi\theta/\beta)]$ |
+| Peak velocity / acceleration | $2h/\beta$ &nbsp;/&nbsp; $2\pi h/\beta^2$ |
+| Pressure angle | $\tan\phi = (ds/d\theta)/(R_b + s)$ |
+| Pitch-curve radius | $R = R_b + s(\theta)$ |
 
-:::tip[Industry Best Practice]
-**"Design the motion first, then optimize the mechanism."** - Start with ideal motion requirements, then adapt the cam design to manufacturing and operational constraints rather than compromising the motion specification.
-:::
+### A Note on Tools
 
-### Real-World Applications
+The SVAJ diagrams, cam profile, and pressure-angle curves here were drawn from the motion equations and reproduced with a few lines of Python (NumPy). To turn the profile into a part, build it in the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) CAD lesson, which sweeps the same program into a solid cam.
 
-**CNC Machine Tools:**
-- **Tool changers**: Precise positioning and force control
-- **Workpiece handling**: Automated loading and positioning systems
-- **Auxiliary functions**: Coolant control, chip removal systems
-
-**Automated Assembly:**
-- **Component insertion**: Force and position control for assembly
-- **Testing equipment**: Repeatable motion for quality control
-- **Material handling**: Precise picking and placing operations
-
-**Process Equipment:**
-- **Chemical processing**: Precise dosing and mixing control
-- **Food processing**: Consistent portion control and handling
-- **Pharmaceutical**: Precise tablet pressing and packaging
-
-**Coming Next**: In Lesson 6, we'll complete our planar mechanics journey with force analysis and mechanism synthesis for multi-DOF robotic manipulator systems, where we'll integrate all previous concepts into complete system design methodologies.
+Next, [Force Analysis and Mechanism Synthesis](./force-analysis-mechanism-synthesis) returns to the linkages and closes the course: free-body diagrams and force polygons give the joint reactions, the transmission angle measures force quality, and synthesis runs the whole process backward to design a mechanism that meets a force and motion specification.
 
 
 

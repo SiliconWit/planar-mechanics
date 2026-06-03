@@ -1,10 +1,11 @@
 ---
 title: "Lesson 2: Position Analysis of Planar Linkages"
-description: "Understanding vector loop equations and geometric constraints through four-bar linkage suspension system optimization"
+description: "Formulate and solve vector loop equations for planar mechanisms. Closed-form four-bar position (Freudenstein), slider-crank and scissor-lift geometry, Grashof classification, assembly modes, coupler curves, and limit positions, each verified in a simulator."
 contributors: "sam-macharia,andrew-kibor,jack-kojiro"
-pubDate: 2025-09-06
-tags: ["planar-mechanics", "position-analysis", "four-bar-linkage", "vector-loops", "geometric-constraints", "suspension-systems"]
-excerpt: "Master position analysis of planar mechanisms by optimizing a four-bar linkage suspension system, covering vector loop equations, geometric constraints, and analytical solution methods."
+pubDate: 2025-09-07
+tags: ["planar-mechanics", "position-analysis", "four-bar-linkage", "vector-loops", "freudenstein", "grashof", "coupler-curves"]
+excerpt: "Solve the position problem for planar linkages: write the vector loop equation, solve it in closed form for the four-bar, slider-crank, and scissor lift, classify mechanisms with Grashof's rule, and verify every answer in an interactive simulator."
+heroImage: "https://cdn.siliconwit.com/product-development/2d-mechanisms-analyzer/four-bar-linkage-simulator.png"
 ---
 
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
@@ -23,437 +24,651 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-Knowing that a mechanism has the right number of degrees of freedom (Lesson 1) tells you it can move, but not where it moves. A four-bar linkage with the same topology can produce wildly different coupler curves depending on link lengths, and a suspension linkage that looks fine in one position may hit a singularity or interfere with the chassis at full travel. Position analysis answers the question: given the input angle, where is every point on every link? In this lesson you will formulate vector loop equations, solve them analytically, and optimize a four-bar linkage suspension system. #PositionAnalysis #FourBarLinkage #VectorLoops
+Mobility analysis confirmed that the four-bar linkage, slider-crank, scissor lift, and toggle clamp each move with a single degree of freedom. That tells you one input controls them, but not where that input puts the output. Turn the crank of a four-bar by a known angle and the coupler and follower take up specific angles that the geometry alone decides. Position analysis finds those angles. It is the problem you must solve before any velocity, acceleration, or force analysis, because all of those are built on top of the positions. In this lesson you write the vector loop equation for each mechanism and solve it in closed form, then check the answer in the simulator. #PositionAnalysis #VectorLoops #Freudenstein
 
 ## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
-1. **Formulate** vector loop equations for planar linkage systems
-2. **Solve** position analysis problems using geometric constraint methods
-3. **Optimize** four-bar linkage geometry for specific motion requirements
-4. **Apply** position analysis to real suspension and manufacturing systems
+1. **Formulate** the vector loop equation for any closed planar linkage
+2. **Solve** the four-bar position problem in closed form with the Freudenstein equation
+3. **Classify** mechanisms with the Grashof condition and handle open and crossed assembly modes
+4. **Locate** coupler-point paths and limit (dead-center) positions, verifying each against a simulator
 
-## Real-World System Problem: Four-Bar Linkage Suspension System
+## Real-World System Problem: Predicting Where the Output Goes
 
 <InArticleAd />
 
 
-<BionicText method="advanced" intensity="medium" class="highlight">
-Modern vehicles and manufacturing equipment require sophisticated suspension systems that maintain optimal geometry throughout their range of motion. Whether it's a Formula 1 race car navigating high-speed corners or a precision manufacturing machine maintaining tool alignment, four-bar linkages are the foundation of advanced mechanical systems.
-</BionicText>
+A windshield wiper must sweep a precise arc and stop short of the A-pillar. An engine piston must reach top-dead-center exactly when the crank does. A scissor-lift platform must reach a target height and stay level. In every case the designer commits to link lengths and then has to predict, before any metal is cut, exactly where the output sits for every input position. Guessing is not an option, because a few millimetres of error can mean a wiper that hits the trim or a piston that collides with a valve.
 
-### System Challenge: Adaptive Suspension Geometry
+### The Position Problem
 
-**Critical Engineering Problem:**
-- How do we maintain optimal wheel alignment throughout suspension travel?
-- What linkage geometry provides the best ride quality and handling?
-- How do we predict suspension behavior before physical prototyping?
+Position analysis answers one question for a single-degree-of-freedom mechanism:
 
-<Card title="🏎️ Advanced Suspension Design Challenge" icon="rocket">
-**Design Goal:** Create a four-bar linkage suspension system that maintains optimal wheel geometry throughout its range of motion.
+> **Engineering Question:** Given the input link angle, what are the angles and coordinates of every other link?
 
-**Key Requirements:**
-- **Camber Control**: Maintain proper tire contact with road surface
-- **Track Width Stability**: Minimize lateral tire scrub during suspension travel  
-- **Roll Center Management**: Control vehicle body roll characteristics
-- **Packaging Constraints**: Fit within available chassis space
+For an open serial chain (a robot arm), this is direct: add the links nose to tail. For a closed chain (the four mechanisms of this course), the links form a loop that must close on itself, and that closure condition is what we solve.
+
+### Why Position Analysis Comes First
+
+<CardGrid>
+  <Card title="Foundation for everything" icon="rocket">
+  Velocity is the time derivative of position; acceleration is the derivative of velocity. You cannot find either until the positions are solved.
+  </Card>
+  <Card title="Reachability and interference" icon="warning">
+  Position analysis shows whether the output reaches its target and whether links collide or bind anywhere in the range of motion.
+  </Card>
+  <Card title="Path generation" icon="puzzle">
+  A point on the coupler traces a curve. Position analysis predicts that curve, which is how linkages are made to follow a required path.
+  </Card>
+  <Card title="Limit positions" icon="setting">
+  It locates the extreme positions where the output reverses, the basis of dead-center clamping and stroke limits.
+  </Card>
+</CardGrid>
+
+## Fundamental Theory: The Vector Loop Method
+
+<InArticleAd />
+
+
+### Links as Vectors That Close a Loop
+
+<Card title="Vector Loop Principle" icon="document">
+Treat each link as a vector pointing from one joint to the next. In any closed kinematic loop, walking around the links and back to the start gives zero net displacement:
+
+$$\sum_{i} \vec{r}_i = 0$$
+
+This single geometric fact turns a drawing into algebra. Each vector contributes a cosine term to the x-equation and a sine term to the y-equation, giving two scalar equations per loop.
 </Card>
 
-:::note[Real-World Impact]
-Companies like **Mercedes-Benz**, **Audi**, and **BMW** use sophisticated multi-link suspensions based on four-bar linkage principles. Understanding position analysis enables:
-- **Suspension Tuning**: Optimizing geometry for performance
-- **Virtual Prototyping**: Testing designs before physical builds
-- **Failure Prediction**: Identifying potential binding conditions
-- **Cost Reduction**: Minimizing expensive physical testing
+The power of the method is that it is the same for every linkage. You label the links as vectors, write the loop sum, split it into x and y components, mark which angles are known and which are unknown, and solve. The four-bar gives two equations in two unknown angles. The slider-crank gives two equations in one unknown angle and one unknown distance. The procedure never changes; only the bookkeeping does.
+
+### The Four-Bar Loop in Component Form
+
+We use the same link labels as the simulator: link $a$ is the input crank, $b$ the coupler, $c$ the follower, and $d$ the ground. Place the origin at the crank pivot, the ground link $d$ along the positive x-axis, and measure all angles counterclockwise from it.
+
+<Card title="Four-Bar Vector Loop" icon="document">
+$$\vec{a} + \vec{b} - \vec{c} - \vec{d} = 0$$
+
+**X-component:**
+$$a\cos\theta_2 + b\cos\theta_3 - c\cos\theta_4 - d = 0$$
+
+**Y-component:**
+$$a\sin\theta_2 + b\sin\theta_3 - c\sin\theta_4 = 0$$
+
+**Known:** link lengths $a, b, c, d$ and the input angle $\theta_2$.
+**Unknown:** the coupler angle $\theta_3$ and the follower angle $\theta_4$.
+</Card>
+
+These are two nonlinear equations in two unknowns. The next section solves them in closed form, so no guessing or iteration is needed.
+
+## Application 1: Four-Bar Position by the Freudenstein Equation
+
+<InArticleAd />
+
+
+This is the central worked example of the lesson. We solve the four-bar position problem exactly, then read the same angles off the simulator.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/four-bar-linkage-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Four-Bar Linkage Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Four-Bar Linkage Experiments](/education/mechanism-design-simulation/four-bar-linkage-experiments/) lab. Experiment 5 (coupler-curve exploration) extends the position analysis below to the path traced by a coupler point.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Crank-rocker four-bar (the default geometry at [siwit.co/FBL](https://siwit.co/FBL))
+- **Task:** Find the coupler and follower angles for a given crank angle, in closed form
+- **Link lengths:** crank $a = 40$ mm, coupler $b = 120$ mm, follower $c = 80$ mm, ground $d = 100$ mm
+- **Input:** crank angle $\theta_2 = 60°$
+
+**What we need to calculate:**
+1. The constants of the Freudenstein equation
+2. The follower angle $\theta_4$
+3. The coupler angle $\theta_3$
+4. The open and crossed assembly modes
+
+**Key Question:** Given only the four link lengths and the crank angle, how do we compute the exact output angle without trial and error?
 :::
 
-### Why Four-Bar Linkages Matter in Mechatronics
+### Step 1: Draw the Space Diagram and Measure
 
-Four-bar linkages are fundamental building blocks found in:
-- **Automotive**: Suspension systems, steering linkages, engine mounts
-- **Manufacturing**: Robotic arms, conveyor mechanisms, clamping fixtures
-- **Aerospace**: Landing gear systems, control surface actuators
-- **Medical Devices**: Surgical robots, rehabilitation equipment
-
-## Fundamental Theory: Vector Loop Equations and Geometric Constraints
-
-<InArticleAd />
-
-
-To solve complex position analysis problems, we need systematic mathematical approaches that work for any linkage configuration.
-
-### What is Position Analysis?
-
-**Position analysis** determines the location and orientation of all links in a mechanism when given the position of the input link(s).
-
-<Card title="🎯 Position Analysis Definition" icon="document">
-**Position Analysis** answers the fundamental question:
-
-*"Given the input link position, where are all other links in the mechanism?"*
-
-**Key Outputs:**
-- Link angles (θ₁, θ₂, θ₃, θ₄)
-- Joint coordinates (x, y positions)  
-- Critical points (coupler points, end-effector locations)
-- Geometric relationships (angles, distances)
-</Card>
-
-### Vector Loop Method: The Foundation
-
-The **vector loop method** treats each link as a vector and uses the geometric constraint that vectors forming a closed loop must sum to zero.
-
-<Card title="➰ Vector Loop Principle" icon="document">
-**Fundamental Concept:** In any closed kinematic loop, the sum of all link vectors equals zero.
-
-$$\sum_{i=1}^{n} \vec{r_i} = 0$$
-
-**Physical Meaning:** Walking around a closed path and returning to the starting point means the net displacement is zero.
-
-**Mathematical Power:** Converts geometric problems into algebraic equations that computers can solve efficiently.
-</Card>
-
-### Four-Bar Linkage: The Classic Case Study
-
-A four-bar linkage consists of four rigid links connected by four revolute joints, forming a single closed loop.
-
-<Steps>
-1. **Link Definition:**
-   - **Ground Link (Link 1)**: Fixed frame, length a
-   - **Input Link (Link 2)**: Driver/crank, length b  
-   - **Coupler Link (Link 3)**: Connecting rod, length c
-   - **Output Link (Link 4)**: Follower/rocker, length d
-
-2. **Coordinate System Setup:**
-   - Origin at input joint (A)
-   - Ground link along x-axis
-   - Angles measured counterclockwise from positive x-axis
-
-3. **Vector Loop Equation:**
-   $$\vec{AB} + \vec{BC} + \vec{CD} + \vec{DA} = 0$$
-</Steps>
-
-### Converting to Component Equations
-
-Each link vector can be expressed in component form:
-
-<Card title="📐 Component Form Vector Equations" icon="document">
-**X-Component Equation:**
-$$b\cos\theta_2 + c\cos\theta_3 - d\cos\theta_4 - a = 0$$
-
-**Y-Component Equation:**  
-$$b\sin\theta_2 + c\sin\theta_3 - d\sin\theta_4 = 0$$
-
-**Where:**
-- θ₂ = Input link angle (known/given)
-- θ₃, θ₄ = Unknown link angles (to be solved)
-- a, b, c, d = Known link lengths
-</Card>
-
-## System Application: Suspension Linkage Position Analysis
-
-<InArticleAd />
-
-
-Let's apply our vector loop method to analyze a real four-bar suspension system.
-
-### Suspension System Configuration
-
-**System Parameters:**
-- **Ground Link (a)**: 400 mm (chassis mounting points)
-- **Lower Control Arm (b)**: 300 mm (input link)  
-- **Tie Rod (c)**: 250 mm (coupler link)
-- **Upper Control Arm (d)**: 280 mm (output link)
-- **Input Range**: θ₂ = 30° to 60° (suspension travel)
-
-### Step 1: Formulate Vector Loop Equations
+Before solving algebraically, find the position graphically: draw the linkage to scale and measure the angles with a protractor.
 
 <details>
-<summary>**Click to reveal vector loop formulation**</summary>
+<summary>**Click to reveal the graphical position solution**</summary>
 
 <Steps>
 
-1. **Set up coordinate system:**
-   - Origin at lower ball joint
-   - x-axis along chassis (ground link)
-   - All angles measured from positive x-axis
+1. **Ground and crank.** Draw $O_2O_4 = d = 100$ mm horizontally. From $O_2$ draw the crank $O_2A$ at $\theta_2 = 60\degree$, length $a = 40$ mm. ✅
 
-2. **Write vector loop equation:**
-   $$\vec{r_2} + \vec{r_3} + \vec{r_4} + \vec{r_1} = 0$$
+2. **Intersect the arcs.** With centre $A$ and radius $b = 120$ mm, and centre $O_4$ and radius $c = 80$ mm, strike two arcs. The upper intersection (open assembly) is the coupler-follower joint $B$. ✅
 
-3. **Component equations:**
-   
-   **X-components:**
-   $$300\cos\theta_2 + 250\cos\theta_3 - 280\cos\theta_4 - 400 = 0$$
-   
-   **Y-components:**
-   $$300\sin\theta_2 + 250\sin\theta_3 - 280\sin\theta_4 = 0$$
+3. **Measure.** With a protractor $\theta_3 \approx 18\degree$ and $\theta_4 \approx 65\degree$. The Freudenstein solution below gives the exact $18.4\degree$ and $64.9\degree$, confirming the drawing. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Four-bar position by arc intersection at crank angle 60 degrees](./images/l2-four-bar-space-diagram.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Eliminate the Coupler Angle
+
+<details>
+<summary>**Click to reveal the elimination of $\theta_3$**</summary>
+
+<Steps>
+
+1. **Isolate the coupler terms** in both component equations:
+
+   $$b\cos\theta_3 = d + c\cos\theta_4 - a\cos\theta_2$$
+   $$b\sin\theta_3 = c\sin\theta_4 - a\sin\theta_2$$ ✅
+
+2. **Square both equations and add.** Because $\cos^2\theta_3 + \sin^2\theta_3 = 1$, the coupler angle $\theta_3$ disappears, leaving one equation in $\theta_4$:
+
+   $$b^2 = a^2 + c^2 + d^2 + 2cd\cos\theta_4 - 2ad\cos\theta_2 - 2ac\cos(\theta_4 - \theta_2)$$ ✅
 
 </Steps>
 
 </details>
 
-### Step 2: Solve for Unknown Angles
+### Step 3: Form the Freudenstein Equation
 
 <details>
-<summary>**Click to reveal solution process**</summary>
-
-For θ₂ = 45° (mid-travel position):
+<summary>**Click to reveal the Freudenstein constants**</summary>
 
 <Steps>
 
-1. **Substitute known values:**
-   
-   X-equation: $300\cos(45°) + 250\cos\theta_3 - 280\cos\theta_4 - 400 = 0$
-   
-   Y-equation: $300\sin(45°) + 250\sin\theta_3 - 280\sin\theta_4 = 0$
+1. **Divide through by $2ac$** and group the constant terms. The result is the **Freudenstein equation**:
 
-2. **Simplify:**
-   
-   X: $212.1 + 250\cos\theta_3 - 280\cos\theta_4 = 400$
-   
-   Y: $212.1 + 250\sin\theta_3 - 280\sin\theta_4 = 0$
+   $$K_1\cos\theta_4 - K_2\cos\theta_2 + K_3 = \cos(\theta_4 - \theta_2)$$ ✅
 
-3. **Rearrange:**
-   
-   $250\cos\theta_3 - 280\cos\theta_4 = 187.9$
-   
-   $250\sin\theta_3 - 280\sin\theta_4 = -212.1$
+2. **Define the three constants** from the link lengths only:
 
-4. **Solve simultaneously:**
-   
-   Using trigonometric elimination: **θ₃ = 28.7°, θ₄ = 52.3°**
+   $$K_1 = \frac{d}{a}, \qquad K_2 = \frac{d}{c}, \qquad K_3 = \frac{a^2 - b^2 + c^2 + d^2}{2ac}$$ ✅
+
+3. **Evaluate** for $a=40$, $b=120$, $c=80$, $d=100$:
+
+   $$K_1 = \frac{100}{40} = 2.500, \quad K_2 = \frac{100}{80} = 1.250, \quad K_3 = \frac{1600 - 14400 + 6400 + 10000}{2(40)(80)} = \frac{3600}{6400} = 0.5625$$ ✅
 
 </Steps>
 
 </details>
 
-### Step 3: Analyze Complete Motion Range
+### Step 4: Solve for the Follower Angle
+
+<details>
+<summary>**Click to reveal the closed-form solution for $\theta_4$**</summary>
+
+<Steps>
+
+1. **Expand** $\cos(\theta_4 - \theta_2)$ and substitute the half-angle $t = \tan(\theta_4/2)$. This converts the equation into a quadratic $A t^2 + B t + C = 0$ with:
+
+   $$A = \cos\theta_2 - K_1 - K_2\cos\theta_2 + K_3$$
+   $$B = -2\sin\theta_2$$
+   $$C = K_1 - (K_2 + 1)\cos\theta_2 + K_3$$ ✅
+
+2. **Evaluate** at $\theta_2 = 60°$ ($\cos 60° = 0.500$, $\sin 60° = 0.866$):
+
+   $$A = 0.500 - 2.500 - 1.250(0.500) + 0.5625 = -2.0625$$
+   $$B = -2(0.866) = -1.732$$
+   $$C = 2.500 - (2.250)(0.500) + 0.5625 = 1.9375$$ ✅
+
+3. **Solve the quadratic.** The two roots give the two assembly modes:
+
+   $$\theta_4 = 2\arctan\!\left(\frac{-B \mp \sqrt{B^2 - 4AC}}{2A}\right)$$
+
+   $$B^2 - 4AC = 3.000 - 4(-2.0625)(1.9375) = 18.98, \qquad \sqrt{18.98} = 4.357$$ ✅
+
+4. **Open mode** (minus sign):
+
+   $$\theta_4 = 2\arctan\!\left(\frac{1.732 - 4.357}{-4.125}\right) = 2\arctan(0.6364) = 64.9°$$ ✅
+
+   The crossed mode (plus sign) gives the other branch, discussed in Step 5.
+
+</Steps>
+
+</details>
+
+### Step 5: Solve for the Coupler Angle
+
+<details>
+<summary>**Click to reveal the closed-form solution for $\theta_3$**</summary>
+
+<Steps>
+
+1. **Eliminate $\theta_4$ instead** (square-and-add the follower terms) to get a second Freudenstein form in $\theta_3$, with:
+
+   $$K_4 = \frac{d}{b}, \qquad K_5 = \frac{c^2 - d^2 - a^2 - b^2}{2ab}$$
+
+   $$K_4 = \frac{100}{120} = 0.8333, \qquad K_5 = \frac{6400 - 10000 - 1600 - 14400}{2(40)(120)} = \frac{-19600}{9600} = -2.0417$$ ✅
+
+2. **Quadratic coefficients:**
+
+   $$D = \cos\theta_2 - K_1 + K_4\cos\theta_2 + K_5 = -3.625$$
+   $$E = -2\sin\theta_2 = -1.732$$
+   $$F = K_1 + (K_4 - 1)\cos\theta_2 + K_5 = 0.375$$ ✅
+
+3. **Solve** (open mode, minus sign):
+
+   $$\theta_3 = 2\arctan\!\left(\frac{-E - \sqrt{E^2 - 4DF}}{2D}\right) = 2\arctan(0.1617) = 18.4°$$ ✅
+
+4. **Check the result in the original loop equation** ($\theta_2=60°$, $\theta_3=18.4°$, $\theta_4=64.9°$):
+
+   $$40\cos 60° + 120\cos 18.4° - 80\cos 64.9° - 100 = 20 + 113.9 - 33.9 - 100 \approx 0$$
+   $$40\sin 60° + 120\sin 18.4° - 80\sin 64.9° = 34.6 + 37.8 - 72.5 \approx 0$$ ✅
+
+</Steps>
+
+</details>
+
+### Step 6: Sweep the Crank and Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the full-rotation table and verification**</summary>
+
+<Steps>
+
+1. **Repeat the solution** for crank angles across a full turn (open mode). A short Python script automates it: ✅
+
+   ```python
+   import numpy as np
+
+   def four_bar_position(a, b, c, d, theta2_deg, mode="open"):
+       """Closed-form four-bar position. a=crank, b=coupler, c=follower, d=ground."""
+       t2 = np.radians(theta2_deg)
+       K1, K2 = d/a, d/c
+       K3 = (a**2 - b**2 + c**2 + d**2) / (2*a*c)
+       A = np.cos(t2) - K1 - K2*np.cos(t2) + K3
+       B = -2*np.sin(t2)
+       C = K1 - (K2 + 1)*np.cos(t2) + K3
+       s = -1 if mode == "open" else 1
+       t4 = 2*np.arctan2(-B + s*np.sqrt(B**2 - 4*A*C), 2*A)
+
+       K4 = d/b
+       K5 = (c**2 - d**2 - a**2 - b**2) / (2*a*b)
+       D = np.cos(t2) - K1 + K4*np.cos(t2) + K5
+       E = -2*np.sin(t2)
+       F = K1 + (K4 - 1)*np.cos(t2) + K5
+       t3 = 2*np.arctan2(-E + s*np.sqrt(E**2 - 4*D*F), 2*D)
+       return np.degrees(t3) % 360, np.degrees(t4) % 360
+
+   for th2 in range(0, 121, 30):
+       th3, th4 = four_bar_position(40, 120, 80, 100, th2)
+       print(f"theta2={th2:3d}  theta3={th3:6.1f}  theta4={th4:6.1f}")
+   ```
+
+2. **Results** (open mode): ✅
+
+   | Crank $\theta_2$ | Coupler $\theta_3$ | Follower $\theta_4$ |
+   |:---:|:---:|:---:|
+   | 0° | 36.3° | 62.7° |
+   | 30° | 22.4° | 55.3° |
+   | 60° | 18.4° | 64.9° |
+   | 90° | 18.9° | 80.3° |
+   | 120° | 22.0° | 96.3° |
+
+3. **Verify in the simulator.** Set $a=40$, $b=120$, $c=80$, $d=100$, choose the **Open** assembly, and drive the crank to each angle. The simulator's reported $\theta_3$ and $\theta_4$ match the table. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The Freudenstein equation reduces the entire four-bar position problem to evaluating three constants and solving one quadratic. There is no iteration and no guessing, which is exactly why it is the standard method coded into mechanism software and into our simulator.
+
+**Key Concept:** The two roots of the quadratic are the **open** and **crossed** assembly modes. A physical linkage stays in whichever mode it was assembled in; the math gives both, and you select the one that matches your build. The same two equations you solved here are the ones the [velocity analysis](./velocity-analysis-instantaneous-centers) differentiates to find velocities.
+:::
+
+## Theory: Grashof Classification
+
+<InArticleAd />
+
+
+Before solving a four-bar, you can predict how it will move from the link lengths alone. The **Grashof condition** compares the shortest and longest links to the other two.
+
+<Card title="The Grashof Condition" icon="document">
+Let $s$ be the shortest link, $l$ the longest, and $p, q$ the remaining two. The linkage is **Grashof** (at least one link can fully rotate) when:
+
+$$s + l \le p + q$$
+
+For our default four-bar: $s = 40$ (crank), $l = 120$ (coupler), and $p + q = 80 + 100 = 180$. Since $40 + 120 = 160 \le 180$, it is Grashof, and because the shortest link is the crank, it is a **crank-rocker**: the crank fully rotates while the follower rocks.
+</Card>
 
 <Tabs>
-  <TabItem label="Position Results">
-    
-    **Suspension Travel Analysis:**
-    
-    | Input θ₂ | Coupler θ₃ | Output θ₄ | Wheel Camber | Track Change |
-    |----------|------------|-----------|--------------|--------------|
-    | 30°      | 15.2°      | 42.8°     | -1.2°        | +2.1 mm      |
-    | 37.5°    | 21.8°      | 47.6°     | -0.8°        | +1.4 mm      |
-    | 45°      | 28.7°      | 52.3°     | -0.3°        | +0.7 mm      |
-    | 52.5°    | 36.1°      | 56.9°     | +0.2°        | +0.1 mm      |
-    | 60°      | 43.8°      | 61.4°     | +0.8°        | -0.4 mm      |
-    
+  <TabItem label="Grashof (s + l < p + q)">
+
+  At least one link makes a full revolution. Which one depends on which link is the ground:
+
+  - **Shortest link is the crank or follower:** crank-rocker (input rotates, output rocks)
+  - **Shortest link is the ground:** double-crank (both side links rotate fully)
+  - **Shortest link is the coupler:** double-rocker (both side links rock, coupler rotates)
+
   </TabItem>
-  <TabItem label="Performance Analysis">
-    
-    **Suspension Geometry Evaluation:**
-    
-    ✅ **Camber Control**: Maintains \pm1° throughout travel
-    ✅ **Track Stability**: less than 2.5mm variation (excellent)
-    ✅ **Smooth Motion**: No binding conditions detected
-    ✅ **Packaging**: Fits within 400×300mm envelope
-    
-    **Design Verification:**
-    - Wheel remains nearly vertical (good tire contact)
-    - Minimal lateral tire scrub
-    - Predictable handling characteristics
-    
+  <TabItem label="Non-Grashof (s + l > p + q)">
+
+  No link can complete a full revolution. The mechanism is a **triple-rocker**: every moving link only oscillates. Useful when limited, bounded motion is required.
+
   </TabItem>
-  <TabItem label="Optimization Insights">
-    
-    **Linkage Optimization Results:**
-    
-    **Current Design Strengths:**
-    - Excellent camber control
-    - Minimal bump steer
-    - Compact packaging
-    
-    **Potential Improvements:**
-    - Slightly longer tie rod (c = 270mm) would reduce camber change
-    - Adjustable mounting points for fine-tuning
-    - Consider anti-roll bar integration points
-    
+  <TabItem label="Change-point (s + l = p + q)">
+
+  The links can become collinear (fully extended or folded). The **parallelogram linkage** is the classic case: it keeps the coupler parallel to the ground but can flip into an anti-parallelogram at the change point. Handle with care, because the assembly mode can switch here.
+
   </TabItem>
 </Tabs>
 
-## Advanced Position Analysis Techniques
+:::tip[Verify in the simulator]
+Load the four-bar simulator presets ([siwit.co/FBL](https://siwit.co/FBL)) in turn: **Crank-Rocker**, **Double-Crank**, **Double-Rocker**, **Triple-Rocker**, and **Parallelogram**. Each one is built so its link lengths satisfy the matching Grashof case above. Driving the crank shows directly which links rotate and which only rock.
+:::
+
+## Application 2: Slider-Crank Position
 
 <InArticleAd />
 
 
-### Multiple Solution Handling
+The slider-crank loop has one unknown angle (the connecting rod) and one unknown distance (the slider position), so its position solution is a single closed-form expression rather than a quadratic.
 
-Four-bar linkages often have two possible configurations for a given input position - the **open** and **crossed** configurations.
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
+</div>
 
-<Card title="🔄 Configuration Management" icon="document">
-**Branch Selection Criteria:**
-
-**Open Configuration:**
-- Links don't cross each other
-- Generally preferred for continuous motion
-- More stable and predictable
-
-**Crossed Configuration:**  
-- Links cross during motion
-- May have better mechanical advantage
-- Requires careful singularity analysis
-
-**Design Rule:** Choose configuration based on application requirements and avoid switching between branches during operation.
+**Hands-on lab:** Continue in the [Crank-Slider Experiments](/education/mechanism-design-simulation/crank-slider-experiments/) lab. Experiment 1 (baseline kinematic profile) plots the slider displacement you derive below across a full crank rotation.
 </Card>
 
-### Singularity Detection
+:::note[System Problem Statement]
+- **Configuration:** In-line slider-crank (engine or compressor)
+- **Task:** Find the slider position and connecting-rod angle for a given crank angle
+- **Geometry:** crank $r = 50$ mm, connecting rod $l = 150$ mm, offset $e = 0$
+- **Input:** crank angle $\theta = 60°$
+:::
 
-**Singularities** occur when the mechanism loses a degree of freedom or becomes indeterminate.
+### Step 1: Draw the Space Diagram and Measure
+
+<details>
+<summary>**Click to reveal the graphical position solution**</summary>
 
 <Steps>
-1. **Identify Critical Positions:**
-   - Links become collinear
-   - Jacobian matrix becomes singular
-   - Mechanism "locks up" or becomes unstable
 
-2. **Mathematical Detection:**
-   - Calculate determinant of coefficient matrix
-   - Monitor for near-zero values
-   - Check link alignment angles
+1. **Centre-line and crank.** Draw the slider centre-line through $O$. Draw the crank $OA$ at $\theta = 60\degree$, length $r = 50$ mm. ✅
 
-3. **Design Solutions:**
-   - Avoid operating near singularities
-   - Add mechanical limits to prevent entry
-   - Design for single configuration throughout range
+2. **Swing the rod.** With centre $A$ and radius $l = 150$ mm, cut the centre-line at $B$, the piston. ✅
+
+3. **Measure.** The piston is $s \approx 169$ mm from $O$ and the rod angle $\phi \approx 17\degree$, matching the closed-form values below. ✅
+
 </Steps>
 
-### Coupler Point Analysis
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Slider-crank position at crank angle 60 degrees, piston found by swinging the rod onto the centre-line](./images/l2-slider-crank-space-diagram.svg)
+  </TailwindWrapper>
+</div>
 
-The **coupler point** is any point fixed to the coupler link - essential for suspension applications.
+</details>
 
-<Card title="📍 Coupler Point Position" icon="document">
-**Coupler Point Coordinates:**
+### Step 2: Write and Solve the Loop
 
-$$x_P = x_B + r_P \cos(\theta_3 + \alpha)$$
-$$y_P = y_B + r_P \sin(\theta_3 + \alpha)$$
+<details>
+<summary>**Click to reveal the slider-crank position solution**</summary>
 
-**Where:**
-- (x_B, y_B) = Coupler link's reference joint position
-- r_P = Distance from reference joint to coupler point
-- α = Angle offset from link axis to coupler point
-- θ₃ = Coupler link angle
+<Steps>
 
-**Application:** In suspension systems, the coupler point represents the wheel center position.
+1. **Loop in components.** With the slider on the x-axis at distance $s$ from the crank pivot, crank angle $\theta$, rod angle $\phi$ below the axis, and vertical offset $e$:
+
+   $$r\cos\theta + l\cos\phi = s \qquad\text{(x)}$$
+   $$r\sin\theta - l\sin\phi = e \qquad\text{(y)}$$ ✅
+
+2. **Solve the y-equation for the rod angle** $\phi$:
+
+   $$\sin\phi = \frac{r\sin\theta - e}{l} \quad\Rightarrow\quad \phi = \arcsin\!\left(\frac{r\sin\theta - e}{l}\right)$$ ✅
+
+3. **Substitute into the x-equation** for the slider position (eliminating $\phi$ with $\cos\phi = \sqrt{1 - \sin^2\phi}$):
+
+   $$s = r\cos\theta + \sqrt{l^2 - (r\sin\theta - e)^2}$$ ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Evaluate and Verify
+
+<details>
+<summary>**Click to reveal the numbers and simulator check**</summary>
+
+<Steps>
+
+1. **Rod angle** at $\theta = 60°$, $e = 0$:
+
+   $$\phi = \arcsin\!\left(\frac{50\sin 60°}{150}\right) = \arcsin(0.2887) = 16.8°$$ ✅
+
+2. **Slider position:**
+
+   $$s = 50\cos 60° + \sqrt{150^2 - (50\sin 60°)^2} = 25 + \sqrt{22500 - 1875} = 25 + 143.6 = 168.6 \text{ mm}$$ ✅
+
+3. **Verify in the simulator.** Set $r=50$, $l=150$, $e=0$, drive the crank to $60°$, and read the slider position and rod angle. They match. ✅
+
+4. **Dead centers.** The slider reaches its extremes when crank and rod are collinear: at $\theta = 0°$, $s_\text{max} = r + l = 200$ mm (top-dead-center), and at $\theta = 180°$, $s_\text{min} = l - r = 100$ mm (bottom-dead-center). The stroke is $2r = 100$ mm. These are the limit positions of the slider. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+Adding the offset $e$ makes the equation asymmetric, which produces the quick-return behavior taken up in the [velocity analysis](./velocity-analysis-instantaneous-centers). Notice that the slider position is the part of the four-bar story where the follower link has been stretched to infinity: the rocker arc becomes a straight slide, and the two-unknown quadratic collapses to one closed-form distance.
+:::
+
+## Application 3: Scissor-Lift Position
+
+<InArticleAd />
+
+
+Not every position problem is a four-bar loop. The scissor lift is governed by a direct geometric relationship, which makes it a clean contrast to Applications 1 and 2.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/scissor-lift-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Scissor Lift Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Scissor Lift Experiments](/education/mechanism-design-simulation/scissor-lift-experiments/) lab. Experiment 1 (baseline height and force profile) plots the platform height equation derived below.
 </Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Single-stage symmetric scissor lift
+- **Task:** Find the platform height and base spread as a function of the scissor angle
+- **Geometry:** arm length $L = 300$ mm, stages $n = 1$
+- **Input:** scissor angle $\theta = 30°$
+:::
+
+### Step 1: Draw the Space Diagram and Measure
+
+<details>
+<summary>**Click to reveal the graphical position solution**</summary>
+
+<Steps>
+
+1. **Base and arms.** Draw the base. From the fixed bottom pin draw an arm of length $L = 300$ mm at $\theta = 30\degree$; draw the crossing arm from the sliding bottom pin. ✅
+
+2. **Platform.** Join the upper arm ends with the platform line. ✅
+
+3. **Measure.** The platform height scales to $h \approx 150$ mm, matching $h = L\sin\theta$ below. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Single-stage scissor lift drawn at 30 degrees, platform height h = L sin theta](./images/l2-scissor-space-diagram.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Height and Spread from Geometry
+
+<details>
+<summary>**Click to reveal the scissor-lift position relations**</summary>
+
+<Steps>
+
+1. **Each arm of length $L$** makes angle $\theta$ with the base. The vertical rise of one crossing is $L\sin\theta$, and stacking $n$ stages multiplies it:
+
+   $$h = n\,L\sin\theta$$ ✅
+
+2. **The horizontal spread** of the arm ends along the base is:
+
+   $$S = L\cos\theta$$ ✅
+
+3. **Evaluate** at $L = 300$ mm, $n = 1$, $\theta = 30°$:
+
+   $$h = 1 \times 300 \times \sin 30° = 150 \text{ mm}, \qquad S = 300\cos 30° = 259.8 \text{ mm}$$ ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Verify and Read the Range
+
+<details>
+<summary>**Click to reveal the simulator check and limit positions**</summary>
+
+<Steps>
+
+1. **Verify in the simulator.** Set $L = 300$, one stage, and drive the angle to $30°$. The reported platform height is $150$ mm. ✅
+
+2. **Limit positions.** Height is maximum as $\theta \to 90°$ (arms vertical, $h \to nL$) and minimum as $\theta \to 0°$ (arms flat, $h \to 0$). Real lifts work in a bounded band, for example $10°$ to $80°$, because the force demand near the flat position grows without bound, a result derived in the [force analysis](./force-analysis-mechanism-synthesis). ✅
+
+3. **Multi-stage scaling.** Setting $n = 2$ or $3$ in the simulator multiplies the height by $n$ for the same arm length, confirming $h = nL\sin\theta$. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The scissor lift shows that position analysis is about finding the closure relationship, whatever its form. Here it is a one-line trigonometric identity rather than a vector-loop quadratic, yet it plays the same role: it is the foundation that the [velocity analysis](./velocity-analysis-instantaneous-centers) differentiates for platform velocity and the [acceleration analysis](./acceleration-analysis-dynamic-forces) differentiates again for platform acceleration.
+:::
+
+## Application 4: Toggle-Clamp Limit Position
+
+<InArticleAd />
+
+
+The toggle clamp is a four-bar, so its general position solution is the Freudenstein method of Application 1. Its distinctive position-analysis question is different: where is the **limit (toggle) position** that gives the clamp its self-locking behavior?
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/toggle-clamp-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Toggle Clamp Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Toggle Clamp Experiments](/education/mechanism-design-simulation/toggle-clamp-experiments/) lab. Experiment 1 (top-dead-centre and self-locking) locates the limit position discussed here.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Over-center toggle clamp (a four-bar)
+- **Task:** Locate the top-dead-center position where the handle link and main link are collinear
+- **Concept:** the limit position is where the clamp's mechanical advantage becomes very large and it self-locks
+:::
+
+### Step 1: Draw the Space Diagram
+
+<details>
+<summary>**Click to reveal the toggle-position construction**</summary>
+
+<Steps>
+
+1. **Skeleton.** Draw the four-bar skeleton: ground $O_2O_4$, handle $O_2A$, main link $AB$, clamp arm $O_4B$. ✅
+
+2. **Find top-dead-centre.** Rotate the handle until $O_2$, $A$ and $B$ are collinear. That collinear position is the limit (toggle) position analysed below. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Toggle clamp four-bar skeleton at top-dead-centre, handle and main link collinear](./images/l2-toggle-space-diagram.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: The Collinear (Toggle) Condition
+
+<details>
+<summary>**Click to reveal the limit-position geometry**</summary>
+
+<Steps>
+
+1. **Limit positions of any four-bar** occur when two links line up. For the toggle clamp, top-dead-center (TDC) is the handle angle at which the **handle link and main link become collinear**, so the toggle angle between them is zero. ✅
+
+2. **Why this is a position-analysis result.** It is found purely from the geometry of the loop, with no forces involved: solve the loop closure for the handle angle that makes the two link vectors parallel. The clamp is set to rest a few degrees past this angle, the "lock margin". ✅
+
+3. **Why it matters.** At the collinear position a small handle motion produces almost no pad motion, so the velocity ratio collapses. This is the same singular configuration seen in the [mobility analysis](./kinematic-joints-constraint-analysis); the [velocity analysis](./velocity-analysis-instantaneous-centers) quantifies the velocity ratio while the [force analysis](./force-analysis-mechanism-synthesis) quantifies the force amplification it creates. ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Locate It in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** and drive the handle slowly. The information panel reports the TDC handle angle, the position where the handle and main link align. ✅
+
+2. **Observe the pad.** As the handle approaches TDC, the pad position changes more and more slowly for the same handle increment, confirming you are at a limit position. Past TDC by the lock margin, the clamp holds itself closed. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+Limit positions are where the output momentarily stops and reverses. Finding them is a pure position-analysis task, yet they govern force amplification (toggle clamps), stroke ends (engine dead centers), and motion reversal (rocker extremes). Locating them before building the mechanism is how designers place the self-locking point exactly where they want it.
+:::
+
+## Theory: Coupler Points and Coupler Curves
+
+<InArticleAd />
+
+
+A point fixed to the coupler link, but not on the line between its two joints, traces a closed path called a **coupler curve** as the crank rotates. Coupler curves are how a single four-bar can generate straight-line segments, figure-eights, and dwell paths used in walking mechanisms, film advances, and mixing machines.
+
+<Card title="Coupler-Point Coordinates" icon="document">
+Let joint $A$ (crank-coupler) be at $(x_A, y_A)$, found from the crank: $x_A = a\cos\theta_2$, $y_A = a\sin\theta_2$. A coupler point $P$ lies a distance $r_P$ from $A$ at a fixed angle $\gamma$ from the coupler line:
+
+$$x_P = x_A + r_P\cos(\theta_3 + \gamma)$$
+$$y_P = y_A + r_P\sin(\theta_3 + \gamma)$$
+
+Once the position analysis gives $\theta_2$ and $\theta_3$ at each instant, sweeping the crank traces the full coupler curve.
+</Card>
+
+:::tip[Verify in the simulator]
+The four-bar simulator ([siwit.co/FBL](https://siwit.co/FBL)) plots the coupler-point path directly. Change the link lengths and watch the curve change shape, then reproduce a few of its points with the equations above using the $\theta_3$ values from your position solution. Experiment 5 in the four-bar lab is built around this.
+:::
 
 ## Design Guidelines for Position Analysis
 
 <InArticleAd />
 
 
-### Linkage Synthesis Principles
-
 <CardGrid>
-  <Card title="Grashof Criterion" icon="rocket">
-    **Rule:** s + l ≤ p + q
-    
-    Where s = shortest link, l = longest link, p,q = other links
-    
-    **Result:** Ensures continuous rotation capability
+  <Card title="Classify before you solve" icon="rocket">
+  Apply the Grashof test first. It tells you whether the input can fully rotate and what motion type to expect, before any equation is solved.
   </Card>
-  <Card title="Transmission Angle" icon="setting">
-    **Optimal Range:** 45° - 135°
-    
-    **Critical:** Avoid angles near 0° or 180°
-    
-    **Impact:** Determines force transmission efficiency
+  <Card title="Pick one assembly mode" icon="setting">
+  The position equations give open and crossed solutions. Choose the mode that matches your build and confirm the mechanism never passes through a change point that would switch modes.
   </Card>
-  <Card title="Motion Range" icon="puzzle">
-    **Consideration:** Output link swing angle
-    
-    **Design:** Match required motion range
-    
-    **Constraint:** Avoid over-travel conditions
+  <Card title="Solve the whole range" icon="puzzle">
+  Sweep the input across its full travel, not just one position. Interference and binding usually appear at the extremes, not the middle.
   </Card>
-  <Card title="Package Size" icon="warning">
-    **Envelope:** Overall mechanism footprint
-    
-    **Clearance:** Link interference checking
-    
-    **Integration:** Mounting point accessibility
+  <Card title="Find the limit positions" icon="warning">
+  Locate dead-center and toggle positions explicitly. They set the stroke ends and the self-locking points, and they are where velocity and force behavior change most sharply.
   </Card>
 </CardGrid>
-
-### Professional Design Process
-
-<Steps>
-1. **Requirements Definition**
-   - Specify required motion (input/output relationship)
-   - Define workspace and packaging constraints
-   - Establish performance criteria
-
-2. **Conceptual Design**
-   - Select basic linkage type (four-bar, six-bar, etc.)
-   - Choose ground link position and orientation
-   - Estimate initial link proportions
-
-3. **Position Analysis**
-   - Formulate vector loop equations
-   - Solve for complete motion range
-   - Check for singularities and branch switches
-
-4. **Design Optimization**
-   - Adjust link lengths to meet requirements
-   - Optimize transmission angles
-   - Verify packaging constraints
-
-5. **Validation and Testing**
-   - Create detailed mechanical drawings
-   - Build prototype for verification
-   - Conduct performance testing
-</Steps>
-
-## Practical Applications and Case Studies
-
-<InArticleAd />
-
-
-### Case Study 1: Manufacturing Fixture
-
-**Application:** Automated clamping system for CNC machining
-
-**Requirements:**
-- 50mm linear travel at clamp jaw
-- High force capability
-- Compact 200×150mm envelope
-
-**Solution:**
-- Four-bar linkage with mechanical advantage
-- Input: 30° rotation, Output: 50mm linear motion
-- Transmission angle optimized for clamping force
-
-### Case Study 2: Robotic Gripper
-
-**Application:** Two-finger parallel gripper for assembly robot
-
-**Requirements:**  
-- 40mm finger opening range
-- Parallel finger motion throughout travel
-- Force multiplication for gripping
-
-**Solution:**
-- Dual four-bar linkages (one per finger)
-- Coupler points maintain parallel orientation
-- Single actuator drives both linkages
-
-### Case Study 3: Vehicle Door Hinge
-
-**Application:** Car door opening mechanism
-
-**Requirements:**
-- 70° opening angle
-- Door clears body panels during motion
-- Smooth, stable operation
-
-**Solution:**
-- Four-bar hinge linkage
-- Optimized door swing path
-- Integrated check mechanisms
 
 ## Summary and Next Steps
 
@@ -462,49 +677,26 @@ $$y_P = y_B + r_P \sin(\theta_3 + \alpha)$$
 
 ### Key Concepts Mastered
 
-1. **Vector Loop Method**: Systematic approach to position analysis
-2. **Four-Bar Linkages**: Understanding geometry and motion relationships  
-3. **Solution Techniques**: Solving nonlinear trigonometric equations
-4. **Design Optimization**: Matching linkage geometry to requirements
+1. **Vector loop method:** every closed linkage gives two scalar equations per loop from the condition that the link vectors sum to zero.
+2. **Freudenstein equation:** the four-bar position problem reduces to three constants and one quadratic, with the two roots being the open and crossed modes.
+3. **Slider-crank and scissor lift:** their closure conditions are a single closed-form expression each, including the dead-center and height limits.
+4. **Grashof classification:** link lengths predict whether the mechanism is a crank-rocker, double-crank, double-rocker, triple-rocker, or change-point linkage.
+5. **Coupler curves and limit positions:** position analysis predicts the path of a coupler point and the extreme positions where the output reverses.
 
-### Professional Design Principles
+### Position Solutions at a Glance
 
-<CardGrid>
-  <Card title="Systematic Analysis" icon="rocket">
-    **Method:** Vector loops provide consistent framework
-    **Benefit:** Works for any planar linkage configuration
-    **Tool:** Foundation for computer-aided design
-  </Card>
-  <Card title="Configuration Management" icon="setting">
-    **Challenge:** Multiple solutions exist
-    **Solution:** Choose appropriate branch
-    **Verification:** Check throughout motion range
-  </Card>
-  <Card title="Optimization Focus" icon="puzzle">
-    **Goal:** Match geometry to requirements  
-    **Process:** Iterative design refinement
-    **Validation:** Prototype testing confirmation
-  </Card>
-  <Card title="Real-World Integration" icon="warning">
-    **Consideration:** Manufacturing tolerances
-    **Design:** Robust to parameter variations
-    **Testing:** Physical verification essential
-  </Card>
-</CardGrid>
+| Mechanism | What you solve for | Closure relation | Simulator |
+|-----------|--------------------|------------------|-----------|
+| Four-bar | $\theta_3$, $\theta_4$ | Freudenstein quadratic | [siwit.co/FBL](https://siwit.co/FBL) |
+| Slider-crank | $s$, $\phi$ | $s = r\cos\theta + \sqrt{l^2 - (r\sin\theta - e)^2}$ | [siwit.co/CSM](https://siwit.co/CSM) |
+| Scissor lift | $h$, $S$ | $h = nL\sin\theta$ | [siwit.co/SLM](https://siwit.co/SLM) |
+| Toggle clamp | handle angle, TDC | Freudenstein, collinear limit | [siwit.co/TCM](https://siwit.co/TCM) |
 
-:::tip[Industry Best Practice]
-**"Design for the motion, then optimize for the forces."** - Position analysis must be solved first before velocity, acceleration, and force analysis can be performed effectively.
-:::
+### A Note on Tools
 
-### Computational Tools
+Every result in this lesson was found in closed form by hand and reproduced with a few lines of Python (NumPy). The simulators then confirm the same numbers interactively. No specialised motion-analysis software is needed; the mathematics is the tool.
 
-Modern position analysis leverages:
-- **MATLAB/Simulink**: Numerical solving and simulation
-- **SolidWorks Motion**: CAD-integrated analysis
-- **Adams/MSC**: Professional multibody dynamics
-- **Python/SciPy**: Custom analysis scripts
-
-**Coming Next**: In Lesson 3, we'll build on position analysis to explore velocity analysis and instantaneous centers in crank-slider mechanisms, essential for engine and compressor design optimization.
+Next, [Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers) differentiates the very loop equations solved here. The four-bar position equations become velocity equations for $\omega_3$ and $\omega_4$, and the slider-crank position gives the piston velocity, with instantaneous centers offering a second, graphical route to the same answers.
 
 
 

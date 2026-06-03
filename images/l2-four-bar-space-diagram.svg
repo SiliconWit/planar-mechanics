@@ -1,0 +1,20 @@
+<svg viewBox="0 0 469 348" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four-bar space diagram at crank angle 60 degrees">
+<rect data-bg="1" x="0" y="0" width="469" height="348" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="78.2" y1="254.1" x2="308.2" y2="254.1" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round"/>
+<line x1="78.2" y1="254.1" x2="124.2" y2="174.4" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="124.2" y1="174.4" x2="386.1" y2="87.4" stroke="#d97706" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="308.2" y1="254.1" x2="386.1" y2="87.4" stroke="#059669" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="78.2" cy="254.1" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/><path d="M 71.2 263.1 L 78.2 254.1 L 85.2 263.1 Z" fill="none" stroke="#374151" stroke-width="1.5"/><line x1="68.2" y1="263.1" x2="88.2" y2="263.1" stroke="#374151" stroke-width="1.5"/>
+<circle cx="308.2" cy="254.1" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/><path d="M 301.2 263.1 L 308.2 254.1 L 315.2 263.1 Z" fill="none" stroke="#374151" stroke-width="1.5"/><line x1="298.2" y1="263.1" x2="318.2" y2="263.1" stroke="#374151" stroke-width="1.5"/>
+<circle cx="124.2" cy="174.4" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/>
+<circle cx="386.1" cy="87.4" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/>
+<text x="87.2" y="216.2" fill="#2563eb" font-size="15" font-family="sans-serif" font-weight="600">a</text>
+<text x="255.2" y="122.9" fill="#d97706" font-size="15" font-family="sans-serif" font-weight="600">b</text>
+<text x="355.2" y="172.7" fill="#059669" font-size="15" font-family="sans-serif" font-weight="600">c</text>
+<text x="189.2" y="272.1" fill="#6b7280" font-size="15" font-family="sans-serif" font-weight="600">d</text>
+<text x="52.2" y="270.1" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600">O<tspan baseline-shift="sub" font-size="70%">2</tspan></text>
+<text x="314.2" y="270.1" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600">O<tspan baseline-shift="sub" font-size="70%">4</tspan></text>
+<text x="114.2" y="168.4" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600">A</text>
+<text x="394.1" y="81.4" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600">B</text>
+<text x="46" y="342" fill="#6b7280" font-size="11.5" font-family="sans-serif">Choose a length scale, e.g. 1 cm = 20 mm. a=40, b=120, c=80, d=100 mm, &#952;&#8322;=60&#176;.</text>
+</svg>

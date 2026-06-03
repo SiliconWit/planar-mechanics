@@ -1,0 +1,13 @@
+<svg viewBox="0 0 602 257" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Force triangle for a three-force member"><defs><marker id="m059669" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#059669"/></marker><marker id="m6b7280" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#6b7280"/></marker><marker id="md97706" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/></marker></defs>
+<rect data-bg="1" x="0" y="0" width="602" height="257" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="230.6" y1="203.9" x2="299.0" y2="16.0" stroke="#d97706" stroke-width="2.6" marker-end="url(#md97706)"/>
+<line x1="299.0" y1="16.0" x2="299.0" y2="196.0" stroke="#059669" stroke-width="2.6" marker-end="url(#m059669)"/>
+<line x1="299.0" y1="196.0" x2="230.6" y2="203.9" stroke="#6b7280" stroke-width="2.6" marker-end="url(#m6b7280)"/>
+<text x="255.4" y="106.5" fill="#d97706" font-size="14" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">F<tspan baseline-shift="sub" font-size="70%">link</tspan></text>
+<text x="309.0" y="106.0" fill="#059669" font-size="14" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">F<tspan baseline-shift="sub" font-size="70%">pad</tspan></text>
+<text x="265.9" y="209.9" fill="#6b7280" font-size="14" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">F<tspan baseline-shift="sub" font-size="70%">pivot</tspan></text>
+<circle cx="230.6" cy="203.9" r="3.4" fill="#374151"/>
+<circle cx="299.0" cy="16.0" r="3.4" fill="#374151"/>
+<circle cx="299.0" cy="196.0" r="3.4" fill="#374151"/>
+<text x="12" y="250" fill="#6b7280" font-size="11.5" font-family="sans-serif">The three forces on a member close into a triangle. Choose a force scale, e.g. 1 cm = 20 N.</text>
+</svg>

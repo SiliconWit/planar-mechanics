@@ -1,10 +1,11 @@
 ---
 title: "Lesson 4: Acceleration Analysis and Dynamic Forces"
-description: "Understanding acceleration polygons and inertial forces through Geneva mechanism indexing system design for packaging and assembly automation"
+description: "Differentiate the velocity loop for accelerations, build acceleration polygons, and turn accelerations into inertia and shaking forces. Worked on the slider-crank, four-bar, and scissor lift, each verified in a simulator."
 contributors: "sam-macharia,andrew-kibor,jack-kojiro"
-pubDate: 2025-09-01
-tags: ["planar-mechanics", "acceleration-analysis", "geneva-mechanism", "dynamic-forces", "indexing-systems", "automation"]
-excerpt: "Master acceleration analysis and dynamic force prediction by designing Geneva mechanism indexing systems for precise positioning without vibration in automated packaging and assembly equipment."
+pubDate: 2025-09-09
+tags: ["planar-mechanics", "acceleration-analysis", "acceleration-polygon", "inertia-forces", "shaking-forces", "engine-balancing"]
+excerpt: "Find accelerations by differentiating the velocity loop, construct acceleration polygons with normal and tangential components, and convert accelerations into the inertia and shaking forces that load bearings and vibrate machines, each result verified in an interactive simulator."
+heroImage: "https://cdn.siliconwit.com/product-development/2d-mechanisms-analyzer/crank-slider-mechanism-simulator.png"
 ---
 
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
@@ -23,522 +24,453 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-Velocity tells you how fast a link is moving; acceleration tells you the forces it generates. In a Geneva indexing mechanism, a sudden acceleration spike at the moment of engagement sends a shock through every downstream component, causing vibration, wear, and positioning errors in the assembly equipment it drives. Predicting and minimizing those acceleration peaks requires acceleration polygon construction and dynamic force analysis. In this lesson you will analyze a Geneva mechanism indexing system, construct acceleration polygons, compute inertial forces, and design for smooth, vibration-free motion. #AccelerationAnalysis #GenevaMechanism #DynamicForces
+Velocity tells you how fast a part moves; acceleration tells you how hard its motion is changing, and that is what creates force. A piston at 6000 rpm reverses direction a hundred times a second, and the force to turn its motion around comes straight from the engine structure, which is why a poorly balanced engine shakes itself apart. Acceleration analysis is one more differentiation of the loop you already have, and then Newton's second law turns those accelerations into the inertia forces that size bearings and the shaking forces that engineers spend so much effort balancing. In this lesson you build acceleration polygons and convert them into dynamic forces. #AccelerationAnalysis #InertiaForces #EngineBalancing
 
 ## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
-1. **Construct** acceleration polygons for complex planar mechanism analysis
-2. **Calculate** inertial forces and moments in moving mechanism components
-3. **Design** Geneva mechanisms for smooth indexing without vibration
-4. **Optimize** dynamic performance for high-speed automated systems
+1. **Differentiate** the velocity loop to find accelerations, splitting each into normal and tangential parts
+2. **Construct** acceleration polygons for the slider-crank and four-bar
+3. **Convert** accelerations into inertia and shaking forces with d'Alembert's principle
+4. **Predict** the primary and secondary shaking forces that drive engine balancing, and verify each result in a simulator
 
-## Real-World System Problem: Geneva Mechanism Indexing System
+## Real-World System Problem: The Forces That Shake an Engine
 
 <InArticleAd />
 
 
-<BionicText method="advanced" intensity="medium" class="highlight">
-In modern automated manufacturing - from pharmaceutical packaging to electronic assembly - precision indexing is critical. Products must be moved from station to station with exact positioning, minimal vibration, and repeatable accuracy. The Geneva mechanism is the gold standard for intermittent motion systems, but high-speed operation introduces challenging dynamic forces that can cause vibration, wear, and positioning errors.
-</BionicText>
+An engine, compressor, or pump runs steadily, yet its piston never moves at a steady speed. It accelerates hardest at the top of the stroke, where it reverses, and the force to reverse it is large: at high speed the inertia force on a piston can exceed the gas pressure force. That force is reacted through the connecting rod, the crank, the bearings, and finally the engine mounts, where it appears as vibration. Designers must predict these accelerations to size the bearings, choose the connecting-rod ratio, and add the counterweights and balance shafts that keep the machine smooth.
 
-### System Challenge: High-Speed Precision Indexing
+### The Acceleration Problem
 
-**Critical Engineering Problem:**
-- How do we achieve precise indexing at high speeds without vibration?
-- What acceleration profiles minimize dynamic loading and wear?
-- How do we design for smooth engagement without shock loading?
-- Can we optimize for both precision and production throughput?
+> **Engineering Question:** Given the input speed, what is the acceleration of every part, and what inertia forces do those accelerations create?
 
-<Card title="🎯 Precision Indexing System Challenge" icon="rocket">
-**Design Goal:** Create a Geneva mechanism indexing system that operates at 300 RPM while maintaining \pm0.1mm positioning accuracy and minimal vibration.
-
-**Key Requirements:**
-- **High-Speed Operation**: 300 RPM input speed (5 Hz indexing)
-- **Precision Positioning**: \pm0.1mm repeatability
-- **Smooth Motion**: Minimize acceleration peaks and jerk
-- **Low Vibration**: Reduce dynamic forces transmitted to base structure
-</Card>
-
-:::note[Industrial Applications]
-Companies like **Bosch**, **ABB**, and **Festo** use Geneva mechanisms in:
-- **Packaging Equipment**: Filling, capping, labeling stations
-- **Assembly Systems**: Component insertion, testing, sorting
-- **Pharmaceutical**: Tablet counting, blister packaging  
-- **Electronics**: Circuit board handling, component placement
-Understanding acceleration analysis enables precise control of these systems.
-:::
+For the slider-crank the headline result is the piston acceleration and the shaking force it produces. For the four-bar it is the angular accelerations of the coupler and follower, which set the inertia torques. For the scissor lift it is the platform acceleration that the actuator must overcome.
 
 ### Why Acceleration Analysis Matters
 
-Acceleration analysis is essential for:
-- **Force Prediction**: Calculating inertial loads on bearings and structures
-- **Vibration Control**: Minimizing transmitted forces to surrounding equipment
-- **Wear Reduction**: Optimizing motion profiles to reduce component stress
-- **Performance Optimization**: Balancing speed with precision and durability
-
-## Fundamental Theory: Acceleration Analysis and Dynamic Forces
-
-<InArticleAd />
-
-
-To design high-performance indexing systems, we need systematic methods for analyzing accelerations and predicting dynamic forces.
-
-### What is Acceleration Analysis?
-
-**Acceleration analysis** determines the linear and angular accelerations of all points and links in a mechanism when given the acceleration of the input link.
-
-<Card title="⚡ Acceleration Analysis Definition" icon="document">
-**Acceleration Analysis** answers the fundamental question:
-
-*"Given the input link acceleration, what accelerations and dynamic forces exist throughout the mechanism?"*
-
-**Key Outputs:**
-- Linear accelerations of key points (indexing tables, tool holders)
-- Angular accelerations of all moving links
-- Inertial forces and moments on each component
-- Dynamic loading on bearings and joints
-</Card>
-
-### Types of Acceleration Components
-
-Every point on a moving mechanism has multiple acceleration components:
-
-<Card title="🔄 Acceleration Component Types" icon="document">
-**Normal (Centripetal) Acceleration:**
-$$a_n = \omega^2 \cdot r$$
-- Always directed toward center of rotation
-- Present whenever there is rotational motion
-- Proportional to square of angular velocity
-
-**Tangential Acceleration:**
-$$a_t = \alpha \cdot r$$  
-- Tangent to path of motion
-- Present when angular acceleration exists
-- Proportional to angular acceleration
-
-**Relative Acceleration:**
-$$\vec{a_B} = \vec{a_A} + \vec{a_{B/A}}$$
-- Acceleration of B relative to A
-- Includes both normal and tangential components
-</Card>
-
-### Acceleration Polygon Method
-
-**Acceleration polygons** provide systematic graphical solutions for complex mechanisms:
-
-<Steps>
-1. **Start with known acceleration** (usually input link)
-2. **Identify acceleration components** for each point
-3. **Construct polygon** with normal accelerations toward rotation centers
-4. **Add tangential accelerations** perpendicular to position vectors
-5. **Close polygon** to find unknown accelerations
-</Steps>
-
-## System Application: Geneva Mechanism Analysis
-
-<InArticleAd />
-
-
-Let's analyze a Geneva mechanism indexing system used in automated packaging equipment.
-
-### Geneva Mechanism Configuration
-
-**System Parameters:**
-- **Drive Wheel Radius (R)**: 60 mm
-- **Geneva Wheel Radius (r)**: 80 mm  
-- **Number of Slots (n)**: 6 (60° indexing increments)
-- **Input Speed**: 300 RPM (31.4 rad/s)
-- **Indexing Load**: 5 kg rotary table with products
-
-### Step 1: Kinematic Analysis Foundation
-
-<details>
-<summary>**Click to reveal Geneva mechanism kinematics**</summary>
-
-<Steps>
-
-1. **Geneva mechanism geometry:**
-   - Center distance: $C = \sqrt{R^2 + r^2} = \sqrt{60^2 + 80^2} = 100$ mm
-   - Engagement angle: $\beta = \arcsin(R/C) = \arcsin(0.6) = 36.87°$
-   - Motion ratio: $k = R/r = 60/80 = 0.75$
-
-2. **Angular velocity relationship:**
-   $$\omega_{geneva} = \omega_{drive} \cdot \frac{R\cos\phi}{r}$$
-
-   Where φ is the drive wheel angle measured from engagement
-
-3. **Peak Geneva wheel speed:**
-   - Occurs at φ = 0 (full engagement)
-   - $\omega_{max} = 31.4 \times 0.75 = 23.6$ rad/s
-
-</Steps>
-
-</details>
-
-### Step 2: Acceleration Analysis
-
-<details>
-<summary>**Click to reveal acceleration calculations**</summary>
-
-<Tabs>
-  <TabItem label="Drive Wheel Analysis">
-    
-    **Drive Wheel Accelerations:**
-    
-    **Drive Pin Position:**
-    - $x_{pin} = R\cos(\omega t) = 60\cos(31.4t)$ mm
-    - $y_{pin} = R\sin(\omega t) = 60\sin(31.4t)$ mm
-    
-    **Drive Pin Accelerations:**
-    - $a_{pin,x} = -R\omega^2\cos(\omega t) = -59,200\cos(31.4t)$ mm/s²
-    - $a_{pin,y} = -R\omega^2\sin(\omega t) = -59,200\sin(31.4t)$ mm/s²
-    - $|a_{pin}| = R\omega^2 = 59.2$ m/s² (pure centripetal)
-    
-  </TabItem>
-  <TabItem label="Geneva Wheel Analysis">
-    
-    **Geneva Wheel Angular Acceleration:**
-    
-    Using differentiation of the angular velocity relationship:
-    $$\alpha_{geneva} = \frac{d\omega_{geneva}}{dt} = \omega_{drive}^2 \cdot \frac{R^2\sin\phi}{r \cdot (R^2\cos^2\phi + r^2)^{3/2}}$$
-    
-    **Peak Angular Acceleration:**
-    - Occurs at φ = \pm30° (during engagement/disengagement)
-    - $\alpha_{max} = 31.4^2 \times \frac{60^2 \times \sin(30°)}{80 \times (60^2\cos^2(30°) + 80^2)^{3/2}}$
-    - $\alpha_{max} = 982 \times \frac{1800}{80 \times 140.6} = 157.3$ rad/s²
-    
-  </TabItem>
-  <TabItem label="Critical Point Analysis">
-    
-    **Geneva Wheel Critical Points:**
-    
-    **Table Edge Acceleration** (r = 150 mm from center):
-    - **Normal component**: $a_n = \omega^2 \cdot r = 23.6^2 \times 0.15 = 83.5$ m/s²
-    - **Tangential component**: $a_t = \alpha \cdot r = 157.3 \times 0.15 = 23.6$ m/s²
-    - **Total acceleration**: $|a_{total}| = \sqrt{a_n^2 + a_t^2} = 87.1$ m/s²
-    
-  </TabItem>
-</Tabs>
-
-</details>
-
-### Step 3: Dynamic Force Analysis
-
-<Card title="⚖️ Inertial Force Calculations" icon="document">
-**Geneva Wheel Dynamic Loading:**
-
-**Rotary Inertia Force:**
-- Geneva wheel moment of inertia: $I = 0.5mr^2 = 0.5 × 5 × 0.08^2 = 0.016$ kg⋅m²
-- Inertial moment: $M = I × \alpha = 0.016 × 157.3 = 2.52$ N⋅m
-
-**Table Load Inertial Forces:**
-- Product mass: 0.5 kg per position × 6 positions = 3 kg total
-- Maximum inertial force: $F = ma = 3 × 87.1 = 261$ N
-
-**Bearing Load Analysis:**
-- Geneva wheel bearing must support 261 N inertial force
-- Drive bearing experiences 59.2 m/s² × drive system mass
-- Moment loading requires robust bearing selection
-</Card>
-
-## Advanced Dynamic Analysis Techniques
-
-<InArticleAd />
-
-
-### Acceleration Polygon Construction for Complex Mechanisms
-
-For mechanisms more complex than simple Geneva drives:
-
-<Steps>
-1. **Establish reference frame** and coordinate system
-2. **Calculate known accelerations** (usually input components)
-3. **Apply relative acceleration equations** at each joint
-4. **Construct acceleration polygons** graphically or analytically
-5. **Verify results** using alternative calculation methods
-</Steps>
-
-### Dynamic Force Analysis Procedure
-
-<Card title="🔧 Systematic Force Analysis Method" icon="document">
-**Step-by-Step Dynamic Analysis:**
-
-1. **Calculate accelerations** for all key points and links
-2. **Determine inertial forces**: $F_{inertial} = ma$
-3. **Calculate inertial moments**: $M_{inertial} = I\alpha$  
-4. **Apply Newton's laws** to find joint reaction forces
-5. **Sum forces and moments** for equilibrium verification
-6. **Design bearings and supports** for calculated loads
-
-**Key Principle:** Dynamic forces are proportional to acceleration - minimize accelerations to reduce dynamic loading.
-</Card>
-
-### Jerk Analysis for Smooth Motion
-
-**Jerk** (rate of change of acceleration) is critical for smooth operation:
-
-$$j = \frac{da}{dt} = \frac{d^3x}{dt^3}$$
-
-High jerk values cause:
-- **Mechanical shock** and impact loading
-- **Vibration excitation** of structural resonances
-- **Control system instability** in servo-driven systems
-- **Accelerated wear** of bearings and joints
-
-## Geneva Mechanism Design Optimization
-
-<InArticleAd />
-
-
-### Motion Profile Optimization
-
 <CardGrid>
-  <Card title="Standard Geneva Drive">
-    **Characteristics:**
-    - Sharp acceleration peaks during engagement
-    - High jerk values at start/stop
-    - Simple manufacturing and assembly
-    **Applications:** Moderate speed, robust operation
+  <Card title="Inertia forces" icon="warning">
+  Every acceleration demands a force, $F = ma$. At speed these inertia forces dominate the loads on pins and bearings.
   </Card>
-  <Card title="Modified Geneva Drive">
-    **Improvements:**
-    - Curved engagement paths reduce jerk
-    - Optimized slot geometry for smooth motion  
-    - More complex manufacturing requirements
-    **Applications:** High-speed, precision systems
+  <Card title="Vibration and balancing" icon="setting">
+  Unbalanced inertia forces shake the machine. Predicting them is the first step to counterweights and balance shafts.
   </Card>
-  <Card title="Servo-Driven Alternative">
-    **Advantages:**
-    - Programmable motion profiles
-    - Infinite adjustment capability
-    - Integrated feedback control
-    **Considerations:** Higher cost, more complex control
-
+  <Card title="Smoothness and jerk" icon="puzzle">
+  The rate of change of acceleration (jerk) governs how harsh a motion feels and how much a structure rings.
+  </Card>
+  <Card title="Actuator sizing" icon="rocket">
+  An actuator must supply both the static load and the inertia load. The acceleration sets the dynamic part.
   </Card>
 </CardGrid>
 
-### Design Guidelines for Dynamic Performance
-
-<Steps>
-1. **Minimize Mass and Inertia**
-   - Use lightweight materials (aluminum, carbon fiber)
-   - Optimize cross-sections for strength-to-weight ratio
-   - Consider hollow shafts and structures
-
-2. **Optimize Acceleration Profiles**
-   - Smooth engagement/disengagement transitions
-   - Limit peak accelerations to acceptable levels
-   - Consider modified cam profiles for jerk reduction
-
-3. **Robust Bearing Design**
-   - Size bearings for peak dynamic loads
-   - Use high-quality bearings with adequate load ratings
-   - Consider preloaded arrangements for precision
-
-4. **Vibration Isolation**
-   - Isolate high-acceleration components from base structure
-   - Use damping materials to absorb dynamic energy
-   - Balance rotating components to minimize vibration
-</Steps>
-
-## Computational Dynamic Analysis
+## Fundamental Theory: Acceleration by Differentiating the Loop
 
 <InArticleAd />
 
 
-### Modern Analysis Tools
+### One More Derivative
 
-<Tabs>
-  <TabItem label="Multibody Dynamics">
-    
-    **Adams/MSC Software:**
-    - Complete dynamic simulation capability
-    - Automatic force and acceleration calculations
-    - Optimization tools for design refinement
-    
-    **Simulink/SimMechanics:**
-    - MATLAB-based dynamic modeling
-    - Control system integration capability
-    - Parametric design studies
-    
-  </TabItem>
-  <TabItem label="FEA Integration">
-    
-    **ANSYS Workbench:**
-    - Couples mechanism dynamics with structural FEA
-    - Stress analysis under dynamic loading
-    - Fatigue life prediction
-    
-    **SolidWorks Simulation:**
-    - CAD-integrated dynamic analysis
-    - Motion study with force transfer to FEA
-    - Design optimization workflows
-    
-  </TabItem>
-  <TabItem label="Control Integration">
-    
-    **LabVIEW/Control Design:**
-    - Real-time control system simulation
-    - Hardware-in-the-loop testing
-    - Servo system integration
-    
-    **MATLAB/Control Toolbox:**
-    - Advanced control algorithm development
-    - System identification from dynamic models
-    - Performance optimization
-    
-  </TabItem>
-</Tabs>
+Acceleration analysis differentiates the velocity loop exactly as velocity analysis differentiated the position loop. Each link's acceleration splits into two parts:
 
-### Programming Dynamic Analysis
+<Card title="Normal and Tangential Components" icon="document">
+A point on a link rotating at angular velocity $\omega$ and angular acceleration $\alpha$, a distance $r$ from the pivot, has acceleration with two parts:
 
-**Python Example for Geneva Mechanism Analysis:**
+$$a^n = \omega^2 r \quad (\text{normal, toward the pivot}), \qquad a^t = \alpha r \quad (\text{tangential, perpendicular to the link})$$
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
+The **normal** (centripetal) part exists whenever the link rotates, even at constant speed. The **tangential** part exists only when the link speeds up or slows down. Their vector sum is the link's acceleration.
+</Card>
 
-def geneva_dynamics(t, R, r, omega_drive, I_geneva, m_load):
-    """Calculate Geneva mechanism dynamic forces"""
-    
-    # Drive wheel angle
-    theta = omega_drive * t
-    
-    # Geneva wheel angular velocity and acceleration
-    phi = np.arctan2(R*np.sin(theta), r - R*np.cos(theta))
-    omega_geneva = omega_drive * R * np.cos(phi) / r
-    alpha_geneva = np.gradient(omega_geneva, t)
-    
-    # Inertial forces and moments
-    M_inertial = I_geneva * alpha_geneva
-    a_tangential = alpha_geneva * r
-    F_inertial = m_load * a_tangential
-    
-    return omega_geneva, alpha_geneva, M_inertial, F_inertial
+<Card title="The Relative-Acceleration Equation" icon="document">
+For two points on the same rigid link,
 
-# System parameters
-R = 0.06    # Drive radius (m)
-r = 0.08    # Geneva radius (m)
-omega_drive = 31.4  # Drive speed (rad/s)
-I_geneva = 0.016    # Geneva inertia (kg⋅m²)
-m_load = 3.0        # Load mass (kg)
+$$\vec a_B = \vec a_A + \vec a_{B/A}^{\,n} + \vec a_{B/A}^{\,t}$$
 
-# Time array for one complete cycle
-t = np.linspace(0, 2*np.pi/omega_drive, 1000)
+where $a_{B/A}^{n} = \omega^2 L_{AB}$ points from $B$ to $A$, and $a_{B/A}^{t} = \alpha L_{AB}$ is perpendicular to $AB$. This is the equation the acceleration polygon draws.
+</Card>
 
-# Calculate dynamics
-omega_g, alpha_g, M_i, F_i = geneva_dynamics(t, R, r, omega_drive, I_geneva, m_load)
+:::note[A note on Coriolis]
+When a block slides along a link that is itself rotating, a third term appears: the **Coriolis acceleration** $a^{c} = 2\,\omega v_{\text{slip}}$, perpendicular to the slip velocity. None of the four mechanisms in this course has a block sliding on a rotating link (the slider-crank's piston slides on the fixed frame, so its Coriolis term is zero), but the term matters for quick-return and Geneva mechanisms, noted at the end.
+:::
 
-# Plot results
-fig, axes = plt.subplots(2, 2, figsize=(12, 8))
-axes[0,0].plot(t*omega_drive*180/np.pi, omega_g)
-axes[0,0].set_title('Geneva Angular Velocity')
-axes[0,1].plot(t*omega_drive*180/np.pi, alpha_g)
-axes[0,1].set_title('Geneva Angular Acceleration')
-axes[1,0].plot(t*omega_drive*180/np.pi, M_i)
-axes[1,0].set_title('Inertial Moment')
-axes[1,1].plot(t*omega_drive*180/np.pi, F_i)
-axes[1,1].set_title('Inertial Force')
-```
+### The Acceleration Polygon
 
-## Real-World Design Case Study
+The acceleration polygon is built exactly like the velocity polygon, but each relative-acceleration vector now has two parts laid down in sequence: first the **normal** part (known from the velocity analysis, since $a^n = \omega^2 L$), then the **tangential** part (unknown magnitude, known direction). The intersection closes the polygon and gives both the unknown tangential accelerations and the output acceleration.
+
+### From Acceleration to Force: d'Alembert
+
+<Card title="Inertia Force and d'Alembert's Principle" icon="document">
+Newton's second law says $\sum \vec F = m\vec a$. d'Alembert rewrites this as a statics problem by adding an **inertia force** $-m\vec a$ (and an inertia torque $-I\alpha$) to each link, so that the link is treated as if in equilibrium:
+
+$$\sum \vec F + (-m\vec a) = 0$$
+
+The inertia force acts opposite to the acceleration, through the centre of mass. Once the accelerations are known, the dynamic bearing loads follow from a static force balance with these inertia forces included (the [force analysis](./force-analysis-mechanism-synthesis) carries this through to the joint reactions).
+</Card>
+
+## Application 1: Piston Acceleration of the Slider-Crank
 
 <InArticleAd />
 
 
-### High-Speed Pharmaceutical Packaging System
+This is the central worked example. We build the acceleration polygon on top of the velocity polygon, then confirm with the closed-form acceleration and the simulator.
 
-**System Requirements:**
-- **Production Rate**: 600 bottles/minute (10 Hz)
-- **Indexing Accuracy**: \pm0.05mm
-- **Product Mass**: 0.2 kg per bottle
-- **Stations**: 12 (30° indexing increments)
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
+</div>
 
-**Design Solution:**
+**Hands-on lab:** Continue in the [Crank-Slider Experiments](/education/mechanism-design-simulation/crank-slider-experiments/) lab ([siwit.co/CSM](https://siwit.co/CSM)). The acceleration chart there plots the profile derived below.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** In-line slider-crank, offset $e = 0$
+- **Task:** Find the piston acceleration over a full rotation and locate its peak
+- **Geometry:** crank $r = 50$ mm, connecting rod $l = 150$ mm ($l/r = 3$)
+- **Input:** constant crank speed $\omega$ (so the crank has no angular acceleration)
+
+**Key Question:** Where is the piston acceleration largest, and how does the connecting rod split it into two harmonics?
+:::
+
+### Step 1: Build the Acceleration Polygon
+
+Construct it on the velocity polygon from the [velocity analysis](./velocity-analysis-instantaneous-centers), at the same instant $\theta = 60\degree$.
+
+<details>
+<summary>**Click to reveal the acceleration-polygon construction**</summary>
 
 <Steps>
-1. **Geneva Mechanism Sizing:**
-   - 12-slot Geneva wheel for 30° increments
-   - Drive radius optimized for smooth engagement
-   - High-precision machining for accuracy requirements
 
-2. **Dynamic Analysis Results:**
-   - Peak Geneva acceleration: 245 rad/s²
-   - Maximum inertial force per bottle: 147 N
-   - Total bearing load: 1.76 kN dynamic + static loads
+1. **Crank-pin acceleration.** With the crank at constant speed, the crank pin $A$ has only a normal (centripetal) acceleration $a_A = \omega^2 r$, directed from $A$ toward the centre $O$. From the pole $o'$ draw $o'a' = a_A$. ✅
 
-3. **Optimization Strategies:**
-   - Lightweight bottle carriers (aluminum)
-   - Servo-driven alternative evaluated for comparison
-   - Active vibration dampening system implemented
+2. **Normal part of the rod.** The connecting rod's relative-acceleration normal part is $a_{B/A}^{\,n} = \omega_3^2\,l$, directed from $B$ toward $A$, using $\omega_3$ from the velocity analysis. Add it from $a'$. It is small here because the rod turns slowly. ✅
 
-4. **Performance Validation:**
-   - Prototype testing confirmed ±0.03mm accuracy
-   - Vibration levels 60% below specification limits
-   - 50% increase in production rate over previous system
+3. **Tangential part and closure.** From the end of the normal part, draw the tangential direction (perpendicular to the rod). The piston acceleration $a_B$ is horizontal (the piston slides), so draw the horizontal through $o'$. Their intersection is $b'$. ✅
+
+4. **Measure.** $o'b' = a_B$ is the piston acceleration. At $\theta = 60\degree$ it reads about $0.33\,r\omega^2$ in magnitude, matching Step 2. ✅
+
 </Steps>
 
-## Summary and Design Guidelines
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Slider-crank acceleration polygon at 60 degrees: a_A from the pole, the small normal and the tangential relative components, closing to the piston acceleration a_B](./images/l4-slider-crank-accel-polygon.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Confirm by Differentiation
+
+<details>
+<summary>**Click to reveal the closed-form piston acceleration**</summary>
+
+<Steps>
+
+1. **Differentiate the piston velocity** (constant $\omega$). The standard result, accurate to about two percent for $l/r = 3$, is:
+
+   $$a_P = -r\omega^2\left(\cos\theta + \frac{r}{l}\cos 2\theta\right)$$ ✅
+
+   The first term is the **primary** acceleration (once per revolution); the second is the **secondary** (twice per revolution) from the connecting rod.
+
+2. **Tabulate** $a_P/(r\omega^2)$ for $l/r = 3$: ✅
+
+   | Crank $\theta$ | $a_P/(r\omega^2)$ |
+   |:---:|:---:|
+   | 0&#176; (TDC) | **-1.333** (peak) |
+   | 30&#176; | -1.033 |
+   | 60&#176; | -0.333 |
+   | 90&#176; | +0.333 |
+   | 120&#176; | +0.667 |
+   | 180&#176; (BDC) | +0.667 |
+
+3. **Read the peaks.** The largest acceleration is at **top-dead-centre**, $a_P = (1 + r/l)\,r\omega^2 = 1.33\,r\omega^2$, and at bottom-dead-centre it is $(1 - r/l)\,r\omega^2 = 0.67\,r\omega^2$. The two ends differ because the secondary term adds at TDC and subtracts at BDC. At $\theta = 60\degree$, $a_P = -0.33\,r\omega^2$, matching the polygon. ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/CSM](https://siwit.co/CSM)), set $r = 50$, $l = 150$, $e = 0$, and read the acceleration chart. ✅
+
+2. **Confirm** the peak-to-peak split: the TDC peak is about twice the BDC peak ($1.33$ versus $0.67$ times $r\omega^2$), the signature of the secondary harmonic. ✅
+
+3. **Lengthen the rod.** Increasing $l/r$ shrinks the secondary term, bringing the two peaks closer together and smoothing the motion. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The connecting rod splits the piston acceleration into a primary and a secondary harmonic, and the secondary makes the top-dead-centre acceleration larger than the bottom. This asymmetry is the root of engine vibration and is taken up as a force in Application 4.
+:::
+
+## Application 2: Angular Accelerations of the Four-Bar
+
+<InArticleAd />
+
+
+For the four-bar we differentiate the velocity loop once more and build the acceleration polygon to find the coupler and follower angular accelerations.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/four-bar-linkage-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Four-Bar Linkage Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Four-Bar Linkage Experiments](/education/mechanism-design-simulation/four-bar-linkage-experiments/) lab ([siwit.co/FBL](https://siwit.co/FBL)). Experiment 7 covers the angular accelerations and inertia forces.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Crank-rocker four-bar (the standard four-bar geometry), constant crank speed
+- **Task:** Find the coupler and follower angular accelerations $\alpha_3$, $\alpha_4$
+- **Link lengths:** $a = 40$, $b = 120$, $c = 80$, $d = 100$ mm
+- **Input:** $\theta_2 = 120\degree$, with $\omega_3/\omega_2 = 0.139$, $\omega_4/\omega_2 = 0.514$ from the velocity analysis
+:::
+
+### Step 1: Build the Acceleration Polygon
+
+<details>
+<summary>**Click to reveal the acceleration-polygon construction**</summary>
+
+<Steps>
+
+1. **Crank pin.** At constant crank speed, $a_A = \omega_2^2\,a$ directed from $A$ to $O_2$. Draw $o'a'$. ✅
+
+2. **Coupler normal.** Add $a_{B/A}^{\,n} = \omega_3^2\,b$ from $a'$, directed $B$ to $A$. ✅
+
+3. **Follower normal.** From the pole, the follower contributes $a_B^{\,n} = \omega_4^2\,c$ directed $B$ to $O_4$. ✅
+
+4. **Tangentials close it.** The two tangential directions (perpendicular to coupler and to follower) intersect at $b'$. Their measured lengths give $\alpha_3 b$ and $\alpha_4 c$. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Four-bar acceleration polygon at 120 degrees, with the crank centripetal acceleration, the coupler normal and tangential components, and the follower acceleration](./images/l4-four-bar-accel-polygon.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Confirm by the Acceleration Loop
+
+<details>
+<summary>**Click to reveal the closed-form angular accelerations**</summary>
+
+<Steps>
+
+1. **Differentiate the velocity loop** (with $\alpha_2 = 0$). The two equations are linear in $\alpha_3$ and $\alpha_4$:
+
+   $$-b\,\alpha_3\sin\theta_3 + c\,\alpha_4\sin\theta_4 = a\omega_2^2\cos\theta_2 + b\omega_3^2\cos\theta_3 - c\omega_4^2\cos\theta_4$$
+   $$b\,\alpha_3\cos\theta_3 - c\,\alpha_4\cos\theta_4 = a\omega_2^2\sin\theta_2 + b\omega_3^2\sin\theta_3 - c\omega_4^2\sin\theta_4$$ ✅
+
+2. **Solve** at $\theta_2 = 120\degree$ ($\omega_2 = 1$ rad/s):
+
+   $$\alpha_3 = +0.139 \text{ rad/s}^2, \qquad \alpha_4 = -0.117 \text{ rad/s}^2$$ ✅
+
+   The follower is decelerating ($\alpha_4 < 0$) at this instant even though it is still driving the output forward, which the simulator's angular-acceleration trace confirms.
+
+</Steps>
+
+</details>
+
+### Step 3: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/FBL](https://siwit.co/FBL)), set the standard four-bar link lengths, and read the angular-acceleration values at $\theta_2 = 120\degree$. ✅
+
+2. **Confirm** $\alpha_3 \approx +0.14$ and $\alpha_4 \approx -0.12$ rad/s² (per unit crank speed), matching the loop solution. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+Each angular acceleration multiplied by a link's mass moment of inertia is an inertia torque, and each link's mass times its centre-of-mass acceleration is an inertia force. The acceleration polygon is therefore the direct input to the [dynamic force analysis](./force-analysis-mechanism-synthesis).
+:::
+
+## Application 3: Platform Acceleration of the Scissor Lift
+
+<InArticleAd />
+
+
+The scissor lift shows that a constant actuator rate does not give a constant platform motion: a centripetal-type term appears from the geometry.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/scissor-lift-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Scissor Lift Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Scissor Lift Experiments](/education/mechanism-design-simulation/scissor-lift-experiments/) lab ([siwit.co/SLM](https://siwit.co/SLM)). The acceleration and power charts plot the relation below.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Single-stage scissor lift, arm $L = 300$ mm, $n = 1$
+- **Task:** Relate platform acceleration to the scissor angular rate and its rate of change
+:::
+
+### Step 1: Differentiate the Velocity Twice
+
+<details>
+<summary>**Click to reveal the platform acceleration**</summary>
+
+<Steps>
+
+1. **From the platform velocity** $v = nL\cos\theta\,\dot\theta$, differentiate again:
+
+   $$a_\text{platform} = nL\left(\cos\theta\,\ddot\theta - \sin\theta\,\dot\theta^2\right)$$ ✅
+
+2. **Read the two terms.** The first, $nL\cos\theta\,\ddot\theta$, is the tangential part, present only when the scissor angle is speeding up. The second, $-nL\sin\theta\,\dot\theta^2$, is a centripetal-type term present **even at a constant angular rate** ($\ddot\theta = 0$), and it always acts downward. So a lift raised at a steady angular rate still decelerates as it nears full height. ✅
+
+3. **Actuator consequence.** The actuator must supply the platform weight plus the inertia force $m\,a_\text{platform}$. Near the flat position, where the mechanical advantage is poor ([force analysis](./force-analysis-mechanism-synthesis)), this dynamic term adds appreciably to the actuator load. ✅
+
+</Steps>
+
+</details>
+
+### Step 2: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/SLM](https://siwit.co/SLM)) and run it at a fixed actuator speed. ✅
+
+2. **Confirm** that the platform acceleration is non-zero even where the angular rate is steady, and that the power trace rises where acceleration and velocity are both large. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The $-\sin\theta\,\dot\theta^2$ term is the same kind of centripetal acceleration the normal component captures in the polygons: a consequence of rotation that exists without any speeding up. It is why even smooth, constant-rate machines still impose inertia loads.
+:::
+
+## Application 4: Inertia and Shaking Forces
+
+<InArticleAd />
+
+
+Acceleration becomes force through $F = ma$. For the slider-crank this produces the shaking force that engine balancing is designed to cancel.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Crank-Slider Experiments](/education/mechanism-design-simulation/crank-slider-experiments/) lab ([siwit.co/CSM](https://siwit.co/CSM)). Experiment 6 (force analysis and motor sizing) builds on the inertia forces below.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Slider-crank with reciprocating mass $m$ at the piston, constant crank speed
+- **Task:** Find the shaking force along the cylinder axis and its two harmonics
+:::
+
+### Step 1: From Acceleration to Shaking Force
+
+<details>
+<summary>**Click to reveal the shaking-force harmonics**</summary>
+
+<Steps>
+
+1. **Apply** $F = ma$ to the reciprocating mass using the piston acceleration from Application 1:
+
+   $$F_\text{shake} = m\,a_P = m r\omega^2\left(\cos\theta + \frac{r}{l}\cos 2\theta\right)$$ ✅
+
+2. **Split into harmonics:**
+
+   $$F_\text{primary} = m r\omega^2\cos\theta \quad (\text{once per rev}), \qquad F_\text{secondary} = m r\omega^2\frac{r}{l}\cos 2\theta \quad (\text{twice per rev})$$ ✅
+
+3. **Balancing.** The **primary** force can be largely cancelled by a counterweight on the crank. The **secondary** force runs at twice engine speed and cannot be cancelled by a simple counterweight; it is why inline-four engines use **balance shafts** spinning at twice crank speed. The secondary is smaller by the factor $r/l$, so a longer rod also reduces it. ✅
+
+</Steps>
+
+</details>
+
+### Step 2: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/CSM](https://siwit.co/CSM)) and read the force and crank-torque charts. ✅
+
+2. **Confirm** that the force trace peaks at top-dead-centre (where acceleration peaks) and that its shape is the primary cosine plus a smaller twice-frequency ripple. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The shaking force is the inertia force of Application 1 seen from the engine block. Its primary part sets the size of the crank counterweights; its secondary part, at twice the running frequency, is the reason high-refinement engines carry balance shafts. Every number traces back to the piston acceleration you drew in the polygon.
+:::
+
+## A Note on Intermittent-Motion Mechanisms
+
+<InArticleAd />
+
+
+:::note[Geneva mechanisms and high acceleration]
+Not every mechanism runs smoothly. A **Geneva mechanism** converts continuous rotation into a step-and-dwell indexing motion, and during each index the driven wheel accelerates and decelerates sharply. Because the motion starts and stops, the acceleration peaks (and the jerk) are high, and they involve a Coriolis term as the drive pin slides in the slot. The same acceleration-then-force method applies: the sharp accelerations create large inertia torques that the indexing drive and its bearings must withstand, which is why high-speed indexers move to modified Geneva profiles or servo-driven cams. The four canonical mechanisms of this course carry the methods; the Geneva is where they are pushed hardest.
+:::
+
+## Design Guidelines for Acceleration and Dynamic Forces
+
+<InArticleAd />
+
+
+<CardGrid>
+  <Card title="Differentiate, don't restart" icon="rocket">
+  The acceleration loop is the differentiated velocity loop. Reuse the positions and velocities; only the tangential accelerations are new unknowns.
+  </Card>
+  <Card title="Size for the peak" icon="warning">
+  Inertia loads peak where acceleration peaks (top-dead-centre for the slider-crank). Size pins, rods, and bearings for that worst case.
+  </Card>
+  <Card title="Mind the second harmonic" icon="setting">
+  The secondary term scales with $r/l$ and runs at twice speed. A longer connecting rod or a balance shaft tames it.
+  </Card>
+  <Card title="Constant rate is not constant motion" icon="puzzle">
+  Centripetal and normal terms create acceleration even at steady input speed. Never assume a smoothly driven machine is inertia-free.
+  </Card>
+</CardGrid>
+
+## Summary and Next Steps
 
 <InArticleAd />
 
 
 ### Key Concepts Mastered
 
-1. **Acceleration Polygon Method**: Systematic approach for complex mechanism analysis
-2. **Dynamic Force Prediction**: Converting accelerations to inertial loads and bearing forces
-3. **Geneva Mechanism Optimization**: Balancing speed, precision, and dynamic performance
-4. **Jerk Minimization**: Designing for smooth motion and reduced wear
+1. **Acceleration loop:** one more derivative of the velocity loop, with normal ($\omega^2 r$) and tangential ($\alpha r$) components.
+2. **Acceleration polygon:** the normal parts are known from the velocity analysis; the tangential parts close the polygon.
+3. **Piston acceleration:** $a_P = -r\omega^2(\cos\theta + \tfrac{r}{l}\cos 2\theta)$, peaking at top-dead-centre at $(1 + r/l)\,r\omega^2$.
+4. **Inertia and shaking forces:** $F = ma$ turns accelerations into the loads that vibrate machines, split into a primary and a balance-shaft-requiring secondary harmonic.
 
-### Professional Design Principles
+### Acceleration Results at a Glance
 
-<CardGrid>
-  <Card title="Dynamic Design Philosophy" icon="rocket">
-    **Principle:** Minimize accelerations to reduce dynamic forces
-    **Method:** Optimize motion profiles and link geometry
-    **Validation:** Computational analysis and prototype testing
-  </Card>
-  <Card title="System Integration" icon="setting">
-    **Challenge:** Balance dynamic performance with overall system requirements
-    **Solution:** Holistic system-level optimization
-    **Tools:** Multibody dynamics simulation platforms
-  </Card>
-  <Card title="Precision vs. Speed" icon="puzzle">
-    **Trade-off:** Higher speeds increase dynamic forces and reduce precision
-    **Optimization:** Find optimal operating point for application requirements
-    **Alternative:** Consider servo-driven systems for ultimate performance
-  </Card>
-  <Card title="Maintenance Design" icon="warning">
-    **Consideration:** Dynamic forces directly affect component life
-    **Design:** Size bearings and structures for peak loads
-    **Strategy:** Preventive maintenance based on dynamic load cycles
-  </Card>
-</CardGrid>
+| Mechanism | What you solve for | Key relation | Simulator |
+|-----------|--------------------|--------------|-----------|
+| Slider-crank | piston acceleration | $a_P = -r\omega^2(\cos\theta + \tfrac{r}{l}\cos 2\theta)$ | [siwit.co/CSM](https://siwit.co/CSM) |
+| Four-bar | $\alpha_3$, $\alpha_4$ | acceleration loop (linear) | [siwit.co/FBL](https://siwit.co/FBL) |
+| Scissor lift | platform acceleration | $a = nL(\cos\theta\,\ddot\theta - \sin\theta\,\dot\theta^2)$ | [siwit.co/SLM](https://siwit.co/SLM) |
+| Slider-crank | shaking force | primary $+$ secondary harmonics | [siwit.co/CSM](https://siwit.co/CSM) |
 
-:::tip[Industry Best Practice]
-**"Design for the peak dynamic loads, optimize for the average operation."** - Size components for maximum dynamic forces but optimize geometry and control for best average performance throughout operating cycles.
-:::
+### A Note on Tools
 
-### Real-World Applications
+Every acceleration here was drawn as a polygon, confirmed by hand calculation, and reproduced with a few lines of Python (NumPy). The simulators confirm the same profiles. No specialised dynamics software is needed; the method is one derivative beyond velocity.
 
-**Packaging and Assembly:**
-- Food processing: Filling, sealing, labeling equipment
-- Pharmaceutical: Tablet counting, blister packaging systems
-- Electronics: Component placement, testing stations
-
-**Manufacturing Automation:**
-- CNC tool changers: High-precision indexing mechanisms
-- Welding systems: Rotary positioners with accurate indexing
-- Quality control: Inspection station indexing tables
-
-**Material Handling:**
-- Conveyor indexing: Precise positioning for processing
-- Sorting systems: High-speed product diversion mechanisms
-- Robotic systems: Precise joint positioning and tool changing
-
-**Coming Next**: In Lesson 5, we'll explore cam-follower systems and motion programming for CNC machine tools, where we'll design custom motion profiles and optimize pressure angles for automated manufacturing processes.
+Next, [Cam-Follower Systems and Motion Programming](./cam-follower-systems-motion-programming) inverts the problem: instead of analysing a given linkage, you specify the motion you want (its displacement, velocity, acceleration, and jerk) and design the cam surface that produces it.
 
 
 

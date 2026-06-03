@@ -1,157 +1,121 @@
 ---
 title: Planar Mechanics
-description: Understanding kinematic and dynamic analysis of planar mechanisms in mechatronic systems for robotic arms, manufacturing equipment, and automated machinery
+description: Kinematic and dynamic analysis of planar mechanisms (four-bar linkage, slider-crank, scissor lift, toggle clamp) for robotics, manufacturing, and automotive systems, with interactive simulators and Python labs.
+heroImage: "https://cdn.siliconwit.com/product-development/2d-mechanisms-analyzer/crank-slider-mechanism-simulator.png"
 ---
 
 import Copyright from '../../../../components/Copyright.astro';
 import TawkWidget from '../../../../components/TawkWidget.astro';
-import { Card, CardGrid, Badge } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, LinkButton } from '@astrojs/starlight/components';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import { Steps } from '@astrojs/starlight/components';
 
-**Planar Mechanics**, also called **2D Kinematics**, **Planar Mechanism Analysis**, or **Two-Dimensional Machine Design**, is the branch of engineering that studies motion and force transmission in planar mechanical systems. This fundamental discipline provides the analytical foundation for designing precise, reliable mechatronic systems from robotic arms and manufacturing equipment to automated machinery and automotive components.
+Planar mechanics is the study of how machines move and transmit force in a two-dimensional plane. It is the analytical foundation behind robotic arms, engines, lift platforms, clamps, and most of the linkages inside everyday machines.
 
-This course explores how mechanical systems move and transmit forces in two-dimensional space—knowledge essential for designing sophisticated mechatronic systems that require controlled motion, precise positioning, and optimized force transmission.
+This course teaches that analysis through four mechanisms you return to in every lesson: the **four-bar linkage**, the **slider-crank**, the **scissor lift**, and the **toggle clamp**. Rather than meeting a new example each week, you study these four in depth, viewing each through a different question: first whether it moves, then where each link is positioned, how fast the links move, how hard they accelerate, and what forces that motion demands. Every result you work out by hand can be checked in an interactive simulator.
 
-## Lesson Structure & Approach
+## What Each Lesson Answers
 
-Each lesson follows our systems-based pedagogical approach:
+Each lesson applies one analytical lens to the same mechanisms. The questions build on each other.
 
-<Steps>
-1. **🔧 Real-World System Problem**
-   Begin with complete mechatronic systems (robotic arms, manufacturing equipment, automotive systems) facing specific kinematic and dynamic challenges.
+| Lesson | The one question it answers | The skill you gain |
+|--------|-----------------------------|--------------------|
+| **1. [Kinematic Joints and Constraint Analysis](./kinematic-joints-constraint-analysis)** | Will it move, and how many motors does it need? | Count degrees of freedom, classify joints, recognise over-constraint |
+| **2. [Position Analysis of Planar Linkages](./position-analysis-planar-linkages)** | Where is every link? | Solve vector loop equations for any configuration |
+| **3. [Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers)** | How fast is each part moving? | Find velocities by differentiation and by instantaneous centers |
+| **4. [Acceleration Analysis and Dynamic Forces](./acceleration-analysis-dynamic-forces)** | How fast is the motion changing, and what force does that take? | Find accelerations and the inertia forces they create |
+| **5. [Cam-Follower Systems and Motion Programming](./cam-follower-systems-motion-programming)** | How do I design a shape that produces a chosen motion? | Program follower motion and generate cam profiles |
+| **6. [Force Analysis and Mechanism Synthesis](./force-analysis-mechanism-synthesis)** | What forces flow through the mechanism, and how do I design for them? | Size actuators and links, then synthesise new mechanisms |
 
-2. **📚 Fundamental Theory**
-   Develop the mathematical and kinematic principles needed to analyze and solve the planar motion problem.
+## How the Lessons Build on Each Other
 
-3. **🎯 System Application**
-   Apply theory to the original system with step-by-step kinematic solutions and design verification.
+Lessons 2 to 4 share a single thread. You write a mechanism's vector loop equation once in Lesson 2, differentiate it once for velocity in Lesson 3, and differentiate it again for acceleration in Lesson 4. Lesson 6 then turns to the forces that motion requires, and to the reverse problem of designing a mechanism to meet a specification. Lesson 5 covers the one case where you design the motion directly: the cam profile.
 
-4. **🛠️ Design Guidelines**
-   Extract practical rules and best practices for professional planar mechanism design.
-</Steps>
+Because the mechanisms stay the same, concepts are introduced once and reused. Lesson 1 defines the mechanisms and their joints; later lessons refer back to them instead of starting over.
 
-## Learning Path
+## The Mechanisms You Will Master
 
-<Steps>
-1. **Build Kinematic Foundations**
-   Master joint analysis and degrees of freedom that form the basis for all planar mechanism design.
-
-2. **Understand Position Relationships**
-   Learn geometric constraints and position analysis for complex linkage systems.
-
-3. **Apply Motion Analysis**
-   Use velocity and acceleration analysis methods for dynamic system optimization.
-
-4. **Design Real Systems**
-   Apply planar mechanics principles to advanced mechatronic challenges including cam systems and force optimization.
-</Steps>
-
-## Course Structure
-
-This course is organized around recurring mechatronic systems for coherent knowledge building:
-
-<Tabs>
-  <TabItem label="Foundation & Analysis">
-    <Steps>
-    1. **[Kinematic Joints and Constraint Analysis](./kinematic-joints-constraint-analysis)**
-       > Master [**joint types**](./kinematic-joints-constraint-analysis) and [**degrees of freedom**](./kinematic-joints-constraint-analysis) through modular robotic arm design, covering Grübler's equation and joint selection guidelines.
-    
-    2. **[Position Analysis of Planar Linkages](./position-analysis-planar-linkages)**
-       > Learn [**vector loop equations**](./position-analysis-planar-linkages) and [**geometric constraints**](./position-analysis-planar-linkages) through four-bar linkage suspension system optimization.
-    
-    3. **[Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers)**
-       > Explore [**velocity polygons**](./velocity-analysis-instantaneous-centers) and [**relative motion**](./velocity-analysis-instantaneous-centers) in crank-slider engine/compressor mechanisms.
-    </Steps>
-  </TabItem>
-  <TabItem label="Dynamics & Synthesis">
-    <Steps>
-    1. **[Acceleration Analysis and Dynamic Forces](./acceleration-analysis-dynamic-forces)**
-       > Study [**acceleration polygons**](./acceleration-analysis-dynamic-forces) and [**dynamic loading**](./acceleration-analysis-dynamic-forces) through Geneva mechanism indexing systems.
-    
-    2. **[Cam-Follower Systems and Motion Programming](./cam-follower-systems-motion-programming)**
-       > Design [**cam profiles**](./cam-follower-systems-motion-programming) and [**motion laws**](./cam-follower-systems-motion-programming) for CNC machine tool automation.
-    
-    3. **[Force Analysis and Mechanism Synthesis](./force-analysis-mechanism-synthesis)**
-       > Master [**static force analysis**](./force-analysis-mechanism-synthesis) and [**mechanism synthesis**](./force-analysis-mechanism-synthesis) for multi-DOF robotic manipulator systems.
-    </Steps>
-  </TabItem>
-</Tabs>
-
-## Primary Focus Systems
-
-Throughout this course, we analyze five core mechatronic systems from multiple perspectives:
+You analyse these four mechanisms from a new angle in each lesson. Each has an interactive simulator for checking your work.
 
 <CardGrid>
-  <Card title="Crank-Slider Mechanisms" icon="rocket">
-    **Applications:** Engines, compressors, linear actuators
-    **Analysis:** Lessons 1, 3, 4 - Position → Velocity → Acceleration
+  <Card title="Four-Bar Linkage" icon="setting">
+    **Where it is used:** robotic arms, windshield wipers, suspensions, grippers
+
+    **Analysed in:** Lessons 1, 2, 3, 4, 6 (mobility, position, velocity, acceleration, force)
   </Card>
-  <Card title="Four-Bar Linkages" icon="setting">
-    **Applications:** Robotic arms, automotive suspensions, manufacturing fixtures
-    **Analysis:** Lessons 1, 2, 6 - DOF → Position → Force synthesis
+  <Card title="Slider-Crank" icon="rocket">
+    **Where it is used:** engines, pumps, compressors, presses
+
+    **Analysed in:** Lessons 1, 2, 3, 4, 6 (the classic rotation-to-translation converter)
   </Card>
-  <Card title="Geneva Mechanisms" icon="puzzle">
-    **Applications:** Indexing tables, conveyor systems, packaging automation
-    **Analysis:** Lessons 1, 4 - Constraints → Dynamic forces
+  <Card title="Scissor Lift" icon="puzzle">
+    **Where it is used:** work platforms, lift tables, dock levellers
+
+    **Analysed in:** Lessons 1, 2, 3, 4, 6 (height, motion, actuator force, stability)
   </Card>
-  <Card title="Cam-Follower Systems" icon="document">
-    **Applications:** Valve timing, CNC automation, manufacturing processes
-    **Analysis:** Lessons 5, 6 - Motion programming → Force optimization
+  <Card title="Toggle Clamp" icon="approve-check">
+    **Where it is used:** machining fixtures, riveters, crushers
+
+    **Analysed in:** Lessons 1, 3, 6 (self-locking, force amplification, stress sizing)
   </Card>
 </CardGrid>
 
-## Why Planar Mechanics Matters for Mechatronics
+Lesson 5 adds the **cam-follower**, the higher-pair mechanism used in valve trains, indexing tables, and automated machinery, where the goal is to design a surface that produces an exact, programmed motion.
+
+## Simulators and Hands-On Labs
+
+Every calculation in this course can be verified in the browser. Each mechanism has an interactive simulator, paired with a set of guided Python experiments in the [Mechanism Design and Simulation](/education/mechanism-design-simulation/) course.
 
 <CardGrid>
-  <Card title="Motion Control" icon="rocket">
-    Design mechanisms that convert rotary motor motion to precise linear or complex trajectories.
+  <Card title="Four-Bar Linkage Simulator" icon="open-book">
+    <LinkButton href="/product-development/four-bar-linkage-simulator/" target="_blank" variant="secondary" icon="external">Open simulator</LinkButton>
+    Experiments: [Four-Bar Linkage Experiments](/education/mechanism-design-simulation/four-bar-linkage-experiments/)
   </Card>
-  <Card title="Force Transmission" icon="setting">
-    Optimize linkage geometry for maximum force transfer with minimal actuator requirements.
+  <Card title="Crank-Slider Simulator" icon="open-book">
+    <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="secondary" icon="external">Open simulator</LinkButton>
+    Experiments: [Crank-Slider Experiments](/education/mechanism-design-simulation/crank-slider-experiments/)
   </Card>
-  <Card title="System Integration" icon="puzzle">
-    Integrate kinematic analysis with motor sizing and control system design for complete solutions.
+  <Card title="Scissor Lift Simulator" icon="open-book">
+    <LinkButton href="/product-development/scissor-lift-mechanism-simulator/" target="_blank" variant="secondary" icon="external">Open simulator</LinkButton>
+    Experiments: [Scissor Lift Experiments](/education/mechanism-design-simulation/scissor-lift-experiments/)
   </Card>
-  <Card title="Performance Optimization" icon="warning">
-    Minimize vibration, maximize speed, and ensure smooth operation in automated systems.
+  <Card title="Toggle Clamp Simulator" icon="open-book">
+    <LinkButton href="/product-development/toggle-clamp-mechanism-simulator/" target="_blank" variant="secondary" icon="external">Open simulator</LinkButton>
+    Experiments: [Toggle Clamp Experiments](/education/mechanism-design-simulation/toggle-clamp-experiments/)
   </Card>
 </CardGrid>
 
-## Expected Learning Outcomes
-
-By completing this course, students will be able to:
+## How Each Lesson Is Structured
 
 <Steps>
-1. **Analyze** any planar mechanism for position, velocity, and acceleration behavior
-2. **Design** mechanisms for specific motion requirements and performance criteria
-3. **Optimize** mechanism geometry for force transmission and dynamic performance
-4. **Select** appropriate mechanisms for diverse mechatronic applications
-5. **Integrate** kinematic analysis with motor sizing and control system design
+1. **Real-world system problem**
+   A working machine that depends on the lesson's analysis, with the specific question it raises.
+
+2. **Fundamental theory**
+   The mathematics and kinematics you need, derived from first principles.
+
+3. **Worked applications, drawn first**
+   Each problem is solved graphically before it is solved with equations: you draw the space diagram to scale, then the velocity diagram, then the acceleration diagram, and measure the answers off the page. The closed-form calculation and the simulator then confirm what you drew.
+
+4. **Design guidelines**
+   Practical rules for using the analysis in your own designs.
 </Steps>
 
-## Interactive Learning Tools
-
-Each lesson includes specialized interactive components:
-
-- **Joint DOF Calculator** - Real-time constraint analysis
-- **Four-Bar Position Visualizer** - Geometric relationship explorer
-- **Crank-Slider Velocity Animator** - Motion profile visualization
-- **Geneva Mechanism Plotter** - Acceleration curve analysis
-- **Cam Profile Designer** - Motion programming tool
-- **Robot Force Calculator** - Integrated system analysis
+:::note[What you will need]
+Keep a **drawing set** beside you: set squares, a compass, a protractor, and a scale rule. Every worked example is constructed to scale by hand first, because drawing the diagrams yourself builds the spatial intuition that the equations and simulators only confirm, and it is direct preparation for sketching in CAD. The reference figure in each Application is the answer key to check your own drawing against.
+:::
 
 ## Prerequisites
 
-Vector mechanics, basic calculus, and elementary physics concepts. Familiarity with engineering graphics and coordinate systems recommended.
+Vector mechanics, basic calculus, and elementary physics. The graphical work needs only a drawing set; the analysis scripts use Python with NumPy and Matplotlib, so a working knowledge of Python is helpful but not required to follow the worked solutions.
 
 ## Key Resources
 
-- **Textbooks**: "Theory of Machines and Mechanisms" (Uicker, Pennock & Shigley), "Kinematics and Dynamics of Machinery" (Wilson & Sadler)
-- **Software**: MATLAB/Simulink, SolidWorks Motion, Working Model
-- **Standards**: ASME, ISO mechanism design standards
+- **Interactive simulators and labs:** the four simulators above and the [Mechanism Design and Simulation](/education/mechanism-design-simulation/) experiments
+- **Programming:** Python with NumPy and Matplotlib for the analysis scripts
+- **Textbooks:** *Theory of Machines and Mechanisms* (Uicker, Pennock and Shigley), *Kinematics and Dynamics of Machinery* (Wilson and Sadler)
 
-Ready to begin? Navigate to the first lesson to start your journey into planar mechanics!
+Start with [Lesson 1: Kinematic Joints and Constraint Analysis](./kinematic-joints-constraint-analysis) to learn whether a mechanism moves before you analyse how it moves.
 
 <Copyright />
 <TawkWidget />

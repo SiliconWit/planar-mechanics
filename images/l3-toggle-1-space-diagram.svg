@@ -1,0 +1,20 @@
+<svg viewBox="0 0 432 414" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Toggle clamp four-bar skeleton at the over-centre position">
+<rect data-bg="1" x="0" y="0" width="432" height="414" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="82.0" y1="315.5" x2="262.0" y2="315.5" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round"/>
+<line x1="164.1" y1="90.0" x2="176.4" y2="56.2" stroke="#9ca3af" stroke-width="1.4" stroke-dasharray="3 3" stroke-linecap="round"/>
+<line x1="82.0" y1="315.5" x2="109.4" y2="240.4" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="109.4" y1="240.4" x2="164.1" y2="90.0" stroke="#d97706" stroke-width="2.6" stroke-linecap="round"/>
+<line x1="262.0" y1="315.5" x2="164.1" y2="90.0" stroke="#059669" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="82.0" cy="315.5" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/><path d="M 75.0 324.5 L 82.0 315.5 L 89.0 324.5 Z" fill="none" stroke="#374151" stroke-width="1.5"/><line x1="72.0" y1="324.5" x2="92.0" y2="324.5" stroke="#374151" stroke-width="1.5"/>
+<circle cx="262.0" cy="315.5" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/><path d="M 255.0 324.5 L 262.0 315.5 L 269.0 324.5 Z" fill="none" stroke="#374151" stroke-width="1.5"/><line x1="252.0" y1="324.5" x2="272.0" y2="324.5" stroke="#374151" stroke-width="1.5"/>
+<circle cx="109.4" cy="240.4" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/>
+<circle cx="164.1" cy="90.0" r="4.5" fill="#fff" stroke="#374151" stroke-width="2"/>
+<text x="31.7" y="279.9" fill="#2563eb" font-size="13" font-family="sans-serif" font-weight="600">handle</text>
+<text x="144.7" y="163.2" fill="#d97706" font-size="13" font-family="sans-serif" font-weight="600">main link</text>
+<text x="221.0" y="202.8" fill="#059669" font-size="13" font-family="sans-serif" font-weight="600">clamp arm</text>
+<text x="60.0" y="329.5" fill="#374151" font-size="14" font-family="sans-serif" font-weight="600">O<tspan baseline-shift="sub" font-size="70%">2</tspan></text>
+<text x="264.0" y="331.5" fill="#374151" font-size="14" font-family="sans-serif" font-weight="600">O<tspan baseline-shift="sub" font-size="70%">4</tspan></text>
+<text x="117.4" y="244.4" fill="#374151" font-size="14" font-family="sans-serif" font-weight="600">A</text>
+<text x="172.1" y="88.0" fill="#374151" font-size="14" font-family="sans-serif" font-weight="600">B</text>
+<text x="50" y="408" fill="#6b7280" font-size="11.5" font-family="sans-serif">Toggle position: handle and main link are collinear.</text>
+</svg>

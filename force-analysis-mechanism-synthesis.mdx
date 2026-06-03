@@ -1,10 +1,11 @@
 ---
 title: "Lesson 6: Force Analysis and Mechanism Synthesis"
-description: "Understanding static force analysis and mechanism synthesis through multi-DOF robotic manipulator system design and actuator optimization"
+description: "Find joint forces with free-body diagrams and force polygons, read mechanical advantage as the reciprocal of the velocity ratio, judge force quality by the transmission angle, size links and pins, then synthesise a mechanism for a target."
 contributors: "sam-macharia,andrew-kibor,jack-kojiro"
-pubDate: 2025-09-08
-tags: ["planar-mechanics", "force-analysis", "mechanism-synthesis", "robotic-manipulators", "actuator-sizing", "virtual-work"]
-excerpt: "Master complete mechanism design methodology by developing multi-DOF robotic manipulator systems, covering static force analysis, virtual work principles, and integrated synthesis approaches."
+pubDate: 2025-09-11
+tags: ["planar-mechanics", "force-analysis", "force-polygon", "transmission-angle", "stress-sizing", "mechanism-synthesis"]
+excerpt: "Close the course with statics: free-body diagrams and force polygons for joint reactions, mechanical advantage from the force side, transmission angle as force quality, link and pin stress sizing, and the synthesis that designs a mechanism to meet a target."
+heroImage: "https://cdn.siliconwit.com/product-development/2d-mechanisms-analyzer/toggle-clamp-mechanism-simulator.png"
 ---
 
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
@@ -23,678 +24,361 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-Kinematic analysis tells you where a mechanism moves and how fast; force analysis tells you what it takes to make it move and what loads it imposes on its joints and frame. Without force analysis, you cannot size bearings, select actuators, or verify that the structure can handle the loads. Mechanism synthesis goes further: instead of analyzing a given mechanism, you start with a desired motion or force requirement and work backward to find the link lengths, joint locations, and actuator sizes that satisfy it. In this lesson you will perform static force analysis on multi-DOF robotic manipulators using virtual work principles, then synthesize mechanisms to meet specified motion and force requirements. #ForceAnalysis #MechanismSynthesis #ActuatorSizing
+Five lessons told you how a mechanism moves. This one tells you what it costs in force, and how to design for it. A toggle clamp turns a light hand pull into a heavy clamping force; a scissor lift needs a hydraulic cylinder whose force runs away as the platform nears the floor; every pin and link must carry its load without breaking. Force analysis is statics done on the mechanism in a chosen position: free-body diagrams and force polygons give the joint reactions, the transmission angle warns where the force transmits badly, and stress sizing turns those forces into metal. The course then closes by running the whole process backward, synthesis: choosing a mechanism and its dimensions to meet a target. #ForceAnalysis #TransmissionAngle #MechanismSynthesis
 
 ## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
-1. **Analyze** static force transmission through complex planar mechanisms
-2. **Apply** virtual work principles for force and torque calculations
-3. **Size** actuators based on mechanism force requirements and mechanical advantage
-4. **Synthesize** complete mechanisms using integrated position, velocity, and force analysis
+1. **Find** joint reactions with free-body diagrams and force polygons
+2. **Relate** mechanical advantage to the velocity ratio through virtual work
+3. **Judge** force quality with the transmission angle and size links and pins for stress
+4. **Synthesise** a mechanism, choosing type and dimensions, to meet a force and motion target
 
-## Real-World System Problem: Multi-DOF Robotic Manipulator System
+## Real-World System Problem: From Motion to Metal
 
 <InArticleAd />
 
 
-<BionicText method="advanced" intensity="medium" class="highlight">
-The ultimate challenge in planar mechanism design is creating multi-DOF robotic manipulators that can handle complex tasks with precision, efficiency, and reliability. From surgical robots requiring nanometer precision to industrial robots moving heavy payloads at high speeds, the design process integrates all aspects of planar mechanics: joint analysis, position/velocity relationships, dynamic forces, and force transmission optimization.
-</BionicText>
+A toggle clamp on a machining fixture must hold a part down with several hundred newtons, applied by hand and held without effort while the tool cuts. The designer must answer: what hand force gives the required clamping force, what loads do the pins and links then carry, and are they strong enough? The same questions decide the hydraulic cylinder on a scissor lift and the motor on an engine. Motion analysis found the speeds and accelerations; now we find the forces they imply and the sizes they demand.
 
-### System Challenge: Complete Robot Design Integration
+### The Force Problem
 
-**Critical Engineering Problem:**
-- How do we determine actuator requirements for complex manipulation tasks?
-- What mechanism geometry provides optimal force transmission throughout the workspace?
-- How do we balance payload capacity, precision, speed, and energy efficiency?
-- Can we design robots that adapt their mechanical advantage based on task requirements?
+> **Engineering Question:** For a given input force or torque, what force appears at the output, what reactions load each joint, and are the links and pins strong enough?
 
-<Card title="🤖 Advanced Robotic Manipulator Challenge" icon="rocket">
-**Design Goal:** Create a 3-DOF planar robotic manipulator capable of handling 10 kg payloads with millimeter precision while minimizing actuator size and energy consumption.
+### Why Force Analysis Closes the Course
 
-**Key Requirements:**
-- **Payload Capacity**: 10 kg anywhere in workspace
-- **Positioning Precision**: \pm1.0 mm repeatability
-- **Workspace**: 1.2m × 0.8m rectangular envelope
-- **Speed**: 2 m/s maximum end-effector velocity
-- **Energy Efficiency**: Optimize actuator sizing for minimum power consumption
+<CardGrid>
+  <Card title="Mechanical advantage" icon="rocket">
+  The force ratio is the reciprocal of the [velocity ratio](./velocity-analysis-instantaneous-centers). Motion and force are two views of one machine.
+  </Card>
+  <Card title="Joint reactions" icon="setting">
+  Free-body diagrams and force polygons give the pin loads that bearings and links must carry.
+  </Card>
+  <Card title="Transmission angle" icon="warning">
+  It measures how much of the joint force does useful work. Near the bad zones a mechanism wastes force and wears.
+  </Card>
+  <Card title="Synthesis" icon="puzzle">
+  Run the analysis backward to choose a mechanism type and its link lengths so the target is met.
+  </Card>
+</CardGrid>
+
+## Fundamental Theory: Statics on a Mechanism
+
+<InArticleAd />
+
+
+### Free-Body Diagrams and the Force Polygon
+
+<Card title="The Force Polygon" icon="document">
+A link in static equilibrium has forces that sum to zero, so drawn tip to tail they **close into a polygon**. Two special cases do most of the work:
+
+- A **two-force member** (forces at only two joints, no other load) carries a force directed **along the line joining the joints**. The coupler of a four-bar and the main link of a toggle are two-force members.
+- A **three-force member** has three forces that must be **concurrent** (meet at one point) and close into a **force triangle**. Knowing the directions of all three and the magnitude of one, the triangle gives the other two by measurement.
+
+The force polygon is the statics counterpart of the velocity and acceleration polygons: the same draw-to-scale-and-measure method, now for forces.
 </Card>
 
-:::note[Industry Applications]
-Companies like **ABB**, **KUKA**, **Fanuc**, and **Universal Robots** design robotic systems using these principles for:
-- **Manufacturing**: Welding, assembly, material handling, quality inspection
-- **Medical**: Surgical assistance, rehabilitation, drug dispensing
-- **Service**: Cleaning, food service, logistics, personal assistance
-- **Research**: Laboratory automation, space exploration, hazardous environments
+### Mechanical Advantage by Virtual Work
+
+<Card title="Force Ratio is the Reciprocal of the Velocity Ratio" icon="document">
+An ideal (lossless) mechanism conserves power: input power equals output power. With $P = F v = T\omega$,
+
+$$F_\text{in}\,v_\text{in} = F_\text{out}\,v_\text{out} \quad\Rightarrow\quad \text{MA} = \frac{F_\text{out}}{F_\text{in}} = \frac{v_\text{in}}{v_\text{out}}$$
+
+The mechanical advantage is the **reciprocal of the velocity ratio** found in the [velocity analysis](./velocity-analysis-instantaneous-centers). Where the output slows (a limit or toggle position, velocity ratio toward zero), the mechanical advantage grows large. This is why the same toggle position that stopped the output in the velocity analysis amplifies force here. Real mechanisms lose a little to friction, so an efficiency $\eta < 1$ multiplies the ideal value.
+</Card>
+
+### Transmission Angle and Stress
+
+<Card title="Transmission Angle and Allowable Stress" icon="document">
+The **transmission angle** $\mu$ is the angle between the coupler and the follower at their joint. The component of the coupler force that drives the follower scales with $\sin\mu$, so $\mu$ near $90\degree$ transmits force well and $\mu$ near $0\degree$ or $180\degree$ transmits almost none. The usual guide is $\mu \ge 40\degree$ throughout the motion.
+
+Once a joint force $F$ is known, a **pin** of diameter $d$ in single shear carries $\tau = F/(\pi d^2/4)$, and a rectangular **link** of thickness $t$ and width $w$ under a bending moment $M$ carries $\sigma = M/Z$ with $Z = t w^2/6$. Both must stay under the **allowable stress** $\sigma_\text{all} = \sigma_\text{yield}/N$ for a safety factor $N$.
+</Card>
+
+## Application 1: Toggle-Clamp Force Amplification and Sizing
+
+<InArticleAd />
+
+
+This is the capstone worked example: from hand force to clamping force by force polygon, then the pin and link stresses.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/toggle-clamp-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Toggle Clamp Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Toggle Clamp Experiments](/education/mechanism-design-simulation/toggle-clamp-experiments/) lab ([siwit.co/TCM](https://siwit.co/TCM)). Experiments 2 and 4 cover force amplification and pin/link stress sizing.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Over-center toggle clamp (a four-bar), resting just past top-dead-centre
+- **Task:** Find the clamping force from the hand force, then size the pins and links
+- **Data:** hand force $F_h = 100$ N, lock margin $\alpha = 5\degree$ past centre, efficiency $\eta = 0.75$; pin $d = 8$ mm, link $t = 6$ mm, $w = 20$ mm, moment arm $L_\text{arm} = 40$ mm, yield $350$ MPa, safety factor $N = 2$
 :::
 
-### Why Force Analysis and Synthesis Matter
+### Step 1: Force Polygon for the Clamp Arm
 
-Complete mechanism design requires:
-- **Force Analysis**: Understanding load transmission and actuator requirements
-- **Mechanical Advantage**: Optimizing force/torque relationships throughout workspace
-- **Actuator Selection**: Right-sizing motors and drives for performance and efficiency
-- **System Integration**: Balancing all design requirements for optimal performance
-
-## Fundamental Theory: Static Force Analysis and Mechanism Synthesis
-
-<InArticleAd />
-
-
-To design complete robotic systems, we need systematic methods for analyzing forces and synthesizing optimal mechanisms.
-
-### What is Static Force Analysis?
-
-**Static force analysis** determines the forces and torques required at mechanism inputs to balance external loads applied to the mechanism.
-
-<Card title="⚖️ Static Force Analysis Definition" icon="document">
-**Static Force Analysis** answers the fundamental question:
-
-*"What input forces and torques are required to maintain equilibrium when external loads are applied to the mechanism?"*
-
-**Key Outputs:**
-- **Joint Reaction Forces**: Forces transmitted through mechanism joints
-- **Actuator Torques**: Required motor torques for given loads
-- **Mechanical Advantage**: Force amplification or reduction ratios
-- **System Efficiency**: Power transmission effectiveness
-</Card>
-
-### Virtual Work Principle: The Universal Method
-
-The **principle of virtual work** provides the most powerful and general approach to force analysis.
-
-<Card title="🔧 Virtual Work Principle" icon="document">
-**Principle Statement:** For a mechanism in equilibrium, the virtual work done by all forces through any virtual displacement is zero.
-
-**Mathematical Expression:**
-$$\sum F_i \delta x_i + \sum T_j \delta \theta_j = 0$$
-
-**Where:**
-- $F_i$ = External forces
-- $\delta x_i$ = Virtual linear displacements
-- $T_j$ = Applied torques (including actuator torques)
-- $\delta \theta_j$ = Virtual angular displacements
-
-**Power:** Relates input and output forces through kinematic relationships without needing to find joint reactions.
-</Card>
-
-### Mechanical Advantage Through Force Analysis
-
-**Mechanical advantage** quantifies how mechanisms amplify or reduce forces:
-
-<Steps>
-1. **Force Mechanical Advantage**
-   $$MA_F = \frac{F_{output}}{F_{input}}$$
-
-2. **Torque Mechanical Advantage**  
-   $$MA_T = \frac{T_{output}}{T_{input}}$$
-
-3. **Velocity Relationship**
-   $$MA_F = \frac{1}{VR} = \frac{v_{input}}{v_{output}}$$
-
-4. **Power Conservation**
-   $$P_{input} = P_{output} \text{ (ideal case)}$$
-
-   $$F_{input} \cdot v_{input} = F_{output} \cdot v_{output}$$
-</Steps>
-
-## System Application: 3-DOF Robot Force Analysis
-
-<InArticleAd />
-
-
-Let's analyze and design a complete 3-DOF robotic manipulator system.
-
-### Robot Configuration Design
-
-**System Architecture:**
-- **Joint 1**: Base rotation (shoulder) - 360° rotation capability
-- **Joint 2**: Upper arm elevation (shoulder pitch) - \pm90° range
-- **Joint 3**: Forearm positioning (elbow) - \pm150° range
-- **Link Lengths**: L₁ = 0.4m, L₂ = 0.6m, L₃ = 0.2m
-- **Target Payload**: 10 kg at end-effector
-
-### Step 1: Workspace and Configuration Analysis
+The main link is a two-force member, so its force is along the link. The clamp arm is a three-force member (pad reaction, main-link force, pivot reaction), so its force triangle closes.
 
 <details>
-<summary>**Click to reveal workspace analysis**</summary>
+<summary>**Click to reveal the force-polygon construction**</summary>
 
 <Steps>
 
-1. **Forward Kinematics:**
-   
-   **End-effector position:**
-   $$x_e = L_1 \cos\theta_1 + L_2 \cos(\theta_1 + \theta_2) + L_3 \cos(\theta_1 + \theta_2 + \theta_3)$$
-   $$y_e = L_1 \sin\theta_1 + L_2 \sin(\theta_1 + \theta_2) + L_3 \sin(\theta_1 + \theta_2 + \theta_3)$$
+1. **Identify the members.** The main link carries a force along its own line (two-force member). The clamp arm then has three forces: the main-link push at one joint, the pad reaction at the workpiece, and the pivot reaction at $O_4$. ✅
 
-2. **Workspace Verification:**
-   - Maximum reach: $L_1 + L_2 + L_3 = 1.2$ m
-   - Minimum reach: $|L_2 + L_3 - L_1| = 0.4$ m  
-   - Workspace envelope: Annular region 0.4m to 1.2m radius
-   
-3. **Configuration Selection:**
-   - **Elbow-up configuration** for maximum stiffness
-   - **Joint limits** prevent singularities and collisions
-   - **Redundancy** available for obstacle avoidance
+2. **Draw the triangle.** Choose a force scale and mark it (for example 1 cm = 20 N). Lay the known main-link force tip to tail with the pad-reaction direction; the pivot reaction closes the triangle. Measuring the sides gives the pad force and the pivot force. ✅
+
+3. **The over-centre amplification.** Geometrically the ideal force ratio of the toggle is $\text{MA} = \dfrac{1}{2\tan\alpha}$, where $\alpha$ is the angle of the links from the collinear (dead-centre) line. The closer to centre, the larger the amplification. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Force triangle for the clamp arm: the main-link force, the pad reaction, and the pivot reaction drawn tip to tail and closing](./images/l6-force-triangle.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Clamping Force and Stresses
+
+<details>
+<summary>**Click to reveal the numbers**</summary>
+
+<Steps>
+
+1. **Mechanical advantage** at the $5\degree$ lock margin:
+
+   $$\text{MA}_\text{ideal} = \frac{1}{2\tan 5\degree} = 5.72, \qquad \text{MA}_\text{real} = \eta\,\text{MA}_\text{ideal} = 0.75(5.72) = 4.3$$ ✅
+
+2. **Clamping force:**
+
+   $$F_\text{clamp} = \text{MA}_\text{real}\times F_h = 4.3 \times 100 = 430 \text{ N}$$ ✅
+
+   The closer the rest position is set to top-dead-centre, the higher this rises, the over-centre design from Lessons 1 and 3 seen as force.
+
+3. **Stress check** at a representative link/pin force of $800$ N (the internal forces exceed the pad force near the joints):
+
+   $$\tau_\text{pin} = \frac{800}{\pi(8)^2/4} = 15.9 \text{ MPa}, \qquad \sigma_\text{link} = \frac{6 F L_\text{arm}}{t w^2} = \frac{6(800)(40)}{6(20)^2} = 80 \text{ MPa}$$ ✅
+
+   With allowable $\sigma_\text{all} = 350/2 = 175$ MPa, both are well within limits. ✅
 
 </Steps>
 
 </details>
 
-### Step 2: Static Force Analysis Using Virtual Work
+### Step 3: Verify in the Simulator
 
 <details>
-<summary>**Click to reveal force analysis calculations**</summary>
+<summary>**Click to reveal the simulator check**</summary>
 
-<Tabs>
-  <TabItem label="Jacobian Matrix">
-    
-    **Velocity Jacobian:**
-    
-    The Jacobian matrix relates joint velocities to end-effector velocity:
-    $$\begin{bmatrix} v_x \\ v_y \end{bmatrix} = \mathbf{J} \begin{bmatrix} \dot{\theta_1} \\ \dot{\theta_2} \\ \dot{\theta_3} \end{bmatrix}$$
-    
-    **Jacobian Elements:**
-    $$J_{11} = -L_1 \sin\theta_1 - L_2 \sin(\theta_1 + \theta_2) - L_3 \sin(\theta_1 + \theta_2 + \theta_3)$$
-    $$J_{12} = -L_2 \sin(\theta_1 + \theta_2) - L_3 \sin(\theta_1 + \theta_2 + \theta_3)$$
-    $$J_{13} = -L_3 \sin(\theta_1 + \theta_2 + \theta_3)$$
-    $$J_{21} = L_1 \cos\theta_1 + L_2 \cos(\theta_1 + \theta_2) + L_3 \cos(\theta_1 + \theta_2 + \theta_3)$$
-    $$J_{22} = L_2 \cos(\theta_1 + \theta_2) + L_3 \cos(\theta_1 + \theta_2 + \theta_3)$$
-    $$J_{23} = L_3 \cos(\theta_1 + \theta_2 + \theta_3)$$
-    
-  </TabItem>
-  <TabItem label="Force-Torque Relationship">
-    
-    **Virtual Work Application:**
-    
-    Using the principle of virtual work:
-    $$\delta W = \mathbf{F}^T \delta \mathbf{x} - \boldsymbol{\tau}^T \delta \boldsymbol{\theta} = 0$$
-    
-    **Force-Torque Relationship:**
-    $$\boldsymbol{\tau} = \mathbf{J}^T \mathbf{F}$$
-    
-    **Where:**
-    - $\boldsymbol{\tau} = [\tau_1, \tau_2, \tau_3]^T$ = Joint torques
-    - $\mathbf{F} = [F_x, F_y]^T$ = End-effector forces
-    - $\mathbf{J}^T$ = Transpose of velocity Jacobian
-    
-  </TabItem>
-  <TabItem label="Worst-Case Analysis">
-    
-    **Maximum Torque Configuration:**
-    
-    For 10 kg payload (98.1 N downward force):
-    
-    **Critical Configuration** (θ₁ = 0°, θ₂ = 0°, θ₃ = 0°):
-    - End-effector at maximum horizontal extension
-    - All links aligned horizontally (worst case for gravity)
-    
-    **Joint Torques:**
-    $$\tau_1 = 0$$ (no torque about vertical axis for vertical load)
-    $$\tau_2 = 98.1 \times (L_2 + L_3) = 98.1 \times 0.8 = 78.5$$ N⋅m
-    $$\tau_3 = 98.1 \times L_3 = 98.1 \times 0.2 = 19.6$$ N⋅m
-    
-  </TabItem>
-</Tabs>
+<Steps>
+
+1. **Open the simulator** ([siwit.co/TCM](https://siwit.co/TCM)) and set the hand force, lock margin, efficiency, and the pin and link sizes. ✅
+
+2. **Confirm** the clamping force rises sharply as the lock margin shrinks toward centre, and read the pin-shear and link-bending stresses with their pass/fail verdict against the allowable. They match the hand calculation. ✅
+
+</Steps>
 
 </details>
 
-### Step 3: Actuator Sizing and Selection
-
-<Card title="🔋 Actuator Sizing Results" icon="rocket">
-**Motor Requirements Analysis:**
-
-**Joint 1 (Base Rotation):**
-- **Peak Torque**: 15 N⋅m (for acceleration, not static load)
-- **Continuous Torque**: 5 N⋅m (positioning and dynamic loads)
-- **Speed**: 180°/s (π rad/s) maximum
-- **Selected Motor**: 1 kW servo motor with 5:1 gearbox
-
-**Joint 2 (Shoulder):**
-- **Peak Torque**: 90 N⋅m (including safety factor and dynamics)
-- **Continuous Torque**: 80 N⋅m (static payload + arm weight)
-- **Speed**: 90°/s (π/2 rad/s) maximum  
-- **Selected Motor**: 2.5 kW servo motor with 20:1 gearbox
-
-**Joint 3 (Elbow):**
-- **Peak Torque**: 25 N⋅m (including safety factor)
-- **Continuous Torque**: 20 N⋅m (static payload)
-- **Speed**: 180°/s (π rad/s) maximum
-- **Selected Motor**: 1.5 kW servo motor with 10:1 gearbox
-
-**System Power**: 5 kW total (motors sized for worst-case conditions)
-</Card>
-
-## Advanced Force Analysis Techniques
-
-<InArticleAd />
-
-
-### Dynamic Force Analysis
-
-For high-speed operation, **dynamic forces** become significant:
-
-<Steps>
-1. **Inertial Force Calculation**
-   - Link masses and inertias contribute to joint torques
-   - Acceleration-dependent forces add to static requirements
-   - Use Newton-Euler or Lagrangian methods
-
-2. **Coupling Effects**
-   - Joint motions interact through mechanism geometry
-   - Centrifugal and Coriolis forces appear at high speeds
-   - Dynamic analysis requires computational tools
-
-3. **Actuator Sizing Impact**
-   - Peak torques may be 2-5× static requirements
-   - Motor selection must account for acceleration capabilities
-   - Energy consumption increases significantly with speed
-</Steps>
-
-### Advanced Synthesis Techniques
-
-**Mechanism synthesis** is the process of designing mechanism geometry to meet specified performance requirements:
-
-<Card title="🎯 Synthesis Problem Types" icon="document">
-**Type Synthesis:** What type of mechanism should be used?
-- Number and types of links and joints
-- Kinematic structure and topology
-- DOF requirements and constraints
-
-**Dimensional Synthesis:** What are the optimal link lengths and joint locations?
-- Workspace requirements and shape
-- Force transmission optimization
-- Singularity avoidance and dexterity
-
-**Combined Synthesis:** Integrate type and dimensional synthesis
-- Multi-objective optimization problems
-- Performance trade-offs and compromises
-- Real-world constraints and manufacturing limits
-</Card>
-
-### Optimization-Based Design
-
-Modern mechanism design uses computational optimization:
-
-<Tabs>
-  <TabItem label="Objective Functions">
-    
-    **Common Optimization Objectives:**
-    
-    **Minimize Actuator Size:**
-    $$\min \sum_{i=1}^n \tau_{max,i}^2$$
-    
-    **Maximize Stiffness:**
-    $$\max \min(\text{eigenvalues of } \mathbf{K})$$
-    
-    **Minimize Energy Consumption:**
-    $$\min \int_0^T P(t) dt$$
-    
-    **Maximize Workspace:**
-    $$\max \text{Volume}(\text{reachable space})$$
-    
-  </TabItem>
-  <TabItem label="Constraints">
-    
-    **Design Constraints:**
-    
-    **Workspace Requirements:**
-    - Reachable points and orientations
-    - Obstacle avoidance and collision limits
-    - Singularity-free operation regions
-    
-    **Performance Limits:**
-    - Maximum joint torques and speeds
-    - Positioning accuracy requirements
-    - Dynamic response specifications
-    
-    **Physical Constraints:**
-    - Manufacturing tolerances and capabilities
-    - Material strength and stiffness limits
-    - Cost and weight restrictions
-    
-  </TabItem>
-  <TabItem label="Solution Methods">
-    
-    **Optimization Algorithms:**
-    
-    **Genetic Algorithms:**
-    - Global optimization capability
-    - Handles discrete and continuous variables
-    - Good for multi-objective problems
-    
-    **Gradient-Based Methods:**
-    - Fast convergence for smooth problems
-    - Local optima limitations
-    - Requires differentiable objectives
-    
-    **Multi-Objective Methods:**
-    - Pareto optimal solutions
-    - Trade-off analysis capabilities
-    - Designer decision support
-    
-  </TabItem>
-</Tabs>
-
-## Computational Force Analysis and Synthesis
-
-<InArticleAd />
-
-
-### Modern Analysis Tools
-
-<CardGrid>
-  <Card title="Multibody Dynamics">
-    **Adams/MSC Software:**
-    - Complete force and motion analysis
-    - Flexible body modeling capabilities
-    - Control system co-simulation
-    
-    **MATLAB Robotics Toolbox:**
-    - Specialized robot analysis functions
-    - Forward/inverse kinematics and dynamics
-    - Path planning and control integration
-  </Card>
-  <Card title="Optimization Platforms">
-    **ANSYS optiSLang:**
-    - Multi-disciplinary design optimization
-    - Robust design and uncertainty quantification
-    - CAE process automation
-    
-    **ModeFrontier:**
-    - Multi-objective optimization platform
-    - Design space exploration tools
-    - Integration with CAD/CAE systems
-  </Card>
-  <Card title="Robot-Specific Tools">
-    **ROS (Robot Operating System):**
-    - Open-source robot development framework
-    - MoveIt motion planning and control
-    - Gazebo simulation environment
-    
-    **CasADi/ACADO:**
-    - Optimal control and trajectory optimization
-    - Real-time capable implementations
-    - Advanced robotics research tools
-  </Card>
-</CardGrid>
-
-### Programming Complete Robot Analysis
-
-**Python Example for Robot Force Analysis:**
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.optimize import minimize
-
-class PlanarRobot3DOF:
-    def __init__(self, L1, L2, L3):
-        self.L = [L1, L2, L3]  # Link lengths
-    
-    def forward_kinematics(self, theta):
-        """Calculate end-effector position"""
-        theta1, theta2, theta3 = theta
-        
-        x = (self.L[0] * np.cos(theta1) + 
-             self.L[1] * np.cos(theta1 + theta2) + 
-             self.L[2] * np.cos(theta1 + theta2 + theta3))
-        
-        y = (self.L[0] * np.sin(theta1) + 
-             self.L[1] * np.sin(theta1 + theta2) + 
-             self.L[2] * np.sin(theta1 + theta2 + theta3))
-        
-        return np.array([x, y])
-    
-    def jacobian(self, theta):
-        """Calculate velocity Jacobian matrix"""
-        theta1, theta2, theta3 = theta
-        
-        # Partial derivatives
-        J11 = -(self.L[0] * np.sin(theta1) + 
-                self.L[1] * np.sin(theta1 + theta2) + 
-                self.L[2] * np.sin(theta1 + theta2 + theta3))
-        
-        J12 = -(self.L[1] * np.sin(theta1 + theta2) + 
-                self.L[2] * np.sin(theta1 + theta2 + theta3))
-        
-        J13 = -self.L[2] * np.sin(theta1 + theta2 + theta3)
-        
-        J21 = (self.L[0] * np.cos(theta1) + 
-               self.L[1] * np.cos(theta1 + theta2) + 
-               self.L[2] * np.cos(theta1 + theta2 + theta3))
-        
-        J22 = (self.L[1] * np.cos(theta1 + theta2) + 
-               self.L[2] * np.cos(theta1 + theta2 + theta3))
-        
-        J23 = self.L[2] * np.cos(theta1 + theta2 + theta3)
-        
-        return np.array([[J11, J12, J13],
-                        [J21, J22, J23]])
-    
-    def static_torques(self, theta, force):
-        """Calculate required joint torques for given end-effector force"""
-        J = self.jacobian(theta)
-        tau = J.T @ force
-        return tau
-    
-    def manipulability(self, theta):
-        """Calculate manipulability measure"""
-        J = self.jacobian(theta)
-        return np.sqrt(np.linalg.det(J @ J.T))
-
-# Robot parameters
-robot = PlanarRobot3DOF(L1=0.4, L2=0.6, L3=0.2)
-
-# Payload parameters
-payload_mass = 10.0  # kg
-g = 9.81  # m/s²
-force_gravity = np.array([0, -payload_mass * g])  # Downward force
-
-# Analyze workspace and torque requirements
-theta_range = np.linspace(-np.pi/2, np.pi/2, 50)
-max_torques = []
-manipulability_values = []
-
-for theta1 in theta_range:
-    for theta2 in theta_range:
-        for theta3 in theta_range:
-            theta = [theta1, theta2, theta3]
-            
-            # Check if configuration is reachable
-            try:
-                torques = robot.static_torques(theta, force_gravity)
-                manip = robot.manipulability(theta)
-                
-                max_torques.append(np.max(np.abs(torques)))
-                manipulability_values.append(manip)
-                
-            except np.linalg.LinAlgError:
-                # Skip singular configurations
-                continue
-
-# Results analysis
-print(f"Maximum required torque: {np.max(max_torques):.1f} N⋅m")
-print(f"Average torque requirement: {np.mean(max_torques):.1f} N⋅m")
-print(f"Best manipulability: {np.max(manipulability_values):.3f}")
-print(f"Worst manipulability: {np.min(manipulability_values):.3f}")
-
-# Visualization
-plt.figure(figsize=(12, 4))
-
-plt.subplot(1, 3, 1)
-plt.hist(max_torques, bins=30)
-plt.xlabel('Maximum Joint Torque (N⋅m)')
-plt.ylabel('Frequency')
-plt.title('Torque Distribution')
-
-plt.subplot(1, 3, 2)
-plt.hist(manipulability_values, bins=30)
-plt.xlabel('Manipulability')
-plt.ylabel('Frequency')
-plt.title('Manipulability Distribution')
-
-plt.subplot(1, 3, 3)
-plt.scatter(max_torques, manipulability_values, alpha=0.6)
-plt.xlabel('Maximum Joint Torque (N⋅m)')
-plt.ylabel('Manipulability')
-plt.title('Torque vs. Manipulability')
-
-plt.tight_layout()
-plt.show()
-```
-
-## Complete Design Case Study: Medical Assistance Robot
-
-<InArticleAd />
-
-
-### System Requirements and Specifications
-
-**Application:** Surgical assistance robot for minimally invasive procedures
-
-**Performance Requirements:**
-- **Positioning Accuracy**: \pm0.1 mm
-- **Payload**: 2 kg surgical instruments
-- **Workspace**: 300mm × 200mm × 150mm
-- **Speed**: 50 mm/s maximum (safety-critical application)
-- **Force Feedback**: 0.1 N resolution for haptic feedback
-
-### Design Synthesis Process
-
-<Steps>
-1. **Type Synthesis Decision**
-   - Selected 3-DOF RRR planar mechanism
-   - Parallel kinematic alternative evaluated but rejected for workspace limitations
-   - Serial configuration provides required reach and dexterity
-
-2. **Dimensional Optimization**
-   - Link length optimization for workspace coverage
-   - Minimization of joint torques throughout workspace
-   - Singularity avoidance with 15° minimum distance from singular configurations
-
-3. **Actuator Integration**
-   - High-resolution servo motors with harmonic drive gearboxes
-   - Force sensors at each joint for safety and haptic feedback
-   - Redundant position encoders for fault tolerance
-
-4. **Validation and Testing**
-   - Prototype constructed and tested with medical advisory board
-   - Accuracy validation using laser interferometry
-   - Safety certification through extensive failure mode analysis
-</Steps>
-
-### Performance Results
-
-<Card title="🏥 Medical Robot Design Results" icon="rocket">
-**Optimized System Performance:**
-
-**Mechanical Design:**
-- **Link Lengths**: L₁ = 200mm, L₂ = 150mm, L₃ = 100mm
-- **Maximum Joint Torques**: 15 N⋅m, 12 N⋅m, 8 N⋅m
-- **Weight**: 8.5 kg (lightweight for portability)
-- **Stiffness**: 2000 N/mm minimum throughout workspace
-
-**Performance Validation:**
-- **Positioning Accuracy**: \pm0.05 mm (exceeded specification)
-- **Repeatability**: \pm0.02 mm (excellent consistency)
-- **Force Resolution**: 0.05 N (doubled sensitivity requirement)
-- **Workspace Coverage**: 98% of specified volume (excellent)
-
-**Clinical Impact:**
-- 40% reduction in procedure time compared to manual methods
-- Improved precision reduces patient trauma and recovery time
-- Surgeon fatigue reduced through haptic assistance
-- Training time reduced through intuitive control interface
-</Card>
-
-## Summary and Professional Integration
-
-<InArticleAd />
-
-
-### Complete Design Methodology
-
-This lesson integrates all previous concepts into a systematic design approach:
-
-<Steps>
-1. **Requirements Analysis** (Lesson 1: DOF and constraints)
-2. **Kinematic Design** (Lesson 2: Position analysis and workspace)
-3. **Motion Optimization** (Lesson 3: Velocity profiles and efficiency)
-4. **Dynamic Analysis** (Lesson 4: Acceleration and inertial forces)
-5. **Actuation Design** (Lesson 5: Motion programming and control)
-6. **Force Analysis and Synthesis** (Lesson 6: Complete system integration)
-</Steps>
-
-### Professional Design Principles
-
-<CardGrid>
-  <Card title="Systems Integration" icon="rocket">
-    **Philosophy:** Consider all aspects simultaneously for optimal design
-    **Method:** Iterative optimization balancing competing requirements
-    **Validation:** Prototype testing confirms analytical predictions
-  </Card>
-  <Card title="Performance Optimization" icon="setting">
-    **Goal:** Maximize performance while minimizing cost and complexity
-    **Tools:** Multi-objective optimization and design space exploration
-    **Trade-offs:** Balance precision, speed, payload, and energy efficiency
-  </Card>
-  <Card title="Robust Design" icon="puzzle">
-    **Challenge:** Real-world variations in materials, manufacturing, and operation
-    **Solution:** Design for tolerances and uncertainties
-    **Validation:** Testing under varied conditions and degraded performance
-  </Card>
-  <Card title="Life-Cycle Considerations" icon="warning">
-    **Maintenance:** Design for predictable wear and easy service
-    **Upgradability:** Allow for technology improvements over time
-    **Sustainability:** Consider environmental impact and end-of-life disposal
-  </Card>
-</CardGrid>
-
-### Course Learning Outcomes Achieved
-
-**Technical Mastery:**
-1. ✅ **Joint Analysis**: Understanding DOF, constraints, and mobility
-2. ✅ **Position Analysis**: Solving kinematic equations and workspace design
-3. ✅ **Velocity Analysis**: Optimizing motion profiles and mechanical advantage
-4. ✅ **Acceleration Analysis**: Predicting dynamic forces and vibration
-5. ✅ **Motion Programming**: Designing optimal cam and motion profiles
-6. ✅ **Force Analysis**: Determining actuator requirements and force transmission
-
-**Professional Skills:**
-1. ✅ **Systems Thinking**: Integrating multiple engineering disciplines
-2. ✅ **Design Optimization**: Balancing competing requirements and constraints
-3. ✅ **Computational Tools**: Using modern software for analysis and design
-4. ✅ **Validation Methods**: Confirming design performance through testing
-5. ✅ **Industry Applications**: Understanding real-world design challenges
-6. ✅ **Communication**: Presenting technical results to diverse audiences
-
-:::tip[Career Development]
-**"Master the fundamentals, then specialize in applications."** - The principles learned in this course apply across all industries. Choose specialization areas (medical, automotive, aerospace, manufacturing) based on your interests, but maintain the broad foundation for career flexibility.
+:::note[Engineering Insight]
+The toggle clamp is the whole course in one device: a 1-DOF four-bar ([mobility](./kinematic-joints-constraint-analysis)), positioned at top-dead-centre ([position](./position-analysis-planar-linkages)), where the velocity ratio vanishes ([velocity](./velocity-analysis-instantaneous-centers)), so the mechanical advantage and clamping force spike here in the force analysis, and the resulting pin and link forces must be carried without yielding.
 :::
 
-### Next Steps in Mechatronic System Design
+## Application 2: Four-Bar Transmission Angle
 
-**Advanced Topics to Explore:**
-- **3D Spatial Mechanisms**: Extension to three-dimensional systems
-- **Flexible Body Dynamics**: Systems with elastic deformations
-- **Control System Integration**: Closed-loop motion and force control
-- **Human-Robot Interaction**: Safety and collaborative operation
-- **Machine Learning Applications**: Adaptive and learning systems
-- **Micro/Nano Systems**: MEMS and precision mechanisms
+<InArticleAd />
 
-**Professional Development:**
-- **Industry Internships**: Gain hands-on experience with real systems
-- **Research Projects**: Explore cutting-edge applications and methods
-- **Professional Societies**: Join ASME, IEEE Robotics, or industry associations
-- **Continuing Education**: Stay current with evolving technology and methods
-- **Interdisciplinary Collaboration**: Work with electrical, software, and biomedical engineers
 
-<BionicText method="advanced" intensity="medium" class="highlight">
-The journey in planar mechanics and mechatronic system design is complete, but your application of these principles is just beginning. Use this foundation to create systems that improve human life, enhance productivity, and push the boundaries of what's possible with mechatronics engineering.
-</BionicText>
+The transmission angle tells you where in its cycle a four-bar transmits force well, and where it wastes it.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/four-bar-linkage-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Four-Bar Linkage Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Four-Bar Linkage Experiments](/education/mechanism-design-simulation/four-bar-linkage-experiments/) lab ([siwit.co/FBL](https://siwit.co/FBL)). Experiment 2 maps the transmission angle and mechanism quality.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Crank-rocker four-bar (the standard four-bar geometry)
+- **Task:** Find the transmission angle over a full crank rotation and the poor-force zones
+- **Link lengths:** $a = 40$, $b = 120$, $c = 80$, $d = 100$ mm
+:::
+
+### Step 1: Plot the Transmission Angle
+
+<details>
+<summary>**Click to reveal the transmission-angle behaviour**</summary>
+
+<Steps>
+
+1. **Measure $\mu$** as the angle between the coupler and follower at joint $B$, taken as the value between $0\degree$ and $90\degree$. At $\theta_2 = 120\degree$ it is $\mu = 74\degree$, an excellent transmission. ✅
+
+2. **Sweep the crank.** Across a full turn $\mu$ rises to about $86\degree$ and falls to about $26\degree$. The dips below the $40\degree$ guide are the **poor-force zones**, where a large coupler force produces only a small useful drive on the follower. ✅
+
+3. **Design response.** If those zones fall inside the working stroke, change the link lengths (Application 4 synthesis) or re-time the load so the heavy work happens where $\mu$ is large. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Four-bar transmission angle versus crank angle, dipping near 26 degrees twice per turn below the 40 degree guide line](./images/l6-transmission-angle.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+:::note[Engineering Insight]
+The transmission angle is a force-quality gauge that costs nothing to check: it comes straight from the [position analysis](./position-analysis-planar-linkages). Keeping it above about $40\degree$ through the working stroke is one of the first rules of good linkage design.
+:::
+
+## Application 3: Scissor-Lift Actuator Force
+
+<InArticleAd />
+
+
+The scissor lift shows mechanical advantage working against the designer: the actuator force runs away as the platform nears the floor.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/scissor-lift-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Scissor Lift Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Continue in the [Scissor Lift Experiments](/education/mechanism-design-simulation/scissor-lift-experiments/) lab ([siwit.co/SLM](https://siwit.co/SLM)). Experiment 1 plots the actuator force and Experiment 8 the link stress.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Single-stage scissor lift carrying load $W = 500$ N
+- **Task:** Find how the actuator force depends on the scissor angle
+:::
+
+### Step 1: Actuator Force by Virtual Work
+
+<details>
+<summary>**Click to reveal the actuator-force relation**</summary>
+
+<Steps>
+
+1. **Apply virtual work.** The actuator does work as the base spread changes, the load rises through the height change. Equating, the horizontal-base actuator force to hold load $W$ at scissor angle $\theta$ is:
+
+   $$F_\text{act} = W\cot\theta$$ ✅
+
+   (the exact constant depends on the actuator placement; the simulator gives the precise value for each type).
+
+2. **Read the runaway.** At $\theta = 45\degree$, $F_\text{act} = W = 500$ N; at $\theta = 30\degree$, $866$ N; at $\theta = 10\degree$, $2840$ N. As the platform nears the floor, the mechanical advantage works against the actuator and the force spikes. ✅
+
+3. **Design response.** This is why scissor lifts work over a limited low-angle band, use a diagonal or pantograph actuator placement to improve the low-angle advantage, and never start fully flat. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Scissor-lift actuator force rising steeply as the scissor angle approaches zero, following F equals W cot theta](./images/l6-actuator-force.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+:::note[Engineering Insight]
+The $\cot\theta$ runaway is the same geometry that gave the platform its gentle velocity in the [velocity analysis](./velocity-analysis-instantaneous-centers) (the $\cos\theta$ there), now inverted into force. Good and bad mechanical advantage are two ends of one relationship, and virtual work is the bridge between motion and force.
+:::
+
+## Application 4: Synthesise a Four-Bar for a Target
+
+<InArticleAd />
+
+
+Analysis takes a mechanism and finds its behaviour. **Synthesis** takes a required behaviour and finds the mechanism. This is where the whole course is put to use.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/four-bar-linkage-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Four-Bar Linkage Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Use the [Four-Bar Linkage Experiments](/education/mechanism-design-simulation/four-bar-linkage-experiments/) lab ([siwit.co/FBL](https://siwit.co/FBL)) to test each candidate set of link lengths against the target.
+</Card>
+
+:::note[System Problem Statement]
+- **Task:** Design a crank-rocker that swings a rocker through a required angle while keeping a good transmission angle
+:::
+
+### Step 1: Type and Dimensional Synthesis
+
+<details>
+<summary>**Click to reveal the synthesis process**</summary>
+
+<Steps>
+
+1. **Type synthesis.** Choose the mechanism family from the task. A continuous input turning an oscillating output points to a **crank-rocker** four-bar; a straight-line output points to a slider-crank; a clamp pointed to a toggle. The degrees-of-freedom check from the [mobility analysis](./kinematic-joints-constraint-analysis) confirms one input drives it. ✅
+
+2. **Dimensional synthesis.** Choose the link lengths to meet the motion. For a required rocker swing, fix the ground and rocker, then size the crank and coupler so the rocker reaches both extreme (limit) positions at the wanted angles. The Grashof test from the [position analysis](./position-analysis-planar-linkages) must pass so the crank fully rotates. ✅
+
+3. **Check force quality.** Run the position analysis and plot the transmission angle (Application 2). If it dips below $40\degree$ inside the working stroke, adjust the link lengths and repeat. Synthesis is this loop: propose lengths, analyse, refine. ✅
+
+4. **Verify the whole design.** Confirm mobility, positions, velocities and mechanical advantage, accelerations and inertia loads, and finally the forces and stresses. A design is finished only when all six checks pass. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+Synthesis is the reason for the other five lessons. Each analysis tool becomes a test the candidate design must pass, and the simulator is where you run those tests quickly before committing to metal. Designing a mechanism is proposing geometry and then subjecting it to every analysis in this course until it survives.
+:::
+
+## Design Guidelines for Force Analysis and Synthesis
+
+<InArticleAd />
+
+
+<CardGrid>
+  <Card title="Spot the two-force members" icon="rocket">
+  A link loaded at only two joints carries force along its line. Finding these first collapses most of the force polygon.
+  </Card>
+  <Card title="Force is the reciprocal of motion" icon="setting">
+  Use the [velocity ratio](./velocity-analysis-instantaneous-centers): mechanical advantage is its reciprocal. No separate force derivation is needed for the ideal value.
+  </Card>
+  <Card title="Keep the transmission angle up" icon="warning">
+  Hold $\mu \ge 40\degree$ through the working stroke. Check it from the position analysis before sizing anything.
+  </Card>
+  <Card title="Synthesis is analysis in a loop" icon="puzzle">
+  Propose dimensions, run every analysis as a test, refine, and repeat until all checks pass.
+  </Card>
+</CardGrid>
+
+## Summary and Course Conclusion
+
+<InArticleAd />
+
+
+### Key Concepts Mastered
+
+1. **Force polygons:** static link forces close into a polygon; two-force members carry force along their line, three-force members close a triangle.
+2. **Mechanical advantage:** the reciprocal of the velocity ratio by virtual work, large at the toggle and limit positions.
+3. **Transmission angle:** the force-quality gauge, kept above about $40\degree$; the four-bar here dips to $26\degree$ twice per turn.
+4. **Stress sizing:** joint forces become pin shear and link bending, checked against the yield stress divided by a safety factor.
+5. **Synthesis:** choose the mechanism type and dimensions, then verify against every analysis in the course.
+
+### Force Results at a Glance
+
+| Mechanism | What you solve for | Key relation | Simulator |
+|-----------|--------------------|--------------|-----------|
+| Toggle clamp | clamping force, stresses | $\text{MA} = 1/(2\tan\alpha)$ | [siwit.co/TCM](https://siwit.co/TCM) |
+| Four-bar | transmission angle | $\mu$ between coupler and follower | [siwit.co/FBL](https://siwit.co/FBL) |
+| Scissor lift | actuator force | $F = W\cot\theta$ | [siwit.co/SLM](https://siwit.co/SLM) |
+| Crank-slider | crank torque | $T = F\,(ds/d\theta)$ | [siwit.co/CSM](https://siwit.co/CSM) |
+
+### The Course in One Thread
+
+You met four mechanisms and analysed each through six lenses: whether it moves, where its links sit, how fast they move, how hard they accelerate and what inertia that creates, how to program a motion with a cam, and what forces flow through it and how to design for them. Every result was drawn to scale by hand, confirmed by calculation, and checked in an interactive simulator. That triad, the drawing for intuition, the mathematics for precision, and the simulator for exploration, is how planar mechanisms are understood and designed.
+
+### A Note on Tools
+
+The force polygons, transmission-angle and actuator-force curves here were drawn from the statics and reproduced with a few lines of Python (NumPy). The simulators confirm the forces and report the stress verdicts. No specialised software is required; statics on a mechanism is the whole method.
 
 
 

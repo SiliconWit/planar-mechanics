@@ -1,10 +1,11 @@
 ---
 title: "Lesson 1: Kinematic Joints and Constraint Analysis"
-description: "Understanding joint types, degrees of freedom, and constraint relationships through modular robotic arm design using Grübler's equation"
+description: "Classify planar kinematic joints, count degrees of freedom with the Kutzbach-Grübler equation, and verify mobility on four real mechanisms: the four-bar linkage, slider-crank, scissor lift, and toggle clamp."
 contributors: "sam-macharia,andrew-kibor,jack-kojiro"
 pubDate: 2025-09-06
 tags: ["planar-mechanics", "kinematics", "joints", "DOF", "grublers-equation", "robotic-arms", "constraints"]
-excerpt: "Master fundamental concepts of kinematic joints and constraint analysis by designing a modular robotic arm assembly system, covering joint types, degrees of freedom, and Grübler's equation."
+excerpt: "Master kinematic joints and constraint analysis: classify joint types, apply the Kutzbach-Grübler equation to planar mechanisms, confront Grübler's paradox on a scissor lift, and verify every result against interactive mechanism simulators."
+heroImage: "https://cdn.siliconwit.com/product-development/2d-mechanisms-analyzer/four-bar-linkage-simulator.png"
 ---
 
 import PlanarMechanicsComments from '../../../../components/planar-mechanics/PlanarMechanicsComments.astro';
@@ -23,37 +24,35 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-A mechanism with too few degrees of freedom locks up. A mechanism with too many flops around unpredictably. The difference between a useful machine and an expensive pile of parts is whether the designer counted constraints correctly before cutting metal. Gruebler's equation gives you that count from the number of links and joints, and it is the first check every mechanism designer performs. In this lesson you will classify kinematic joints, calculate degrees of freedom, and design a modular robotic arm assembly where every joint is there for a reason. #Kinematics #DOF #GrublersEquation
+A mechanism with too few degrees of freedom locks up. A mechanism with too many flops around unpredictably. The difference between a useful machine and an expensive pile of parts is whether the designer counted constraints correctly before cutting metal. The Kutzbach-Grübler equation gives you that count from the number of links and joints, and it is the first check every mechanism designer performs. In this lesson you will classify kinematic joints, calculate degrees of freedom, confront the case where the equation lies to you, and verify every answer on the same four mechanisms you can drive in our interactive simulators. #Kinematics #DOF #GrublersEquation
 
 ## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
 1. **Identify** different types of kinematic joints and their constraint properties
-2. **Calculate** degrees of freedom using Grübler's equation for planar mechanisms
-3. **Analyze** joint constraints and their impact on mechanism mobility
-4. **Design** joint libraries for reconfigurable robotic systems with optimal DOF
+2. **Calculate** degrees of freedom using the Kutzbach-Grübler equation for planar mechanisms
+3. **Diagnose** redundant constraints when the equation disagrees with physical mobility
+4. **Verify** mechanism mobility against interactive simulators for four-bar, slider-crank, scissor-lift, and toggle-clamp mechanisms
 
 ## Real-World System Problem: Modular Robotic Arm Assembly System
 
 <InArticleAd />
 
 
-<BionicText method="advanced" intensity="medium" class="highlight">
-Consider a manufacturing facility that needs flexible automation - one day assembling electronic components, the next day handling automotive parts, and later packaging consumer goods. Traditional fixed robotic systems cannot adapt to this variety of tasks.
-</BionicText>
-The solution? **Modular robotic arms** with interchangeable joint modules that can be reconfigured for different applications.
+Consider a manufacturing facility that needs flexible automation: one day assembling electronic components, the next day handling automotive parts, and later packaging consumer goods. Traditional fixed robotic systems cannot adapt to this variety of tasks.
+The solution? **Modular robotic arms** with interchangeable joint modules that can be reconfigured for different applications. But reconfiguring blindly is dangerous: add the wrong joint and the arm either jams solid or wobbles with motions no motor controls.
 
 ### System Challenge: Joint Selection for Reconfigurable Robots
 
 **Critical Engineering Questions:**
 - How many joints do we need for a specific task?
 - Which joint types provide the required motion?
-- How do we ensure the robot has sufficient degrees of freedom?
+- How do we guarantee the mechanism has exactly the mobility we intend, no more and no less?
 - What constraints do different joints impose on the system?
 
-<Card title="🤖 Modular Robot Design Challenge" icon="rocket">
-**Design Goal:** Create a joint library where engineers can select and combine different joint types to build task-specific robotic arms.
+<Card title="Modular Robot Design Challenge" icon="rocket">
+**Design Goal:** Create a joint library where engineers can select and combine different joint types to build task-specific robotic arms and machines.
 
 **Key Requirements:**
 - **Flexibility**: Support various motion requirements
@@ -70,6 +69,22 @@ Companies like **Universal Robots**, **KUKA**, and **ABB** use modular approache
 - **Cost Optimization**: Avoiding over-designed solutions
 :::
 
+> **Engineering Question:** Given any arrangement of links and joints, how do we predict whether it will move, how many motors it needs, and whether our prediction can be trusted?
+
+### Why Constraint Analysis Matters
+
+**Consequences of getting the count wrong:**
+- **Lock-up** when too many constraints leave zero mobility (a structure where you wanted a mechanism)
+- **Uncontrolled motion** when too few constraints leave degrees of freedom no actuator commands
+- **Binding and broken parts** in over-constrained assemblies that only fit because of manufacturing slop
+- **Wasted cost** from motors and controllers driving freedoms the task never needed
+
+**Benefits of systematic analysis:**
+- **Predictable mobility** before any hardware is built
+- **Correct actuator count** (one independent input per degree of freedom)
+- **Early detection** of over-constraint and singular configurations
+- **A shared language** that scales from a door hinge to a six-axis robot
+
 ## Fundamental Theory: Kinematic Joints and Constraints
 
 <InArticleAd />
@@ -79,369 +94,765 @@ To solve our modular robot challenge, we need to understand how joints work and 
 
 ### What are Kinematic Joints?
 
-**Kinematic joints** are mechanical connections between rigid bodies (links) that allow certain motions while preventing others.
-
-<Card title="🔗 Joint Definition" icon="document">
-A **kinematic joint** is a mechanical connection that:
-- **Connects** two or more rigid bodies
-- **Allows** specific types of relative motion  
+<Card title="Joint Definition" icon="document">
+A **kinematic joint** (or kinematic pair) is a mechanical connection that:
+- **Connects** two rigid bodies (links)
+- **Allows** specific types of relative motion
 - **Constrains** unwanted motions
 - **Transmits** forces and moments between bodies
 
-**Key Concept**: Every joint both **enables** desired motion and **restricts** undesired motion.
+**Key Concept**: Every joint both **enables** desired motion and **removes** undesired motion. The motions it permits are its degrees of freedom; the motions it blocks are its constraints. In a plane, *permitted + constrained = 3* for every joint.
 </Card>
 
-### Types of Planar Kinematic Joints
+In a plane, a single free body has exactly three degrees of freedom: it can translate in X, translate in Y, and rotate about the axis perpendicular to the plane. Every planar joint we attach removes some of these three freedoms. A joint that removes two freedoms (leaving one) is called a lower pair; a joint that removes only one (leaving two) is a higher pair. This single accounting rule, three freedoms minus the constraints, is the entire foundation of mobility analysis.
 
-In planar mechanisms, we have several fundamental joint types:
+### Classification of Planar Kinematic Joints
 
 <Tabs>
   <TabItem label="Revolute Joint (R)">
-    
-    **Motion Allowed:** Rotation about a fixed axis
-    **Motion Constrained:** Translation in X and Y directions
-    **Degrees of Freedom:** 1 (rotation only)
-    **Constraints:** 2 (blocks X and Y translation)
-    
-    **Applications:**
-    - Robot shoulder joints
-    - Door hinges
-    - Motor shaft connections
-    
-    **Symbol:** Circle with dot (⊙)
-    
+
+<Card title="Revolute (Pin) Joint" icon="document">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+  <TailwindWrapper>
+	![Revolute Joint](https://cdn.siliconwit.com/education/spatial-mechanics/revolute-joint-ls-group.gif)
+  </TailwindWrapper>
+</div>
+
+**Motion Allowed:** Rotation about the axis perpendicular to the plane
+**Motion Constrained:** Translation in both in-plane directions
+**Degrees of Freedom:** 1 &nbsp; | &nbsp; **Constraints:** 2
+
+| Planar motion | Permitted? |
+|---------------|:----------:|
+| X-translation | ❌ |
+| Y-translation | ❌ |
+| Z-rotation | ✅ |
+
+**This is a *lower pair*** (surface contact, 2 constraints).
+
+**Applications:** Robot shoulder and elbow joints, door hinges, motor shaft connections, every pin in a four-bar linkage.
+</Card>
+
   </TabItem>
   <TabItem label="Prismatic Joint (P)">
-    
-    **Motion Allowed:** Translation along one axis
-    **Motion Constrained:** Rotation and translation perpendicular to axis
-    **Degrees of Freedom:** 1 (translation only)
-    **Constraints:** 2 (blocks rotation and perpendicular translation)
-    
-    **Applications:**
-    - Linear actuators
-    - Telescoping mechanisms
-    - Sliding doors
-    
-    **Symbol:** Rectangle with direction arrow
-    
+
+<Card title="Prismatic (Slider) Joint" icon="document">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+  <TailwindWrapper>
+	![Prismatic Joint](https://cdn.siliconwit.com/education/spatial-mechanics/prismatic-joint-ls-group.gif)
+  </TailwindWrapper>
+</div>
+
+**Motion Allowed:** Translation along one in-plane axis
+**Motion Constrained:** Translation perpendicular to that axis, and rotation
+**Degrees of Freedom:** 1 &nbsp; | &nbsp; **Constraints:** 2
+
+| Planar motion | Permitted? |
+|---------------|:----------:|
+| X-translation (along slide) | ✅ |
+| Y-translation | ❌ |
+| Z-rotation | ❌ |
+
+**This is a *lower pair*** (surface contact, 2 constraints).
+
+**Applications:** Linear actuators, hydraulic cylinders, the piston of an engine, telescoping mechanisms, sliding doors.
+</Card>
+
   </TabItem>
-  <TabItem label="Higher-Order Joints">
-    
-    **Cylindrical Joint (C):**
-    - Motion: Translation + Rotation along same axis
-    - DOF: 2, Constraints: 1
-    
-    **Spherical Joint (S):**
-    - Motion: Rotation about any axis through center
-    - DOF: 3, Constraints: 0 (in 3D)
-    
-    **Fixed Joint (F):**
-    - Motion: None
-    - DOF: 0, Constraints: 3 (all motions blocked)
-    
+  <TabItem label="Higher Pair (Half Joint)">
+
+<Card title="Higher Pair: Cam or Gear Contact" icon="document">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+  <TailwindWrapper>
+	![Cam and Follower Higher Pair](https://cdn.siliconwit.com/education/parametric-mechanical-CAD-with-FreeCAD/cam-and-follower-mechanism.gif)
+  </TailwindWrapper>
+</div>
+
+A **higher pair** makes contact along a line or at a point rather than over a surface. A cam touching a follower (above), or two gear teeth meshing, can simultaneously **roll** and **slip** at the contact while staying in contact, so it removes only one freedom (the normal direction) instead of two.
+
+**Motion Allowed:** Rolling (rotation) + slipping (tangential translation)
+**Motion Constrained:** Translation normal to the contact (must stay in contact)
+**Degrees of Freedom:** 2 &nbsp; | &nbsp; **Constraints:** 1
+
+| Planar motion | Permitted? |
+|---------------|:----------:|
+| Tangential translation (slip) | ✅ |
+| Normal translation | ❌ |
+| Z-rotation (roll) | ✅ |
+
+**This is a *higher pair*** (line/point contact, only 1 constraint). In the Kutzbach-Grübler equation it is counted as $j_2$.
+
+**Applications:** [Cam-follower systems](./cam-follower-systems-motion-programming), gear-tooth contact, wheel rolling on a surface, ball bearings.
+</Card>
+
   </TabItem>
 </Tabs>
 
+:::tip[Lower pair vs higher pair, in one sentence]
+A **lower pair** (revolute, prismatic) touches over a surface and removes **2** planar freedoms; a **higher pair** (cam, gear) touches along a line or point and removes only **1**. That single difference is why the equation has separate terms for $j_1$ and $j_2$.
+:::
+
 ### Degrees of Freedom Fundamentals
 
-**Degrees of Freedom (DOF)** represent the number of independent coordinates needed to completely specify a system's configuration.
-
-<Card title="📐 DOF in Planar Systems" icon="document">
-**Free Body in Plane:** 3 DOF
+<Card title="Degrees of Freedom in the Plane" icon="document">
+**A free rigid body in a plane has 3 DOF:**
 - X-translation
-- Y-translation  
-- Z-rotation (about axis perpendicular to plane)
+- Y-translation
+- Z-rotation (about the axis perpendicular to the plane)
 
-**Constrained System:** 3n - 2j₁ - j₂ DOF
-
-Where:
-- n = number of moving bodies
-- j₁ = number of single-DOF joints (revolute, prismatic)
-- j₂ = number of two-DOF joints (higher-order)
+For a mechanism of $n$ links, **one link is the fixed ground**, so the moving bodies contribute $3(n-1)$ unconstrained freedoms before any joint is added. Joints then subtract constraints.
 </Card>
 
-### Grübler's Equation: The Foundation of Constraint Analysis
+### The Kutzbach-Grübler Equation
 
-**Grübler's equation** provides a systematic method to calculate the degrees of freedom for any planar mechanism:
-
-<Card title="⚖️ Grübler's Equation for Planar Mechanisms" icon="document">
+<Card title="Kutzbach-Grübler Equation for Planar Mechanisms" icon="document">
 $$\text{DOF} = 3(n-1) - 2j_1 - j_2$$
 
 **Where:**
-- n = Total number of links (including ground/frame)
-- j₁ = Number of single-DOF joints (revolute, prismatic)
-- j₂ = Number of two-DOF joints (higher-order)
-- 3(n-1) = Total DOF of all moving bodies
-- 2j₁ + j₂ = Total constraints imposed by joints
+- $n$ = total number of links, **including the ground/frame**
+- $j_1$ = number of **lower pairs** (revolute or prismatic, each removing 2 constraints)
+- $j_2$ = number of **higher pairs** (cam or gear contact, each removing 1 constraint)
 
-**Physical Meaning:** System mobility equals unconstrained motion minus joint constraints.
+**Reading the equation:** $3(n-1)$ is the total freedom of all moving links; $2j_1 + j_2$ is the total constraint imposed by all joints. Mobility is what is left over.
 </Card>
 
-:::tip[Grübler's Equation Applications]
-- **DOF > 0**: Mechanism has mobility (can move)
-- **DOF = 0**: Structure (statically determinate)
-- **DOF < 0**: Over-constrained (may bind or break)
-- **DOF = 1**: Single-input mechanism (most common design goal)
+:::tip[Interpreting the result]
+- **DOF > 0**: a *mechanism*: it moves, and it needs this many independent inputs
+- **DOF = 0**: a *structure*: statically determinate, no motion
+- **DOF < 0**: *over-constrained*: statically indeterminate, and may bind unless special geometry helps (see Application 3)
+- **DOF = 1**: a single-input mechanism, the most common and most controllable design target
 :::
 
-## System Application: Robotic Arm DOF Analysis
+### Systematic Joint Analysis Process
+
+<Steps>
+1. **Identify all links**, and include the ground/frame as one link.
+
+2. **Classify every joint** as a lower pair ($j_1$) or higher pair ($j_2$), and confirm the constraint count.
+
+3. **Apply the Kutzbach-Grübler equation** to compute the mobility.
+
+4. **Verify physically**: does the predicted mobility match how the real mechanism moves? One actuator should be needed per degree of freedom.
+
+5. **Check for special cases**: redundant constraints, passive joints, and singular configurations can all make the raw equation disagree with reality.
+</Steps>
+
+:::caution[Where the equation can mislead you]
+1. **Redundant (overlapping) constraints** can make DOF come out negative even though the mechanism moves freely (the scissor lift in Application 3).
+2. **Passive degrees of freedom** (a roller that spins without affecting output) inflate the count.
+3. **Singular configurations** can momentarily change the *instantaneous* mobility without changing the mechanism's overall DOF (the toggle clamp in Application 4).
+
+This is exactly why we pair every hand calculation in this lesson with a simulator: the equation predicts, the simulator confirms.
+:::
+
+## Application 1: Four-Bar Linkage (The Workhorse of Planar Mechanisms)
 
 <InArticleAd />
 
 
-Let's return to our modular robotic arm challenge and apply Grübler's equation to analyze different configurations.
+The four-bar linkage is the most widely used closed-chain mechanism in engineering, from windshield wipers to suspension systems to robotic grippers. We will analyze its mobility, then drive it in the simulator to confirm a single input controls the entire chain.
 
-### Configuration 1: Simple 2-DOF Robot Arm
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/four-bar-linkage-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Four-Bar Linkage Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Practice with this mechanism in the [Four-Bar Linkage Experiments](/education/mechanism-design-simulation/four-bar-linkage-experiments/) lab. Experiment 1 (the Grashof condition) is a natural starting point for confirming that a single crank input drives the whole linkage.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Crank-rocker four-bar linkage (a packaging-line diverter arm)
+- **Task:** Determine the mobility and the number of motors required
+- **Link lengths (a crank-rocker set):** crank $a = 40$ mm, coupler $b = 120$ mm, follower/rocker $c = 80$ mm, ground $d = 100$ mm
+
+**What we need to calculate:**
+1. **Number of links** including ground
+2. **Joint types and counts** ($j_1$, $j_2$)
+3. **Mobility** from the Kutzbach-Grübler equation
+4. **Verification** that a single crank input determines the whole linkage
+
+**Key Question:** How many independent inputs does a four-bar linkage need, and why is it the default choice for controlled planar motion?
+:::
+
+<Card title="Equivalent System Model" icon="document">
+**Given the four links:**
+- **Link 1**: ground/frame (the fixed bar of length $d$)
+- **Link 2**: crank (input link of length $a$)
+- **Link 3**: coupler (floating link of length $b$)
+- **Link 4**: follower/rocker (output link of length $c$)
+
+**The four joints** are all pin (revolute) connections: ground-crank ($O_2$), crank-coupler ($A$), coupler-follower ($B$), follower-ground ($O_4$).
+</Card>
+
+### Step 1: Count Links and Joints
 
 <details>
-<summary>**Click to reveal calculations**</summary>
+<summary>**Click to reveal the link and joint inventory**</summary>
 
 <Steps>
-1. **System Description:**
-   - 2 rotating links (upper arm, forearm)
-   - 2 revolute joints (shoulder, elbow)
-   - 1 fixed base (ground)
 
-2. **Grübler Analysis:**
-   - Links (n): 3 (ground + upper arm + forearm)
-   - Revolute joints (j₁): 2 (shoulder + elbow)  
-   - Higher joints (j₂): 0
-   
-   DOF = 3(3-1) - 2(2) - 0 = 6 - 4 = **2 DOF**
+1. **Count links (include ground):**
 
-3. **Design Verification:**
-   ✅ **DOF = 2**: Robot can position end-effector anywhere in its planar workspace
-   ✅ **Single motor per joint**: Each revolute joint needs one actuator
-   ✅ **Controllable**: Two-input system matches two actuators
+   $$n = 4 \quad (\text{ground} + \text{crank} + \text{coupler} + \text{follower})$$ ✅
+
+2. **Classify the joints:**
+
+   All four connections are pin joints, so they are revolute lower pairs:
+
+   $$j_1 = 4 \quad (\text{4 revolute joints}), \qquad j_2 = 0 \quad (\text{no higher pairs})$$ ✅
+
 </Steps>
 
 </details>
 
-### Configuration 2: 3-DOF Robot with Wrist Rotation
+### Step 2: Apply the Kutzbach-Grübler Equation
 
 <details>
-<summary>**Click to reveal calculations**</summary>
+<summary>**Click to reveal the mobility calculation**</summary>
 
 <Steps>
-1. **System Description:**
-   - 3 rotating links (upper arm, forearm, wrist)
-   - 3 revolute joints (shoulder, elbow, wrist)
-   - 1 fixed base
 
-2. **Grübler Analysis:**
-   - Links (n): 4 (ground + upper arm + forearm + wrist)
-   - Revolute joints (j₁): 3
-   - Higher joints (j₂): 0
-   
-   DOF = 3(4-1) - 2(3) - 0 = 9 - 6 = **3 DOF**
+1. **Substitute into the equation:**
 
-3. **Design Analysis:**
-   ✅ **DOF = 3**: Robot can position and orient end-effector in plane
-   ✅ **Redundancy**: Can reach same point with different arm configurations
-   ✅ **Versatility**: Suitable for complex manipulation tasks
+   $$\text{DOF} = 3(n-1) - 2j_1 - j_2$$
+
+   $$\text{DOF} = 3(4-1) - 2(4) - 0$$ ✅
+
+   $$\text{DOF} = 9 - 8 = 1 \text{ DOF}$$ ✅
+
+2. **Interpret the result:**
+
+   - The linkage has **mobility 1**: a single input fully determines every link's position.
+   - **Motors required: 1**, applied at the crank ($O_2$).
+   - With one input fixed, the coupler and follower angles are completely determined by the geometry (you solve for them explicitly in the [position analysis](./position-analysis-planar-linkages)). ✅
+
 </Steps>
 
 </details>
 
-### Configuration 3: Hybrid Robot with Linear Actuator
+### Step 3: Verify in the Simulator
 
 <details>
-<summary>**Click to reveal calculations**</summary>
+<summary>**Click to reveal the simulator verification**</summary>
 
 <Steps>
-1. **System Description:**
-   - 2 rotating links + 1 sliding link
-   - 2 revolute joints + 1 prismatic joint
-   - 1 fixed base
 
-2. **Grübler Analysis:**
-   - Links (n): 4 (ground + 3 moving links)
-   - Single-DOF joints (j₁): 3 (2R + 1P)
-   - Higher joints (j₂): 0
-   
-   DOF = 3(4-1) - 2(3) - 0 = 9 - 6 = **3 DOF**
+1. **Open the** [Four-Bar Linkage Simulator](/product-development/four-bar-linkage-simulator/) (short link [siwit.co/FBL](https://siwit.co/FBL)) and load the **Crank-Rocker (Grashof)** preset, or set $a = 40$, $b = 120$, $c = 80$, $d = 100$ mm. ✅
 
-3. **Design Benefits:**
-   ✅ **Mixed motion types**: Rotation + linear extension
-   ✅ **Extended reach**: Prismatic joint increases workspace
-   ✅ **Force advantages**: Linear actuators can provide high forces
+2. **Observe the single input:** the simulator exposes exactly one driving variable, the crank angle. Sweep it from 0 to 360 degrees. ✅
+
+3. **Confirm mobility = 1:** every other quantity the simulator plots ($\theta_3$, $\theta_4$, $\omega_3$, $\omega_4$, the coupler-point path) is fully determined by that one crank angle. There is no second freedom to set. ✅
+
+4. **Connect to the equation:** the fact that one slider controls the whole figure is the physical meaning of $\text{DOF} = 1$. If the linkage had 2 DOF, the simulator would need two independent inputs to pin down the configuration. ✅
+
 </Steps>
 
 </details>
+
+:::note[Engineering Insight]
+The four-bar linkage is the workhorse of planar mechanism design precisely because $\text{DOF} = 1$: a single motor produces a fully determined, repeatable output motion. This is the ideal most mechanisms are designed toward.
+
+**Key Concept:** Four links + four revolute joints is the minimum closed chain with mobility 1. Remove a joint and it falls apart; add a constraint and it locks. Every mechanism in this lesson is, at heart, a variation on this balance.
+:::
+
+## Application 2: Slider-Crank Mechanism (Replacing a Pin with a Slider)
+
+<InArticleAd />
+
+
+The slider-crank converts rotation into straight-line motion and is the heart of every piston engine, pump, and compressor. It looks different from the four-bar, but its mobility is identical, and seeing *why* deepens the joint-counting intuition.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Practice with this mechanism in the [Crank-Slider Experiments](/education/mechanism-design-simulation/crank-slider-experiments/) lab. Experiment 1 (the baseline kinematic profile) lets you drive the single crank input and watch the piston motion it fully determines.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** In-line slider-crank (an internal-combustion engine / reciprocating compressor)
+- **Task:** Determine mobility and compare it to the four-bar linkage
+- **Typical geometry:** crank $r = 50$ mm, connecting rod $l = 150$ mm, offset $e = 0$
+
+**What we need to calculate:**
+1. **Links and joints**, identifying the one prismatic joint
+2. **Mobility** from the Kutzbach-Grübler equation
+3. **Why** swapping a revolute for a prismatic joint leaves mobility unchanged
+
+**Key Question:** Why does the slider-crank, despite its different appearance, need exactly one input just like the four-bar?
+:::
+
+<Card title="Equivalent System Model" icon="document">
+**The four links:**
+- **Link 1**: engine block / frame (ground)
+- **Link 2**: crank (input)
+- **Link 3**: connecting rod (coupler)
+- **Link 4**: piston / slider (output)
+
+**The four joints:**
+- **3 revolute joints**: crank-frame ($O_2$), crank-rod, rod-piston
+- **1 prismatic joint**: piston sliding in the cylinder bore
+</Card>
+
+### Step 1: Count Links and Joints
+
+<details>
+<summary>**Click to reveal the link and joint inventory**</summary>
+
+<Steps>
+
+1. **Count links (include ground):**
+
+   $$n = 4 \quad (\text{frame} + \text{crank} + \text{connecting rod} + \text{piston})$$ ✅
+
+2. **Classify the joints:**
+
+   Three pin joints plus one sliding joint, all lower pairs:
+
+   $$j_1 = 4 \quad (\text{3 revolute} + \text{1 prismatic}), \qquad j_2 = 0$$ ✅
+
+   **Note:** a prismatic joint is a lower pair just like a revolute joint. Both remove 2 planar constraints, so both count toward $j_1$.
+
+</Steps>
+
+</details>
+
+### Step 2: Apply the Kutzbach-Grübler Equation
+
+<details>
+<summary>**Click to reveal the mobility calculation**</summary>
+
+<Steps>
+
+1. **Substitute:**
+
+   $$\text{DOF} = 3(4-1) - 2(4) - 0 = 9 - 8 = 1 \text{ DOF}$$ ✅
+
+2. **Compare to the four-bar:** identical mobility. The only change from Application 1 is that one revolute joint was replaced by a prismatic joint, and since both are lower pairs with 2 constraints each, the count is unchanged. ✅
+
+</Steps>
+
+</details>
+
+### Step 3: The "Revolute at Infinity" Insight and Simulator Check
+
+<details>
+<summary>**Click to reveal the geometric interpretation and verification**</summary>
+
+<Steps>
+
+1. **A slider is a pin on an infinitely long link.** Imagine the rocker $c$ of the four-bar growing longer and longer. Its tip traces an ever-flatter arc until, in the limit, the arc becomes a straight line and the pin becomes a slider. The slider-crank is the four-bar with its follower stretched to infinity, which is why the mobility is preserved. ✅
+
+2. **Open the** [Crank-Slider Mechanism Simulator](/product-development/crank-slider-mechanism-simulator/) (short link [siwit.co/CSM](https://siwit.co/CSM)) and set $r = 50$, $l = 150$, $e = 0$. ✅
+
+3. **Confirm mobility = 1:** the only driving input is the crank angle. The piston displacement, velocity, and acceleration the simulator plots are all consequences of that single input. ✅
+
+4. **Try the offset:** set $e \neq 0$. The motion becomes asymmetric (the quick-return effect), but the mobility is **still 1**: changing geometry never changes the joint count, only the path traced. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+A prismatic joint and a revolute joint are interchangeable in the mobility equation: each is a lower pair removing 2 constraints. The slider-crank and four-bar are mobility-equivalent, which is why one input drives each.
+
+**Practical Impact:** This equivalence lets designers swap rotary and linear elements (a pin-jointed rocker for a hydraulic cylinder, say) without disturbing the degree-of-freedom budget. You will use exactly this freedom when sizing actuators in the [force analysis](./force-analysis-mechanism-synthesis).
+:::
+
+## Application 3: Scissor Lift (When the Equation Lies: Grübler's Paradox)
+
+<InArticleAd />
+
+
+So far the equation has matched reality perfectly. Now we meet the case every engineer must recognize: a mechanism that **moves with one degree of freedom**, yet whose raw Kutzbach-Grübler count comes out **negative**. The scissor lift is the classic example, and resolving the contradiction is one of the most important skills in this lesson.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/scissor-lift-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Scissor Lift Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Practice with this mechanism in the [Scissor Lift Experiments](/education/mechanism-design-simulation/scissor-lift-experiments/) lab. Experiment 1 (the baseline height and force profile) lets you raise the platform on a single actuator input and observe that it stays horizontal throughout.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Single-stage symmetric scissor lift (a warehouse work platform)
+- **Task:** Compute the raw mobility, compare it to the observed motion, and reconcile the difference
+- **Model:** the two crossed arms, the base, and the platform (the hydraulic actuator is treated as the *driver* of whatever single freedom exists, so it is excluded from the link count)
+
+**What we need to calculate:**
+1. **Raw mobility** from the Kutzbach-Grübler equation
+2. **Observed mobility** (how the real lift actually moves)
+3. **The number of redundant constraints** that reconcile the two
+4. **Verification** in the simulator
+
+**Key Question:** The equation predicts the platform cannot move, yet warehouse lifts rise smoothly on a single cylinder. Who is right, and why?
+:::
+
+<Card title="Equivalent System Model" icon="document">
+**The four links:**
+- **Link 1**: base (ground)
+- **Link 2**: arm A
+- **Link 3**: arm B
+- **Link 4**: platform
+
+**The five joints:**
+- **Center pivot:** revolute joint where arms A and B cross
+- **Arm A to base:** revolute (pinned)
+- **Arm B to base:** prismatic (rolls/slides along the base)
+- **Arm A to platform:** prismatic (rolls/slides along the platform)
+- **Arm B to platform:** revolute (pinned)
+
+So: 3 revolute + 2 prismatic = 5 lower pairs.
+</Card>
+
+### Step 1: Apply the Equation Naively
+
+<details>
+<summary>**Click to reveal the raw mobility calculation**</summary>
+
+<Steps>
+
+1. **Inventory:**
+
+   $$n = 4, \qquad j_1 = 5 \ (\text{3R} + \text{2P}), \qquad j_2 = 0$$ ✅
+
+2. **Substitute:**
+
+   $$\text{DOF} = 3(4-1) - 2(5) - 0 = 9 - 10 = -1 \text{ DOF}$$ ⚠️ ✅
+
+3. **Read the result literally:** $\text{DOF} = -1$ predicts an **over-constrained structure** that should not move at all, and might even bind. ✅
+
+</Steps>
+
+</details>
+
+### Step 2: Compare with Physical Reality
+
+<details>
+<summary>**Click to reveal the contradiction**</summary>
+
+<Steps>
+
+1. **A real scissor lift clearly moves.** A single hydraulic cylinder raises and lowers the platform, and the platform stays horizontal throughout. That is the behavior of a **1-DOF mechanism**, not a $-1$-DOF structure. ✅
+
+2. **The contradiction:**
+
+   $$\text{DOF}_{\text{equation}} = -1 \qquad \text{but} \qquad \text{DOF}_{\text{observed}} = +1$$
+
+   The equation is off by 2. This discrepancy is **Grübler's paradox**. ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Reconcile with Redundant Constraints
+
+<details>
+<summary>**Click to reveal the resolution**</summary>
+
+<Steps>
+
+1. **The fix: redundant constraints.** The Kutzbach-Grübler equation assumes every joint imposes *independent* constraints. The scissor lift's special symmetry violates that assumption: equal-length arms pivoting at their shared midpoint force the platform to stay parallel to the base. That "stay parallel" condition is enforced **more than once** by the symmetric geometry, so some constraints overlap and do no new work. ✅
+
+2. **Account for the overlap.** Let $r$ be the number of redundant constraints. The corrected mobility is:
+
+   $$\text{DOF}_{\text{actual}} = 3(n-1) - 2j_1 - j_2 + r$$ ✅
+
+   Solving with the observed mobility:
+
+   $$1 = -1 + r \quad \Rightarrow \quad r = 2 \text{ redundant constraints}$$ ✅
+
+3. **Physical source of the 2 redundancies:** both prismatic joints have parallel axes and the arms are symmetric, so the orientation of the platform is pinned down by several joints that all say the same thing. Two of those constraint equations are linearly dependent on the others, so they remove no additional freedom. ✅
+
+</Steps>
+
+</details>
+
+### Step 4: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator verification**</summary>
+
+<Steps>
+
+1. **Open the** [Scissor Lift Mechanism Simulator](/product-development/scissor-lift-mechanism-simulator/) (short link [siwit.co/SLM](https://siwit.co/SLM)). ✅
+
+2. **Confirm a single input:** the simulator drives the lift with exactly one variable (the actuator length, or equivalently the scissor angle $\theta$). One input, one degree of freedom. ✅
+
+3. **Confirm the platform stays horizontal** at every height. That preserved horizontal orientation is the *visible signature* of the redundant constraints: the symmetry enforces it automatically, which is why the raw equation over-counted the constraints. ✅
+
+4. **Conclusion:** observed mobility = 1, matching the corrected calculation, not the raw $-1$. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The Kutzbach-Grübler equation is **necessary but not sufficient**. It is exact only when all joint constraints are independent. Symmetric and parallel-motion mechanisms (scissor lifts, pantographs, parallelogram linkages) routinely produce redundant constraints, making the raw count too low.
+
+**Key Concept:** When the equation disagrees with the mechanism you can build, suspect redundant constraints (special geometry) before suspecting your arithmetic. Engineers exploit this deliberately: the redundancy that "breaks" the equation is the very thing that keeps a scissor-lift platform level and stiff.
+
+**Why this lesson pairs every calculation with a simulator:** the equation is your fast first prediction, but for anything with symmetry you confirm mobility against the real, moving mechanism. The prediction guides; the simulation decides.
+:::
+
+## Application 4: Toggle Clamp (Mobility vs. the Singular Configuration)
+
+<InArticleAd />
+
+
+A toggle clamp holds a workpiece with enormous force from a light hand effort, and stays clamped even when you let go. It is a 1-DOF four-bar, yet at one special position it behaves dramatically differently. Distinguishing the mechanism's *overall mobility* from its *instantaneous behavior at a singularity* is the final concept of this lesson.
+
+<Card title="Simulator and hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/toggle-clamp-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Toggle Clamp Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** Practice with this mechanism in the [Toggle Clamp Experiments](/education/mechanism-design-simulation/toggle-clamp-experiments/) lab. Experiment 1 (top-dead-centre and self-locking) maps directly onto the singular configuration discussed here.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Over-center toggle clamp (a machining-fixture hold-down)
+- **Task:** Determine mobility, then explain self-locking without changing the DOF count
+- **Behavior of interest:** the over-center "toggle" position where clamping force spikes and the clamp self-locks
+
+**What we need to calculate:**
+1. **Links and joints**
+2. **Mobility** from the Kutzbach-Grübler equation
+3. **Why self-locking is a singular configuration, not a change in mobility**
+
+**Key Question:** If the clamp still has only one degree of freedom, what exactly happens at the toggle point that makes it lock?
+:::
+
+<Card title="Equivalent System Model" icon="document">
+**The four links:**
+- **Link 1**: clamp base (ground)
+- **Link 2**: handle (input)
+- **Link 3**: main link (coupler)
+- **Link 4**: clamp arm carrying the pad (output)
+
+**The four joints:** all revolute pins: handle-base ($O_2$), handle-main link ($A$), main link-clamp arm ($B$), clamp arm-base ($O_4$).
+
+This is the same topology as the four-bar in Application 1.
+</Card>
+
+### Step 1: Confirm Mobility
+
+<details>
+<summary>**Click to reveal the mobility calculation**</summary>
+
+<Steps>
+
+1. **Inventory:**
+
+   $$n = 4, \qquad j_1 = 4 \ (\text{4 revolute}), \qquad j_2 = 0$$ ✅
+
+2. **Substitute:**
+
+   $$\text{DOF} = 3(4-1) - 2(4) - 0 = 9 - 8 = 1 \text{ DOF}$$ ✅
+
+3. **Interpretation:** the toggle clamp is a four-bar linkage. One input (the handle) determines the whole configuration, exactly as in Application 1. ✅
+
+</Steps>
+
+</details>
+
+### Step 2: What Happens at Top-Dead-Center
+
+<details>
+<summary>**Click to reveal the singular-configuration analysis**</summary>
+
+<Steps>
+
+1. **The toggle (over-center) position:** the clamp reaches a configuration where the handle link and main link become **collinear** (top-dead-center). At that instant the input crank can move while the output pad barely moves at all. ✅
+
+2. **What changes, and what does not:**
+   - The **mobility stays 1**. The mechanism still has exactly one degree of freedom; you have not added or removed any joint.
+   - The **instantaneous velocity ratio** between input and output goes to zero (the output is momentarily stationary with respect to the input). This makes the **mechanical advantage spike toward infinity**: a small handle force produces a very large clamping force. ✅
+
+3. **Self-locking:** because the geometry sits slightly past top-dead-center at rest, any reaction force from the clamped part tries to push the linkage *back through* the collinear position, where the mechanical advantage works against it. The clamp holds with no continued handle effort. This is a **geometric (singular) property of one configuration**, not a property of the degree-of-freedom count. ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator verification**</summary>
+
+<Steps>
+
+1. **Open the** [Toggle Clamp Mechanism Simulator](/product-development/toggle-clamp-mechanism-simulator/) (short link [siwit.co/TCM](https://siwit.co/TCM)). ✅
+
+2. **Confirm a single input:** the handle angle $\theta_h$ is the only driver. One input, one degree of freedom, just as the equation says. ✅
+
+3. **Drive the handle toward top-dead-center** and watch the mechanical-advantage and transmission-angle plots: mechanical advantage rises sharply as the links approach collinear, even though the mechanism never gained a degree of freedom. ✅
+
+4. **Conclusion:** mobility is constant at 1 across the entire motion; the dramatic force amplification is an instantaneous singular effect of geometry. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+**Mobility (the global DOF count) and the instantaneous configuration are different things.** The toggle clamp keeps mobility 1 everywhere, yet at top-dead-center its velocity ratio collapses and mechanical advantage spikes, the basis of self-locking clamps, riveters, and crushers.
+
+**Key Concept:** The Kutzbach-Grübler equation tells you *how many* inputs a mechanism needs, not *how it transmits force at a given position*. Force transmission and singularities are taken up in Lessons 3, 4, and 6. Joint counting is the gate you pass first.
+:::
+
+## Design Application: Modular Serial Robot Arm
+
+<InArticleAd />
+
+
+The four mechanisms above are **closed chains** (their links form loops). The modular robot arm from our opening challenge is an **open chain** (a series of links ending in a free end-effector), and open chains follow a simpler rule: degrees of freedom **add up**. Let us size the modular arm.
+
+### Open-Chain Rule: Series Joints Add
+
+<Card title="Why Serial Joints Add Their DOF" icon="document">
+In an open serial chain with only single-DOF joints, the Kutzbach-Grübler equation reduces to a simple sum. For $m$ single-DOF joints in series:
+
+$$\text{DOF} = 3(n-1) - 2j_1 = 3(m) - 2(m) = m$$
+
+(since an $m$-joint open chain has $n = m + 1$ links). **Each serial joint adds exactly one degree of freedom**, which is why robot arms are described by their joint count: a "6-axis" robot has 6 DOF.
+</Card>
+
+<Tabs>
+  <TabItem label="2-DOF Arm">
+
+**Configuration:** ground + upper arm + forearm, joined by 2 revolute joints (shoulder, elbow).
+
+$$n = 3, \quad j_1 = 2 \quad \Rightarrow \quad \text{DOF} = 3(3-1) - 2(2) = 6 - 4 = 2$$ ✅
+
+**Capability:** positions the end-effector anywhere in its planar workspace. Needs 2 motors.
+
+  </TabItem>
+  <TabItem label="3-DOF Arm">
+
+**Configuration:** ground + 3 moving links, joined by 3 revolute joints (shoulder, elbow, wrist).
+
+$$n = 4, \quad j_1 = 3 \quad \Rightarrow \quad \text{DOF} = 3(4-1) - 2(3) = 9 - 6 = 3$$ ✅
+
+**Capability:** positions *and* orients the end-effector in the plane. Needs 3 motors.
+
+  </TabItem>
+  <TabItem label="Hybrid R-R-P Arm">
+
+**Configuration:** ground + 2 rotating links + 1 sliding link, joined by 2 revolute + 1 prismatic joint.
+
+$$n = 4, \quad j_1 = 3 \quad \Rightarrow \quad \text{DOF} = 3(4-1) - 2(3) = 9 - 6 = 3$$ ✅
+
+**Capability:** mixes rotation with linear extension for a different workspace shape. Same DOF as the 3R arm because the prismatic joint is also a single-DOF lower pair.
+
+  </TabItem>
+  <TabItem label="6-DOF Industrial Arm">
+
+**Configuration:** ground + 6 moving links, 6 revolute joints in series (the standard anthropomorphic industrial robot).
+
+$$n = 7, \quad j_1 = 6 \quad \Rightarrow \quad \text{DOF} = 3(7-1) - 2(6) = 18 - 12 = 6$$ ✅
+
+**Capability:** full position + orientation control. Needs 6 servo motors, one per joint.
+
+*(In 3D this becomes the spatial Grübler equation $F = 6(n-1) - \sum c_i$; see the Spatial Mechanics course.)*
+
+  </TabItem>
+</Tabs>
+
+:::tip[Open chain vs closed chain, in one line]
+**Open (serial) chains add DOF** with each joint, giving large, easily-controlled workspaces. **Closed chains** (Applications 1 to 4) trade workspace for rigidity, force amplification, and constrained, repeatable paths. Real machines combine both.
+:::
 
 ## Design Guidelines for Joint Selection
 
 <InArticleAd />
 
 
-Based on our analysis, here are practical guidelines for modular robotic systems:
-
-### Joint Selection Matrix
-
 <CardGrid>
   <Card title="Revolute Joints (R)">
-    **Best for:**
-    - Rotational positioning
-    - Compact designs
-    - High-precision applications
-    
-    **Considerations:**
-    - Limited workspace per joint
-    - Requires rotational actuators
-    - Good for dexterous manipulation
+  **Best for:** rotational positioning, compact designs, high-precision applications.
+
+  **Considerations:** limited workspace per joint; needs rotary actuators; ideal for dexterous manipulation.
   </Card>
   <Card title="Prismatic Joints (P)">
-    **Best for:**
-    - Linear positioning  
-    - Extended reach applications
-    - High force transmission
-    
-    **Considerations:**
-    - Larger physical footprint
-    - Linear actuator requirements
-    - Excellent for pick-and-place
+  **Best for:** linear positioning, extended reach, high force transmission.
+
+  **Considerations:** larger footprint; needs linear actuators; excellent for pick-and-place and lifting.
   </Card>
-  <Card title="Hybrid Configurations">
-    **Best for:**
-    - Complex motion requirements
-    - Flexible workspace shapes
-    - Multi-task applications
-    
-    **Considerations:**
-    - More complex control
-    - Higher cost and complexity
-    - Maximum versatility
+  <Card title="Higher Pairs (cam, gear)">
+  **Best for:** programmed motion profiles and timed motion ([cam design](./cam-follower-systems-motion-programming)), speed/torque conversion.
+
+  **Considerations:** line/point contact means higher stress; needs careful lubrication and surface hardening.
+  </Card>
+  <Card title="Closed vs Open Chains">
+  **Closed (1-DOF):** rigid, repeatable, force-amplifying. **Open (serial):** large workspace, easy control. Match the architecture to the task.
   </Card>
 </CardGrid>
 
-### DOF Optimization Strategies
+### DOF Optimization Strategy
 
 <Steps>
-1. **Task Analysis First**
-   - Identify required end-effector motions
-   - Determine minimum DOF for task completion
-   - Consider workspace requirements
+1. **Analyze the task first.** Identify the required end-effector motions and the minimum DOF that achieves them.
 
-2. **Joint Efficiency**
-   - Avoid over-constraining (DOF < 0)
-   - Minimize unnecessary DOF (cost and complexity)
-   - Target DOF = task requirements + 1 (for redundancy)
+2. **Right-size the mobility.** Avoid over-constraint (DOF $< 0$, binding) and avoid unnecessary freedoms (each one costs a motor and a controller). Target DOF = task requirement, adding redundancy only when fault tolerance or obstacle avoidance justifies it.
 
-3. **Actuator Integration**
-   - One actuator per DOF minimum
-   - Consider actuator placement and accessibility
-   - Plan for control system integration
+3. **Plan one actuator per degree of freedom.** Input count must equal DOF for full control.
 
-4. **Modular Standardization**
-   - Standardize joint interfaces
-   - Create reusable joint modules
-   - Document DOF contributions for each module
+4. **Verify before building.** Compute mobility with Kutzbach-Grübler, then confirm against a simulation, especially for any symmetric or parallel-motion mechanism where redundant constraints may hide.
 </Steps>
 
-## Practical Design Example: 6-DOF Industrial Robot
-
-<InArticleAd />
-
-
-Let's design a complete industrial robot arm for our modular system:
-
-### Target Specifications
-- **Task**: 3D positioning + 3D orientation (6 DOF total)
-- **Payload**: 10 kg
-- **Reach**: 800 mm
-- **Precision**: \pm0.1 mm
-
-### Joint Configuration Design
-
-<Tabs>
-  <TabItem label="Configuration Analysis">
-    
-    **Selected Configuration:**
-    - 6 revolute joints in series
-    - Standard industrial robot layout
-    - Anthropomorphic design
-    
-    **Grübler Verification:**
-    - Links (n): 7 (base + 6 moving links)
-    - Revolute joints (j₁): 6
-    - Higher joints (j₂): 0
-    
-    DOF = 3(7-1) - 2(6) - 0 = 18 - 12 = **6 DOF** ✅
-    
-  </TabItem>
-  <TabItem label="Joint Functions">
-    
-    **Joint 1 (Base Rotation):** Platform rotation - 360° capability
-    **Joint 2 (Shoulder):** Vertical arm positioning - \pm180° range  
-    **Joint 3 (Elbow):** Forearm positioning - \pm150° range
-    **Joint 4 (Wrist Roll):** End-effector rotation - \pm360° capability
-    **Joint 5 (Wrist Pitch):** End-effector tilt - \pm90° range
-    **Joint 6 (Wrist Yaw):** Final orientation - \pm180° range
-    
-  </TabItem>
-  <TabItem label="Design Verification">
-    
-    ✅ **DOF Match**: 6 DOF system matches 6 task requirements
-    ✅ **Actuator Count**: 6 joints = 6 servo motors needed
-    ✅ **Workspace**: Anthropomorphic design maximizes reachable volume
-    ✅ **Modularity**: Each joint can be standardized module
-    ✅ **Maintainability**: Individual joint replacement possible
-    
-  </TabItem>
-</Tabs>
-
-## Summary and Professional Applications
+## Summary and Next Steps
 
 <InArticleAd />
 
 
 ### Key Concepts Mastered
 
-1. **Joint Types**: Revolute (1 DOF), Prismatic (1 DOF), Higher-order (2+ DOF)
-2. **Constraint Analysis**: Joints both enable and restrict motion
-3. **Grübler's Equation**: DOF = 3(n-1) - 2j₁ - j₂ for planar systems
-4. **Design Strategy**: Match DOF to task requirements for optimal systems
+1. **Joint types:** revolute and prismatic are lower pairs (1 DOF, 2 constraints); cam/gear contacts are higher pairs (2 DOF, 1 constraint).
+2. **Kutzbach-Grübler equation:** $\text{DOF} = 3(n-1) - 2j_1 - j_2$ for any planar mechanism.
+3. **Grübler's paradox:** redundant constraints from special geometry can make the raw count too low; the scissor lift moves with 1 DOF despite a raw count of $-1$.
+4. **Mobility vs. singularity:** a mechanism's DOF is global; self-locking and force spikes (the toggle clamp) are instantaneous geometric effects that do not change the DOF.
+5. **Open vs. closed chains:** serial joints add DOF; closed loops constrain it.
+
+### The Four Mechanisms at a Glance
+
+| Mechanism | $n$ | $j_1$ | $j_2$ | Raw DOF | Actual DOF | Simulator |
+|-----------|:---:|:-----:|:-----:|:-------:|:----------:|-----------|
+| Four-bar linkage | 4 | 4 | 0 | 1 | 1 | [siwit.co/FBL](https://siwit.co/FBL) |
+| Slider-crank | 4 | 4 | 0 | 1 | 1 | [siwit.co/CSM](https://siwit.co/CSM) |
+| Scissor lift | 4 | 5 | 0 | −1 | 1 (2 redundant) | [siwit.co/SLM](https://siwit.co/SLM) |
+| Toggle clamp | 4 | 4 | 0 | 1 | 1 | [siwit.co/TCM](https://siwit.co/TCM) |
 
 ### Professional Design Principles
 
 <CardGrid>
   <Card title="System Mobility" icon="rocket">
-    **DOF = 0**: Fixed structure  
-    **DOF > 0**: Mobile mechanism  
-    **DOF < 0**: Over-constrained (avoid!)
+  **DOF = 0**: fixed structure. **DOF > 0**: mobile mechanism. **DOF < 0**: over-constrained, check for redundant constraints before rejecting.
   </Card>
   <Card title="Actuator Planning" icon="setting">
-    **Minimum**: One actuator per DOF  
-    **Control**: Input count = DOF count  
-    **Redundancy**: Extra DOF for flexibility
+  One actuator per DOF. Input count = DOF count for full control.
   </Card>
-  <Card title="Modular Design" icon="puzzle">
-    **Standardization**: Consistent joint interfaces  
-    **Documentation**: Track DOF contribution  
-    **Flexibility**: Reconfigurable architectures
+  <Card title="Verify, Don't Trust" icon="warning">
+  Kutzbach-Grübler is necessary but not sufficient. Confirm symmetric mechanisms against simulation.
   </Card>
-  <Card title="Cost Optimization" icon="warning">
-    **Right-size DOF**: Don't over-design  
-    **Actuator Efficiency**: Match power to requirements  
-    **Maintenance**: Design for joint replacement
+  <Card title="Right-Size DOF" icon="puzzle">
+  Match mobility to the task. Don't pay for freedoms you never command.
   </Card>
 </CardGrid>
 
 :::tip[Industry Best Practice]
-**"Design for the task, not for general capability."** - Start with task requirements, then determine minimum DOF needed. Add redundancy only when justified by flexibility or fault tolerance needs.
+**"Design for the task, not for general capability."** Start from the required motions, determine the minimum DOF, then add redundancy only when flexibility or fault tolerance justifies it.
 :::
 
 ### Real-World Applications
 
-This joint analysis methodology applies to:
-- **Industrial Robots**: Automotive assembly, welding, painting
-- **Service Robots**: Healthcare assistance, cleaning systems  
-- **Mobile Platforms**: AGVs, inspection robots, drones
-- **Manufacturing Equipment**: CNC machines, packaging systems
-- **Automotive Systems**: Suspension linkages, steering mechanisms
+This joint-and-constraint methodology underpins:
+- **Industrial robots:** automotive assembly, welding, painting
+- **Manufacturing equipment:** scissor lifts, toggle-clamp fixtures, indexing tables
+- **Automotive systems:** suspension linkages, steering mechanisms, engine slider-cranks
+- **Service and mobile platforms:** lifts, grippers, inspection arms
 
-**Coming Next**: In Lesson 2, we'll use these joint concepts to analyze position relationships in four-bar linkage suspension systems, exploring vector loop equations and geometric constraints.
+Next, [Position Analysis of Planar Linkages](./position-analysis-planar-linkages) takes the four-bar linkage whose mobility we just confirmed and solves for the exact position of every link using vector loop equations, the foundation for the velocity, acceleration, and force analysis that follows.
 
 
 

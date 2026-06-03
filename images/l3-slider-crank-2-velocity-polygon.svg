@@ -1,0 +1,16 @@
+<svg viewBox="0 0 385 238" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Slider-crank velocity polygon"><defs><marker id="m059669" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#059669"/></marker><marker id="m2563eb" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker><marker id="md97706" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/></marker></defs>
+<rect data-bg="1" x="0" y="0" width="385" height="238" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="278.8" y1="166.7" x2="79.6" y2="51.7" stroke="#2563eb" stroke-width="2.6" marker-end="url(#m2563eb)"/>
+<line x1="79.6" y1="51.7" x2="44.9" y2="166.7" stroke="#d97706" stroke-width="2.6" marker-end="url(#md97706)"/>
+<line x1="278.8" y1="166.7" x2="44.9" y2="166.7" stroke="#059669" stroke-width="2.6" marker-end="url(#m059669)"/>
+<text x="189.6" y="91.3" fill="#2563eb" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">v<tspan baseline-shift="sub" font-size="70%">A</tspan></text>
+<text x="42.5" y="103.2" fill="#d97706" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">v<tspan baseline-shift="sub" font-size="70%">B/A</tspan></text>
+<text x="161.9" y="187.4" fill="#059669" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">v<tspan baseline-shift="sub" font-size="70%">B</tspan></text>
+<circle cx="278.8" cy="166.7" r="3.6" fill="#374151"/>
+<text x="301.0" y="172.6" fill="#374151" font-size="13.5" font-family="sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="middle">o (pole)</text>
+<circle cx="79.6" cy="51.7" r="3.6" fill="#374151"/>
+<text x="66.2" y="33.0" fill="#374151" font-size="13.5" font-family="sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="middle">a</text>
+<circle cx="44.9" cy="166.7" r="3.6" fill="#374151"/>
+<text x="23.8" y="175.8" fill="#374151" font-size="13.5" font-family="sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="middle">b</text>
+<text x="12" y="231" fill="#6b7280" font-size="11.5" font-family="sans-serif">velocity scale: choose e.g. 1 cm = 10 mm/s  (&#969; = 1 rad/s)</text>
+</svg>
