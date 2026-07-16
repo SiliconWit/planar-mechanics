@@ -1,0 +1,16 @@
+<svg viewBox="0 0 794 354" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quick-return velocity polygon with the sliding-block slip vector"><defs><marker id="m059669" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#059669"/></marker><marker id="m2563eb" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker><marker id="md97706" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#d97706"/></marker></defs>
+<rect data-bg="1" x="0" y="0" width="794" height="354" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<line x1="137.0" y1="219.1" x2="448.8" y2="39.1" stroke="#2563eb" stroke-width="2.6" marker-end="url(#m2563eb)"/>
+<line x1="137.0" y1="219.1" x2="371.7" y2="291.0" stroke="#059669" stroke-width="2.6" marker-end="url(#m059669)"/>
+<line x1="371.7" y1="291.0" x2="448.8" y2="39.1" stroke="#d97706" stroke-width="2.6" marker-end="url(#md97706)"/>
+<text x="285.4" y="116.2" fill="#2563eb" font-size="14" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">v<tspan baseline-shift="sub" font-size="70%">B2</tspan></text>
+<text x="250.0" y="269.4" fill="#059669" font-size="14" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">v<tspan baseline-shift="sub" font-size="70%">B3</tspan></text>
+<text x="424.6" y="169.4" fill="#d97706" font-size="14" font-family="sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="middle">v<tspan baseline-shift="sub" font-size="70%">slip</tspan></text>
+<circle cx="137.0" cy="219.1" r="3.4" fill="#374151"/>
+<text x="122.3" y="222.1" fill="#374151" font-size="13.5" font-family="sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="middle">o</text>
+<circle cx="448.8" cy="39.1" r="3.4" fill="#374151"/>
+<text x="458.8" y="28.0" fill="#374151" font-size="13.5" font-family="sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="middle">b<tspan baseline-shift="sub" font-size="70%">2</tspan></text>
+<circle cx="371.7" cy="291.0" r="3.4" fill="#374151"/>
+<text x="378.3" y="304.5" fill="#374151" font-size="13.5" font-family="sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="middle">b<tspan baseline-shift="sub" font-size="70%">3</tspan></text>
+<text x="12" y="347" fill="#6b7280" font-size="11.5" font-family="sans-serif">Sliding-block triangle: v(B&#8322;) from the crank, v(B&#8323;) of the coincident lever point, v(slip) along the slot.  &#969;&#8322; = 1 rad/s.</text>
+</svg>

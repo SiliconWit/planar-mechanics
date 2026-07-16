@@ -102,7 +102,7 @@ Once a joint force $F$ is known, a **pin** of diameter $d$ in single shear carri
 <InArticleAd />
 
 
-This is the capstone worked example: from hand force to clamping force by force polygon, then the pin and link stresses.
+This is the capstone worked example: from hand force to clamping force by force polygon, then the pin and link stresses. The force polygon is the same [graphical method](./position-analysis-planar-linkages#methods-of-kinematic-analysis) used for velocities and accelerations, now applied to forces: draw the balance to scale, solve it exactly, and confirm in the simulator.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -327,7 +327,7 @@ Analysis takes a mechanism and finds its behaviour. **Synthesis** takes a requir
 </details>
 
 :::note[Engineering Insight]
-Synthesis is the reason for the other five lessons. Each analysis tool becomes a test the candidate design must pass, and the simulator is where you run those tests quickly before committing to metal. Designing a mechanism is proposing geometry and then subjecting it to every analysis in this course until it survives.
+Synthesis is the reason for the other five lessons. Each analysis tool becomes a test the candidate design must pass, and the simulator is where you run those tests quickly before committing to metal. Designing a mechanism is proposing geometry and then subjecting it to every analysis in this course until it survives. The geometry that survives is exactly what you then draw and dimension in the [Parametric Mechanical CAD with FreeCAD](/education/parametric-mechanical-cad-freecad/) course, where these link lengths and limit positions become the sketch constraints of a real part.
 :::
 
 ## Design Guidelines for Force Analysis and Synthesis
@@ -349,6 +349,10 @@ Synthesis is the reason for the other five lessons. Each analysis tool becomes a
   Propose dimensions, run every analysis as a test, refine, and repeat until all checks pass.
   </Card>
 </CardGrid>
+
+:::tip[Instrument it]
+The joint and bearing forces you solve for here are what wear the pins and overload the motor. Put a load cell, or a pin instrumented with a strain gauge, in the high-force joint, and clamp a current sensor (an ACS712 inline, or an INA219 on the supply) on the drive motor, because motor current is a clean proxy for the torque the linkage demands. Read them with an [ESP32 or STM32](/education/sensor-actuator-interfacing-stm32/), [stream the force-and-current trace](/education/iot-systems/), and let siliconwit.io [warn when a joint force climbs past its rating](https://siliconwit.io).
+:::
 
 ## Summary and Course Conclusion
 

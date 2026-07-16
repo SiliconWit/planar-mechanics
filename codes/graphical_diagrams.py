@@ -521,10 +521,455 @@ def toggle_skeleton(fname):
     write(fname, g)
 
 
+def quick_return_space(r, AC, AP, fname):
+    """Crank-and-slotted-lever quick-return (a slider-crank inversion, the shaper drive).
+
+    Fulcrum A (fixed) below, crank centre C (fixed) above it at distance AC, crank radius r.
+    The extreme lever positions are the two tangents from A to the crank circle: at each,
+    the crank CB is perpendicular to the lever AB (right angle at the tangent point), so
+    sin(phi) = r/AC with phi the lever half-swing. The tool arm AP carries the tool end,
+    whose two extremes R1, R2 bound the stroke.
+    """
+    A = np.array([0.0, 0.0])
+    C = np.array([0.0, AC])
+    phi = np.arcsin(r / AC)
+    dR = np.array([np.sin(phi), np.cos(phi)])
+    dL = np.array([-np.sin(phi), np.cos(phi)])
+    ABlen = AC * np.cos(phi)
+    B1, B2 = A + ABlen * dR, A + ABlen * dL          # tangent points (crank pin extremes)
+    P1, P2 = A + AP * dR, A + AP * dL                # tool-end extremes R1, R2
+    ang_deg = np.degrees(2 * phi)
+
+    sc, m, cap = 0.92, 52, 22
+    xs = [P1[0], P2[0], 0]; ys = [0, AP * np.cos(phi), AC + r]
+    xmin, xmax = min(xs) - 18, max(xs) + 18
+    ymin, ymax = min(ys) - 16, max(ys) + 18
+    W = max((xmax - xmin) * sc + 2 * m, 548)
+    H = (ymax - ymin) * sc + 2 * m + cap
+    xoff = (W - ((xmax - xmin) * sc + 2 * m)) / 2
+    X = lambda x: m + xoff + (x - xmin) * sc
+    Y = lambda y: H - m - cap - (y - ymin) * sc
+
+    def L(p, q, col, w=2.6, dash=""):
+        dd = f' stroke-dasharray="{dash}"' if dash else ""
+        return (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" x2="{X(q[0]):.1f}" '
+                f'y2="{Y(q[1]):.1f}" stroke="{col}" stroke-width="{w}"{dd} stroke-linecap="round"/>')
+
+    def pin(p, fixed=False):
+        cx, cy = X(p[0]), Y(p[1])
+        t = f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="4.5" fill="#fff" stroke="{COL["pt"]}" stroke-width="2"/>'
+        if fixed:
+            t += (f'<path d="M {cx-7:.1f} {cy+9:.1f} L {cx:.1f} {cy:.1f} L {cx+7:.1f} {cy+9:.1f} Z" '
+                  f'fill="none" stroke="{COL["pt"]}" stroke-width="1.5"/>'
+                  f'<line x1="{cx-10:.1f}" y1="{cy+9:.1f}" x2="{cx+10:.1f}" y2="{cy+9:.1f}" '
+                  f'stroke="{COL["pt"]}" stroke-width="1.5"/>')
+        return t
+
+    def T(p, txt, col, dx, dy, sz=14):
+        return (f'<text x="{X(p[0])+dx:.1f}" y="{Y(p[1])+dy:.1f}" fill="{col}" font-size="{sz}" '
+                f'font-family="sans-serif" font-weight="600">{txt}</text>')
+
+    cx, cy, rp = X(C[0]), Y(C[1]), r * sc
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" xmlns="http://www.w3.org/2000/svg" '
+         f'role="img" aria-label="Quick-return shaper: crank circle and the two extreme lever positions">',
+         plate(W, H),
+         f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{rp:.1f}" fill="none" stroke="{COL["crank"]}" stroke-width="2"/>',
+         L(A, C, COL["con"], 1.4, "3 3"),                 # line of centres AC (mean lever)
+         L(A, P1, COL["follower"]), L(A, P2, COL["follower"], 2.6, "7 5"),  # extreme lever positions
+         L(P1, P2, COL["piston"], 2.4),                   # tool stroke line R1R2
+         L(C, B1, COL["crank"], 2.0), L(C, B2, COL["crank"], 2.0, "4 3"),   # crank at the two extremes
+         pin(A, True), pin(C, True),
+         f'<circle cx="{X(B1[0]):.1f}" cy="{Y(B1[1]):.1f}" r="3.5" fill="{COL["crank"]}"/>',
+         f'<circle cx="{X(B2[0]):.1f}" cy="{Y(B2[1]):.1f}" r="3.5" fill="{COL["crank"]}"/>',
+         T(A, "A", COL["pt"], -20, 16), T(C, "C", COL["pt"], 8, 4),
+         T(B1, sub("B", "1"), COL["pt"], 6, -4), T(B2, sub("B", "2"), COL["pt"], -30, -4),
+         T(P1, sub("R", "1"), COL["piston"], 6, -4), T(P2, sub("R", "2"), COL["piston"], -30, -4),
+         T((C + B1) / 2, "r", COL["crank"], 6, 2), T((A + C) / 2, "AC", COL["con"], 6, 2, 12),
+         T(C, "&#945;", COL["crank"], -6, 34, 15),
+         f'<text x="{m}" y="{H-6:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">Scale: 1 cm = 40 mm.  r = {r:.0f}, AC = {AC:.0f}, AP = {AP:.0f} mm;  '
+         f'swing 2&#966; = {ang_deg:.1f}&#176;.</text>',
+         "</svg>"]
+    write(fname, g)
+
+
+def _skel_helpers(X, Y):
+    def L(p, q, c, w=3.0, dash=""):
+        dd = f' stroke-dasharray="{dash}"' if dash else ""
+        return (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" x2="{X(q[0]):.1f}" '
+                f'y2="{Y(q[1]):.1f}" stroke="{c}" stroke-width="{w}"{dd} stroke-linecap="round"/>')
+
+    def badge(p, num, col):
+        return (f'<circle cx="{X(p[0]):.1f}" cy="{Y(p[1]):.1f}" r="9.5" fill="#fff" '
+                f'stroke="{col}" stroke-width="2"/><text x="{X(p[0]):.1f}" y="{Y(p[1])+4:.1f}" '
+                f'fill="{col}" font-size="12.5" font-family="sans-serif" font-weight="700" '
+                f'text-anchor="middle">{num}</text>')
+
+    def joint(p, lab, fixed=False):
+        cx, cy = X(p[0]), Y(p[1])
+        t = f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="4.6" fill="#fff" stroke="{COL["pt"]}" stroke-width="2"/>'
+        if fixed:
+            t += (f'<path d="M {cx-7:.1f} {cy+9:.1f} L {cx:.1f} {cy:.1f} L {cx+7:.1f} {cy+9:.1f} Z" '
+                  f'fill="none" stroke="{COL["pt"]}" stroke-width="1.5"/>'
+                  f'<line x1="{cx-10:.1f}" y1="{cy+9:.1f}" x2="{cx+10:.1f}" y2="{cy+9:.1f}" '
+                  f'stroke="{COL["pt"]}" stroke-width="1.5"/>')
+        return t
+
+    def jlab(p, lab, dx, dy):
+        return (f'<text x="{X(p[0])+dx:.1f}" y="{Y(p[1])+dy:.1f}" fill="{COL["pt"]}" font-size="12.5" '
+                f'font-family="sans-serif" font-weight="700">{lab}</text>')
+
+    def T(p, txt, c, dx, dy, sz=14):
+        return (f'<text x="{X(p[0])+dx:.1f}" y="{Y(p[1])+dy:.1f}" fill="{c}" font-size="{sz}" '
+                f'font-family="sans-serif" font-weight="600">{txt}</text>')
+    return L, badge, joint, jlab, T
+
+
+def four_bar_skeleton(fname):
+    """Kinematic skeleton for mobility counting: 4 links, 4 revolute joints."""
+    O2, O4 = np.array([0.0, 0.0]), np.array([100.0, 0.0])
+    A = O2 + 40 * np.array([np.cos(np.radians(60)), np.sin(np.radians(60))])
+    B = O4 + 80 * np.array([np.cos(np.radians(64.94)), np.sin(np.radians(64.94))])
+    sc, m, cap = 1.9, 46, 22
+    xs, ys = [O2[0], O4[0], A[0], B[0]], [O2[1], O4[1], A[1], B[1]]
+    xmin, xmax = min(xs) - 26, max(xs) + 30
+    ymin, ymax = min(ys) - 24, max(ys) + 28
+    W = max((xmax - xmin) * sc + 2 * m, 560)
+    H = (ymax - ymin) * sc + 2 * m + cap
+    xoff = (W - ((xmax - xmin) * sc + 2 * m)) / 2
+    X = lambda x: m + xoff + (x - xmin) * sc
+    Y = lambda y: H - m - cap - (y - ymin) * sc
+    L, badge, joint, jlab, T = _skel_helpers(X, Y)
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" xmlns="http://www.w3.org/2000/svg" '
+         f'role="img" aria-label="Four-bar kinematic skeleton: four links numbered 1 to 4 and four revolute joints">',
+         plate(W, H),
+         L(O2, O4, COL["ground"], 3.0, "7 5"), L(O2, A, COL["crank"]),
+         L(A, B, COL["coupler"]), L(O4, B, COL["follower"]),
+         joint(O2, "R", True), joint(O4, "R", True), joint(A, "R"), joint(B, "R"),
+         jlab(O2, "R", -22, -8), jlab(O4, "R", 8, -8), jlab(A, "R", -20, -6), jlab(B, "R", 10, -4),
+         badge((O2 + O4) / 2, "1", COL["ground"]), badge((O2 + A) / 2, "2", COL["crank"]),
+         badge((A + B) / 2, "3", COL["coupler"]), badge((O4 + B) / 2, "4", COL["follower"]),
+         f'<text x="{m}" y="{H-6:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">Four-bar: 4 links (1 = ground), 4 revolute (R) joints. '
+         f'DOF = 3(4-1) - 2(4) = 1.</text>',
+         "</svg>"]
+    write(fname, g)
+
+
+def slider_crank_skeleton(fname):
+    """Kinematic skeleton: 4 links, 3 revolute joints and 1 prismatic (slider) joint."""
+    O = np.array([0.0, 0.0])
+    A = 50 * np.array([np.cos(np.radians(60)), np.sin(np.radians(60))])
+    s = 50 * np.cos(np.radians(60)) + np.sqrt(150 ** 2 - (50 * np.sin(np.radians(60))) ** 2)
+    B = np.array([s, 0.0])
+    sc, m, cap = 1.9, 46, 22
+    xs, ys = [O[0], A[0], B[0]], [O[1], A[1], B[1]]
+    xmin, xmax = min(xs) - 22, max(xs) + 34
+    ymin, ymax = min(ys) - 26, max(ys) + 30
+    W = max((xmax - xmin) * sc + 2 * m, 570)
+    H = (ymax - ymin) * sc + 2 * m + cap
+    xoff = (W - ((xmax - xmin) * sc + 2 * m)) / 2
+    X = lambda x: m + xoff + (x - xmin) * sc
+    Y = lambda y: H - m - cap - (y - ymin) * sc
+    L, badge, joint, jlab, T = _skel_helpers(X, Y)
+    bx, by = X(B[0]), Y(B[1])
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" xmlns="http://www.w3.org/2000/svg" '
+         f'role="img" aria-label="Slider-crank kinematic skeleton: four links, three revolute joints and one prismatic slider joint">',
+         plate(W, H),
+         f'<line x1="{X(xmin+6):.1f}" y1="{Y(0):.1f}" x2="{X(xmax-4):.1f}" y2="{Y(0):.1f}" '
+         f'stroke="{COL["ground"]}" stroke-width="3.0" stroke-dasharray="7 5"/>',
+         L(O, A, COL["crank"]), L(A, B, COL["rod"]),
+         f'<rect x="{bx-13:.1f}" y="{by-11:.1f}" width="26" height="22" rx="3" fill="none" '
+         f'stroke="{COL["piston"]}" stroke-width="2.6"/>',
+         joint(O, "R", True), joint(A, "R"),
+         f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="4.2" fill="#fff" stroke="{COL["pt"]}" stroke-width="2"/>',
+         jlab(O, "R", -22, 18), jlab(A, "R", -20, -6), jlab(B, "R", -4, -14),
+         f'<text x="{bx+18:.1f}" y="{by+5:.1f}" fill="{COL["pt"]}" font-size="12.5" '
+         f'font-family="sans-serif" font-weight="700">P</text>',
+         badge((O + A) / 2, "2", COL["crank"]), badge((A + B) / 2, "3", COL["rod"]),
+         badge((B + np.array([28, 0])), "4", COL["piston"]),
+         badge(np.array([(xmin + xmax) / 2, ymin + 8]), "1", COL["ground"]),
+         f'<text x="{m}" y="{H-6:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">Slider-crank: 4 links, 3 revolute (R) + 1 prismatic (P). '
+         f'DOF = 3(4-1) - 2(4) = 1.</text>',
+         "</svg>"]
+    write(fname, g)
+
+
+def four_bar_accel_polygon(fname):
+    """Full four-bar acceleration polygon at theta2 = 120 deg: crank centripetal,
+    coupler and follower normals from the pole, and the two tangentials meeting at b'."""
+    a, b, c, d = 40.0, 120.0, 80.0, 100.0
+    t2, t3, t4 = np.radians(120), np.radians(21.96), np.radians(96.25)
+    O2, O4 = np.array([0.0, 0.0]), np.array([d, 0.0])
+    A = O2 + a * np.array([np.cos(t2), np.sin(t2)])
+    B = O4 + c * np.array([np.cos(t4), np.sin(t4)])
+    w3, w4 = four_bar_omega(a, b, c, t2, t3, t4)
+    U = lambda v: v / (np.hypot(*v) or 1)
+    Mv = np.array([[-b * np.sin(t3), c * np.sin(t4)], [b * np.cos(t3), -c * np.cos(t4)]])
+    al3, al4 = np.linalg.solve(Mv, np.array([
+        a * np.cos(t2) + b * w3**2 * np.cos(t3) - c * w4**2 * np.cos(t4),
+        a * np.sin(t2) + b * w3**2 * np.sin(t3) - c * w4**2 * np.sin(t4)]))
+    o = np.array([0.0, 0.0])
+    aA = 1.0**2 * a * U(O2 - A)                       # crank centripetal, o -> a'
+    n = aA + w3**2 * b * U(A - B)                     # + coupler normal, a' -> n
+    perpc = U(np.array([-(B - A)[1], (B - A)[0]]))
+    bp = n + al3 * b * perpc                          # + coupler tangential, n -> b'
+    m = w4**2 * c * U(O4 - B)                         # follower normal from pole, o -> m
+
+    sc, mg, cap = 7.0, 54, 24
+    xs = [o[0], aA[0], n[0], m[0], bp[0]]; ys = [o[1], aA[1], n[1], m[1], bp[1]]
+    xmin, xmax = min(xs) - 12, max(xs) + 16
+    ymin, ymax = min(ys) - 10, max(ys) + 12
+    W = max((xmax - xmin) * sc + 2 * mg, 560)
+    H = (ymax - ymin) * sc + 2 * mg + cap
+    xoff = (W - ((xmax - xmin) * sc + 2 * mg)) / 2
+    X = lambda x: mg + xoff + (x - xmin) * sc
+    Y = lambda y: H - mg - cap - (y - ymin) * sc
+    cols = [COL["crank"], COL["coupler"], COL["follower"], COL["pt"]]
+
+    def arr(p, q, col, w=2.6, dash=""):
+        dd = f' stroke-dasharray="{dash}"' if dash else ""
+        return (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" x2="{X(q[0]):.1f}" '
+                f'y2="{Y(q[1]):.1f}" stroke="{col}" stroke-width="{w}"{dd} '
+                f'marker-end="url(#m{col[1:]})"/>')
+
+    def dot(p, c=COL["pt"], rr=3.4):
+        return f'<circle cx="{X(p[0]):.1f}" cy="{Y(p[1]):.1f}" r="{rr}" fill="{c}"/>'
+
+    def T(p, txt, c, dx, dy, sz=13.5):
+        return (f'<text x="{X(p[0])+dx:.1f}" y="{Y(p[1])+dy:.1f}" fill="{c}" font-size="{sz}" '
+                f'font-family="sans-serif" font-weight="600">{txt}</text>')
+
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" xmlns="http://www.w3.org/2000/svg" '
+         f'role="img" aria-label="Four-bar acceleration polygon: crank centripetal, coupler and follower normals from the pole, and the two tangentials meeting at b prime">'
+         f'<defs>{arrowheads(cols)}</defs>',
+         plate(W, H),
+         arr(o, bp, COL["pt"], 1.6, "5 4"),                        # resultant a_B (dashed)
+         arr(o, aA, COL["crank"]),                                 # crank centripetal
+         arr(aA, n, COL["coupler"]),                               # coupler normal (small)
+         arr(n, bp, COL["coupler"]),                               # coupler tangential
+         arr(o, m, COL["follower"]),                               # follower normal
+         arr(m, bp, COL["follower"]),                              # follower tangential
+         dot(o), dot(aA), dot(n, COL["coupler"]), dot(m, COL["follower"]), dot(bp),
+         T(o, "o&#8242;", COL["pt"], -22, 4), T(aA, "a&#8242;", COL["pt"], 11, 8),
+         T(bp, "b&#8242;", COL["pt"], 9, 4), T(m, "m", COL["pt"], -16, 2), T(n, "n", COL["coupler"], -14, 12),
+         T((o + aA) / 2, sub("a", "A"), COL["crank"], -26, -2, 13),
+         T((o + m) / 2, sup("a", "n"), COL["follower"], -24, 0, 12.5),
+         T((m + bp) / 2, sup("a", "t"), COL["follower"], -4, 16, 12.5),
+         T((n + bp) / 2, sup("a", "t"), COL["coupler"], 8, 2, 12.5),
+         T((aA + n) / 2, sup("a", "n"), COL["coupler"], -20, 6, 12),
+         T((o + bp) / 2, sub("a", "B"), COL["pt"], 8, -4, 12.5),
+         f'<text x="{mg}" y="{H-6:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">Coupler and follower normals from o&#8242;; the two tangentials '
+         f'meet at b&#8242;.  &#952;&#8322; = 120&#176;.</text>',
+         "</svg>"]
+    write(fname, g)
+
+
+def _qr_kin(theta_deg, r, AC, AP, w2=1.0):
+    """Full velocity and acceleration state of the crank-and-slotted-lever
+    quick-return at one crank angle. A fulcrum at origin, C crank centre above."""
+    A = np.array([0.0, 0.0]); C = np.array([0.0, AC])
+    th = np.radians(theta_deg)
+    B = C + r * np.array([np.cos(th), np.sin(th)])
+    d = float(np.linalg.norm(B - A)); u = (B - A) / d
+    perp = np.array([-u[1], u[0]])
+    cz = lambda w, v: np.array([-w * v[1], w * v[0]])
+    vBc = cz(w2, B - C)                      # velocity of B as a point on the crank
+    wL = float(np.dot(vBc, perp) / d)        # lever angular velocity
+    vslip = float(np.dot(vBc, u))            # slip speed of block along the slot
+    b3 = wL * cz(1.0, B - A)                 # velocity image of coincident lever point
+    P = A + AP * u
+    vP = cz(wL, P - A)
+    aBc = -w2 ** 2 * (B - C)                 # accel of B on crank (alpha2 = 0)
+    aN = -wL ** 2 * (B - A)                  # centripetal of coincident lever point
+    cor = 2.0 * wL * cz(1.0, vslip * u)      # Coriolis
+    rhs = aBc - aN - cor
+    kxBA = cz(1.0, B - A)
+    M = np.array([[kxBA[0], u[0]], [kxBA[1], u[1]]])
+    alphaL, a_s = np.linalg.solve(M, rhs)
+    aT = alphaL * kxBA
+    return dict(A=A, C=C, B=B, P=P, d=d, u=u, perp=perp, wL=wL, vslip=vslip,
+                vBc=vBc, b3=b3, vP=vP, aBc=aBc, aN=aN, aT=aT, cor=cor,
+                a_slip=a_s * u, alphaL=float(alphaL), a_s=float(a_s))
+
+
+def quick_return_config(theta_deg, r, AC, AP, fname):
+    """Shaper drive at one crank angle: crank CB, slotted lever A-P, sliding block at B."""
+    k = _qr_kin(theta_deg, r, AC, AP)
+    A, C, B, P, u, perp = k["A"], k["C"], k["B"], k["P"], k["u"], k["perp"]
+    sc, m, cap = 0.9, 52, 22
+    xs = [A[0], C[0] - r, C[0] + r, B[0], P[0]]
+    ys = [A[1], C[1] + r, B[1], P[1]]
+    xmin, xmax = min(xs) - 20, max(xs) + 90
+    ymin, ymax = min(ys) - 16, max(ys) + 20
+    W = max((xmax - xmin) * sc + 2 * m, 560)
+    H = (ymax - ymin) * sc + 2 * m + cap
+    xoff = (W - ((xmax - xmin) * sc + 2 * m)) / 2
+    X = lambda x: m + xoff + (x - xmin) * sc
+    Y = lambda y: H - m - cap - (y - ymin) * sc
+
+    def L(p, q, c, w=2.6, dash=""):
+        dd = f' stroke-dasharray="{dash}"' if dash else ""
+        return (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" x2="{X(q[0]):.1f}" '
+                f'y2="{Y(q[1]):.1f}" stroke="{c}" stroke-width="{w}"{dd} stroke-linecap="round"/>')
+
+    def pin(p, fixed=False):
+        cx, cy = X(p[0]), Y(p[1])
+        t = f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="4.5" fill="#fff" stroke="{COL["pt"]}" stroke-width="2"/>'
+        if fixed:
+            t += (f'<path d="M {cx-7:.1f} {cy+9:.1f} L {cx:.1f} {cy:.1f} L {cx+7:.1f} {cy+9:.1f} Z" '
+                  f'fill="none" stroke="{COL["pt"]}" stroke-width="1.5"/>'
+                  f'<line x1="{cx-10:.1f}" y1="{cy+9:.1f}" x2="{cx+10:.1f}" y2="{cy+9:.1f}" '
+                  f'stroke="{COL["pt"]}" stroke-width="1.5"/>')
+        return t
+
+    def T(p, txt, c, dx, dy, sz=14):
+        return (f'<text x="{X(p[0])+dx:.1f}" y="{Y(p[1])+dy:.1f}" fill="{c}" font-size="{sz}" '
+                f'font-family="sans-serif" font-weight="600">{txt}</text>')
+
+    # sliding block: small square aligned with the slot
+    hu, hp = 9.0 * u, 9.0 * perp
+    c1, c2, c3, c4 = B + hu + hp, B + hu - hp, B - hu - hp, B - hu + hp
+    block = (f'<path d="M {X(c1[0]):.1f} {Y(c1[1]):.1f} L {X(c2[0]):.1f} {Y(c2[1]):.1f} '
+             f'L {X(c3[0]):.1f} {Y(c3[1]):.1f} L {X(c4[0]):.1f} {Y(c4[1]):.1f} Z" '
+             f'fill="{COL["rod"]}" fill-opacity="0.25" stroke="{COL["rod"]}" stroke-width="2"/>')
+    ram_y = P[1]
+    ram_r = np.array([P[0] + 70, ram_y])
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" xmlns="http://www.w3.org/2000/svg" '
+         f'role="img" aria-label="Quick-return shaper at crank angle {theta_deg:.0f} degrees: crank CB, slotted lever A to P, sliding block at B">',
+         plate(W, H),
+         f'<circle cx="{X(C[0]):.1f}" cy="{Y(C[1]):.1f}" r="{r*sc:.1f}" fill="none" '
+         f'stroke="{COL["con"]}" stroke-width="1.4" stroke-dasharray="3 3"/>',
+         L(A, P, COL["follower"], 5.0),                       # slotted lever body
+         L(A, P, "#ffffff", 1.6, "2 5"),                      # the slot inside it
+         L(C, B, COL["crank"], 2.8),                          # crank
+         block,
+         L(P, ram_r, COL["ground"], 2.0),                     # connector to ram
+         f'<rect x="{X(ram_r[0]):.1f}" y="{Y(ram_r[1])-13:.1f}" width="26" height="26" rx="3" '
+         f'fill="none" stroke="{COL["ground"]}" stroke-width="2.2"/>',
+         f'<line x1="{X(ram_r[0])-6:.1f}" y1="{Y(ram_r[1])+22:.1f}" x2="{X(ram_r[0])+32:.1f}" '
+         f'y2="{Y(ram_r[1])+22:.1f}" stroke="{COL["ground"]}" stroke-width="1.6" '
+         f'marker-start="url(#mg)" marker-end="url(#mg)"/>',
+         f'<defs><marker id="mg" markerWidth="9" markerHeight="9" refX="4" refY="3" orient="auto">'
+         f'<path d="M8,0 L0,3 L8,6 Z" fill="{COL["ground"]}"/></marker></defs>',
+         pin(A, True), pin(C, True),
+         f'<circle cx="{X(B[0]):.1f}" cy="{Y(B[1]):.1f}" r="3.6" fill="{COL["pt"]}"/>',
+         f'<circle cx="{X(P[0]):.1f}" cy="{Y(P[1]):.1f}" r="4" fill="#fff" stroke="{COL["pt"]}" stroke-width="2"/>',
+         T(A, "A", COL["pt"], -20, 16), T(C, "C", COL["pt"], 8, 4),
+         T(B, "B", COL["pt"], 10, 0), T(P, "P", COL["pt"], -6, -8),
+         T((C + B) / 2, "r", COL["crank"], 4, -4, 12),
+         T(ram_r, "ram", COL["ground"], 2, 34, 12),
+         f'<text x="{m}" y="{H-6:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">Block B slides in slot A-P; ram driven from P.  '
+         f'r = {r:.0f}, AC = {AC:.0f}, AP = {AP:.0f} mm.</text>',
+         "</svg>"]
+    write(fname, g)
+
+
+def slider_crank_rod_image(fname):
+    """Velocity image of the connecting rod: line a-b, its midpoint g, and the
+    least-velocity point q (foot of the perpendicular from the pole o)."""
+    r, l, th, w2 = 50.0, 150.0, np.radians(60), 1.0
+    cz = lambda w, v: np.array([-w * v[1], w * v[0]])
+    A = r * np.array([np.cos(th), np.sin(th)])
+    s = r * np.cos(th) + np.sqrt(l ** 2 - (r * np.sin(th)) ** 2)
+    B = np.array([s, 0.0])
+    vA = cz(w2, A); w3 = -vA[1] / (B - A)[0]; vB = vA + cz(w3, B - A)
+    o = np.array([0.0, 0.0]); a = vA; b = vB; ab = b - a
+    t = float(np.dot(o - a, ab) / np.dot(ab, ab)); q = a + t * ab; g = (a + b) / 2
+
+    sc, m, cap = 3.6, 48, 24
+    xs = [o[0], a[0], b[0]]; ys = [o[1], a[1], b[1]]
+    xmin, xmax = min(xs) - 12, max(xs) + 14
+    ymin, ymax = min(ys) - 7, max(ys) + 10
+    W = max((xmax - xmin) * sc + 2 * m, 516)
+    H = (ymax - ymin) * sc + 2 * m + cap
+    xoff = (W - ((xmax - xmin) * sc + 2 * m)) / 2
+    X = lambda x: m + xoff + (x - xmin) * sc
+    Y = lambda y: H - m - cap - (y - ymin) * sc
+
+    def ln(p, qq, c, w=2.6, dash="", arrow=False):
+        dd = f' stroke-dasharray="{dash}"' if dash else ""
+        mk = f' marker-end="url(#m{c[1:]})"' if arrow else ""
+        return (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" x2="{X(qq[0]):.1f}" '
+                f'y2="{Y(qq[1]):.1f}" stroke="{c}" stroke-width="{w}"{dd}{mk} stroke-linecap="round"/>')
+
+    def dot(p, c=COL["pt"], rr=3.6):
+        return f'<circle cx="{X(p[0]):.1f}" cy="{Y(p[1]):.1f}" r="{rr}" fill="{c}"/>'
+
+    def T(p, txt, c, dx, dy, sz=13.5):
+        return (f'<text x="{X(p[0])+dx:.1f}" y="{Y(p[1])+dy:.1f}" fill="{c}" font-size="{sz}" '
+                f'font-family="sans-serif" font-weight="600">{txt}</text>')
+
+    cols = [COL["crank"], COL["rod"], COL["follower"]]
+    g_ = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" xmlns="http://www.w3.org/2000/svg" '
+          f'role="img" aria-label="Slider-crank velocity image of the connecting rod with the least-velocity point">'
+          f'<defs>{arrowheads(cols)}</defs>',
+          plate(W, H),
+          ln(o, a, COL["crank"], 2.6, "", True),
+          ln(a, b, COL["rod"], 3.0, "", True),
+          ln(o, b, COL["follower"], 2.6, "", True),
+          ln(o, g, COL["con"], 1.5, "4 3"),
+          ln(o, q, COL["pt"], 1.5, "5 3"),
+          dot(o), dot(a), dot(b), dot(g, COL["rod"]), dot(q, COL["pt"]),
+          T(o, "o (pole)", COL["pt"], -6, 17),
+          T(a, "a", COL["pt"], -15, -4), T(b, "b", COL["pt"], -4, 17),
+          T(g, "g", COL["rod"], 8, -5), T(q, "q", COL["pt"], -16, 4),
+          T((o + a) / 2, sub("v", "A"), COL["crank"], -18, 2, 13),
+          T(a + 0.26 * (b - a), sub("v", "B/A"), COL["rod"], 8, -3, 13),
+          T((o + b) / 2, sub("v", "B"), COL["follower"], -4, 16, 13),
+          f'<text x="{m}" y="{H-6:.0f}" fill="{COL["ground"]}" font-size="11" '
+          f'font-family="sans-serif">a b = rod velocity image; g = midpoint, '
+          f'q = least-velocity point (v &#8776; 48.7 mm/s).</text>',
+          "</svg>"]
+    write(fname, g_)
+
+
+def quick_return_velocity_polygon(theta_deg, r, AC, AP, fname):
+    k = _qr_kin(theta_deg, r, AC, AP)
+    o, b2, b3 = (0.0, 0.0), tuple(k["vBc"]), tuple(k["b3"])
+    vector_polygon(
+        {"o": o, "b2": b2, "b3": b3},
+        [("o", "b2", COL["crank"], sub("v", "B2")),
+         ("o", "b3", COL["follower"], sub("v", "B3")),
+         ("b3", "b2", COL["rod"], sub("v", "slip"))],
+        {"o": "o", "b2": sub("b", "2"), "b3": sub("b", "3")},
+        "Sliding-block triangle: v(B&#8322;) from the crank, v(B&#8323;) of the coincident lever "
+        "point, v(slip) along the slot.  &#969;&#8322; = 1 rad/s.",
+        fname, "Quick-return velocity polygon with the sliding-block slip vector", sc=3.0)
+
+
+def quick_return_accel_polygon(theta_deg, r, AC, AP, fname):
+    k = _qr_kin(theta_deg, r, AC, AP)
+    o = np.array([0.0, 0.0])
+    n = k["aN"]; t_end = n + k["aT"]; cor_end = t_end + k["cor"]; b2 = cor_end + k["a_slip"]
+    vector_polygon(
+        {"o": tuple(o), "n": tuple(n), "t": tuple(t_end), "c": tuple(cor_end), "b2": tuple(b2)},
+        [("o", "n", COL["follower"], sup("a", "n")),
+         ("n", "t", COL["crank"], sup("a", "t")),
+         ("t", "c", "#7c3aed", "2&#969;v"),
+         ("c", "b2", COL["ground"], sub("a", "slip"))],
+        {"o": "o&#39;", "b2": sub("b", "2") + "&#39;"},
+        "Coriolis term 2&#969;v = 70 mm/s&#178; (purple). The chain a&#8319; + a&#7511; + Coriolis "
+        "+ a(slip) closes on the crank point acceleration.",
+        fname, "Quick-return acceleration polygon showing the Coriolis component", sc=3.2)
+
+
 # ----------------------------------------------------------------------------
 # build every current figure
 # ----------------------------------------------------------------------------
 def main():
+    quick_return_space(120, 300, 450, "l2-quick-return-space-diagram.svg")
+    # Lesson 3/4 quick-return (shaper) at crank angle 300 deg
+    quick_return_config(300, 120, 300, 450, "l3-quick-return-1-space-diagram.svg")
+    quick_return_velocity_polygon(300, 120, 300, 450, "l3-quick-return-2-velocity-polygon.svg")
+    quick_return_accel_polygon(300, 120, 300, 450, "l4-quick-return-accel-polygon.svg")
+    slider_crank_rod_image("l3-slider-crank-3-rod-image.svg")
+    # Lesson 1 mobility skeletons (numbered links, joint types)
+    four_bar_skeleton("l1-four-bar-skeleton.svg")
+    slider_crank_skeleton("l1-slider-crank-skeleton.svg")
     # Lesson 3, Application 1: slider-crank at theta = 60 deg (r = 50, l = 150)
     r, l, th = 50, 150, np.radians(60)
     slider_crank_space(r, l, 60, "l3-slider-crank-1-space-diagram.svg")
@@ -587,29 +1032,8 @@ def main():
         plab, "acceleration scale: choose e.g. 1 cm = 10 mm/s&#178;  (&#969; = 1 rad/s, &#952; = 60&#176;)",
         "l4-slider-crank-accel-polygon.svg", "Slider-crank acceleration polygon at 60 degrees")
 
-    # four-bar at theta2 = 120 deg (constant omega2)
-    a, b, c, d = 40.0, 120.0, 80.0, 100.0
-    t2, t3, t4 = np.radians(120), np.radians(21.96), np.radians(96.25)
-    O2, O4 = np.array([0.0, 0.0]), np.array([d, 0.0])
-    Afb = O2 + a * np.array([np.cos(t2), np.sin(t2)])
-    Bfb = O4 + c * np.array([np.cos(t4), np.sin(t4)])
-    w3b, w4b = four_bar_omega(a, b, c, t2, t3, t4)
-    M = np.array([[-b * np.sin(t3), c * np.sin(t4)], [b * np.cos(t3), -c * np.cos(t4)]])
-    rhs = np.array([a * np.cos(t2) + b * w3b**2 * np.cos(t3) - c * w4b**2 * np.cos(t4),
-                    a * np.sin(t2) + b * w3b**2 * np.sin(t3) - c * w4b**2 * np.sin(t4)])
-    al3, al4 = np.linalg.solve(M, rhs)
-    aA_v = 1.0**2 * a * unit(O2 - Afb)          # crank centripetal A->O2
-    aBA_n = w3b**2 * b * unit(Afb - Bfb)        # coupler normal B->A
-    perp = np.array([-(Bfb - Afb)[1], (Bfb - Afb)[0]]); perp = unit(perp)
-    aBA_t = al3 * b * perp                       # coupler tangential
-    npt = aA_v + aBA_n
-    bpt = npt + aBA_t
-    vector_polygon(
-        {"o": (0, 0), "a": tuple(aA_v), "n": tuple(npt), "b": tuple(bpt)},
-        [("o", "a", COL["crank"], aA), ("a", "n", COL["coupler"], sup("a", "n")),
-         ("n", "b", COL["coupler"], sup("a", "t")), ("o", "b", COL["follower"], aB)],
-        plab, "acceleration scale: choose e.g. 1 cm = 10 mm/s&#178;  (&#969;&#8322; = 1, &#952;&#8322; = 120&#176;)",
-        "l4-four-bar-accel-polygon.svg", "Four-bar acceleration polygon at 120 degrees")
+    # four-bar acceleration polygon at theta2 = 120 deg (bespoke, full two-tangential construction)
+    four_bar_accel_polygon("l4-four-bar-accel-polygon.svg")
 
     # Lesson 5 (cam-follower): SVAJ diagram, cam profile, pressure-angle curves
     u = np.linspace(0, 1, 120)

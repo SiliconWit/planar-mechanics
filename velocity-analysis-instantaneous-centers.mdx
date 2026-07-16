@@ -1,10 +1,10 @@
 ---
 title: "Lesson 3: Velocity Analysis and Instantaneous Centers"
-description: "Differentiate the vector loop to find velocities. Closed-form piston velocity, four-bar angular velocities, instantaneous centers and Kennedy's theorem, velocity ratio and mechanical advantage, each verified in a simulator."
+description: "Draw the velocity polygon and confirm it by differentiating the vector loop. Closed-form piston velocity, four-bar angular velocities, velocity ratio and mechanical advantage, with instantaneous centers noted as a shortcut, each verified in a simulator."
 contributors: "sam-macharia,andrew-kibor,jack-kojiro"
 pubDate: 2025-09-08
 tags: ["planar-mechanics", "velocity-analysis", "instantaneous-centers", "kennedys-theorem", "velocity-ratio", "mechanical-advantage"]
-excerpt: "Find how fast every link moves by differentiating the position loop. Solve piston and angular velocities in closed form, locate instantaneous centers with Kennedy's theorem, define mechanical advantage from the velocity ratio, and verify each result in an interactive simulator."
+excerpt: "Find how fast every link moves by drawing the velocity polygon and confirming it with the differentiated loop. Solve piston and angular velocities in closed form, define mechanical advantage from the velocity ratio, note the instantaneous center as a shortcut, and verify each result in an interactive simulator."
 heroImage: "https://cdn.siliconwit.com/product-development/2d-mechanisms-analyzer/crank-slider-mechanism-simulator.png"
 ---
 
@@ -24,16 +24,16 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-Position analysis found where every link sits for a given input angle. Velocity analysis answers the next question: how fast is each link moving at that instant? The answer comes almost for free, because velocity is the time derivative of position, and you already have the position equations. Differentiate the vector loop from the position analysis and you get a set of linear equations for the velocities. Velocity matters because it sets the kinetic energy of every part, the flow rate of a pump, and the bearing loads, and because a smooth-looking mechanism can still have a sharp velocity peak that drives vibration. In this lesson you differentiate the loop, locate instantaneous centers, and read the velocity ratio that becomes mechanical advantage. #VelocityAnalysis #InstantaneousCenters #MechanicalAdvantage
+Position analysis found where every link sits for a given input angle. Velocity analysis answers the next question: how fast is each link moving at that instant? The answer comes almost for free, because velocity is the time derivative of position, and you already have the position equations. Differentiate the vector loop from the position analysis and you get a set of linear equations for the velocities. Velocity matters because it sets the kinetic energy of every part, the flow rate of a pump, and the bearing loads, and because a smooth-looking mechanism can still have a sharp velocity peak that drives vibration. In this lesson you draw the velocity polygon, differentiate the loop to confirm it, and read the velocity ratio that becomes mechanical advantage. You also meet the instantaneous center, a neat velocity shortcut, and see why the course builds on the polygon rather than on it. #VelocityAnalysis #VelocityPolygon #MechanicalAdvantage
 
 ## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
-1. **Differentiate** the vector loop to obtain the velocity equations of any planar linkage
-2. **Solve** for piston and angular velocities in closed form
-3. **Locate** instantaneous centers using Kennedy's theorem
-4. **Read** the velocity ratio as mechanical advantage and verify every result in a simulator
+1. **Construct** the velocity polygon with the drawing set and measure the link velocities from it
+2. **Differentiate** the vector loop to obtain the velocity equations, and solve for piston and angular velocities in closed form
+3. **Read** the velocity ratio as mechanical advantage and verify every result in a simulator
+4. **Recognise** the instantaneous center as a velocity shortcut, and know why the course builds on the polygon instead
 
 ## Real-World System Problem: Piston Velocity in Engines and Compressors
 
@@ -88,28 +88,44 @@ These are two **linear** equations in the unknown angular velocities $\omega_3$ 
 
 This is the central idea of the lesson. Position analysis was nonlinear and needed the Freudenstein trick to solve. Velocity analysis is linear, because differentiation turns the trigonometric position terms into coefficients that multiply the unknown velocities. Once you have the positions, finding the velocities is just solving two linear equations, and the same step repeated in the [acceleration analysis](./acceleration-analysis-dynamic-forces) gives the accelerations.
 
-### Two Routes to the Same Answer
+### Ways to Get the Velocity
+
+Velocity uses the same [methods](./position-analysis-planar-linkages#methods-of-kinematic-analysis) as position, in the same **draw, solve, simulate** rhythm: the graphical velocity polygon is the core hand method, the analytical velocity loop is its exact confirmation, and each Application ends by reading the answer off the simulator.
 
 <Tabs>
-  <TabItem label="Analytical (velocity loop)">
+  <TabItem label="Graphical (velocity polygon)">
 
-  Differentiate the loop and solve the linear equations. This is exact, fast, and easy to program. It is the method used in our simulators and in Applications 1 to 4 below.
+  Build the **velocity polygon** with the drawing set. Draw each velocity vector to scale, head to tail, using the key rule that the velocity of one point *relative to another point on the same rigid link is perpendicular to the line joining them*. Where the construction lines cross closes the polygon, and you **measure** the unknown velocities off it with the scale rule. This is the core hand method, worked in every Application below, and the same construction becomes the acceleration polygon in the [next lesson](./acceleration-analysis-dynamic-forces).
 
   </TabItem>
-  <TabItem label="Instantaneous centers (geometric)">
+  <TabItem label="Analytical (velocity loop)">
 
-  Every moving link has, at each instant, a point about which it appears to purely rotate: its **instantaneous center** (IC). If you can find the IC, then every point on the link has speed $v = \omega \times (\text{distance to the IC})$. This gives a quick geometric route to velocity ratios without solving equations, and it is the basis of the graphical velocity polygon.
+  **Differentiate** the position loop and solve the resulting linear equations. Exact, fast, and easy to program; it is the method behind our simulators and the closed-form confirmation in each Application.
+
+  </TabItem>
+  <TabItem label="Instantaneous centers (worth knowing)">
+
+  Every moving link has, at each instant, a point about which it appears to purely rotate: its **instantaneous center** (IC). Locate it and every point on the link has speed $v = \omega \times (\text{distance to the IC})$, which gives a velocity ratio in one step. It is worth knowing and makes a quick geometric check, but the course does not build on it, for the reason in the note below.
 
   </TabItem>
 </Tabs>
 
-### Kennedy's Theorem
+:::note[Reading the notation, and the two direction rules]
+The symbol $\vec V_{B/A}$ is read "**the velocity of $B$ relative to $A$**" (equivalently, "of $B$ **with respect to** $A$"): how fast $B$ appears to move when you sit on $A$ and watch. The full velocity of $B$ is then the velocity of $A$ plus this relative part:
 
-<Card title="Kennedy's Theorem" icon="document">
-For any three rigid bodies in plane motion, their three instantaneous centers lie on a single straight line.
+$$\vec V_B = \vec V_A + \vec V_{B/A}$$
 
-A mechanism of $n$ links has $\dfrac{n(n-1)}{2}$ instantaneous centers. The obvious ones are the fixed pivots and sliding contacts; Kennedy's theorem locates the rest as intersections of the lines through known IC pairs. The most useful is often the IC between the input and output links, because it gives the velocity ratio directly.
-</Card>
+Two direction rules settle every velocity polygon, and you should commit them to memory:
+
+- **Turning link.** If $A$ and $B$ are two points on the same rigid link, $\vec V_{B/A}$ is **perpendicular** to the line $AB$, with magnitude $\omega \times AB$. (A rigid link cannot stretch, so $B$ can only swing around $A$.)
+- **Sliding pair.** Where one part slides along another (a piston on its centre-line, a block in a slotted lever), the sliding part of the velocity is **parallel** to the slide.
+
+When a point **both slides along a link and that link turns** (a block in a rotating slot, as in the quick-return shaper), the *acceleration* picks up an extra **Coriolis** term that has no velocity counterpart; it is defined and used in the [acceleration analysis](./acceleration-analysis-dynamic-forces).
+:::
+
+:::note[Instantaneous centers: a shortcut we note, not a road we build on]
+The instantaneous center gives **velocities only**. It has no counterpart for acceleration, so it cannot carry a problem through the full position, then velocity, then acceleration chain that this course follows. The velocity polygon can: it is the same drawing discipline that becomes the [acceleration polygon](./acceleration-analysis-dynamic-forces) in Lesson 4, so the effort you spend learning it pays off twice. Locating every center by **Kennedy's theorem** (for any three links in plane motion, their three instantaneous centers are collinear) also grows quickly with size, since a mechanism of $n$ links has $\tfrac{n(n-1)}{2}$ centers, while the polygon and the loop stay the same size on any linkage. So we treat the instantaneous center as a fact worth knowing and a one-step check on a velocity ratio, and we build the course on the polygon, the loop, and the simulator.
+:::
 
 ### Velocity Ratio and Mechanical Advantage
 
@@ -240,26 +256,61 @@ The velocity polygon solves $\vec V_B = \vec V_A + \vec V_{B/A}$ graphically: dr
 
 </details>
 
-### Step 4: Cross-Check with the Instantaneous Center
+### Step 4: Connecting-Rod Angular Velocity
 
 <details>
-<summary>**Click to reveal the IC method and rod angular velocity**</summary>
+<summary>**Click to reveal the rod angular velocity**</summary>
 
 <Steps>
 
-1. **Locate the connecting-rod IC.** The crank pin $A$ moves perpendicular to the crank, so the rod's instantaneous center lies on the crank line extended. The piston moves horizontally, so the IC also lies on the vertical line through the piston. Their intersection is the rod IC relative to ground, the same intersection you used to find $b$ in the polygon. ✅
-
-2. **Rod angular velocity** from differentiating $\phi = \arcsin((r/l)\sin\theta)$:
+1. **Rod angular velocity** from differentiating $\phi = \arcsin((r/l)\sin\theta)$:
 
    $$\omega_3 = \frac{r\omega\cos\theta}{l\cos\phi}$$ ✅
 
    At $\theta = 0\degree$: $\omega_3 = (r/l)\omega = 0.333\,\omega$ (rod rotating fastest). At $\theta = 90\degree$: $\omega_3 = 0$ (rod momentarily not rotating, only translating). ✅
 
+2. **A one-step check.** The rod's instantaneous center is where the crank line and the vertical through the piston cross, the same intersection that fixed $b$ in the polygon; dividing $v_A$ by the distance from that center to $A$ reproduces the same $\omega_3$. It is a quick confirmation, not the working method. ✅
+
 </Steps>
 
 </details>
 
-### Step 5: Verify in the Simulator
+### Step 5: Points on the Rod, and Rubbing Velocities at the Pins
+
+In an engine the connecting rod is a real body with mass, and every pin rubs. Two questions follow from the same polygon you already drew: how fast does a chosen point on the rod move (its inertia needs this), and how fast do the pin surfaces rub? The rubbing speed is worth knowing because it sets the **friction heat, the oil-film thickness, and the wear life** at each bearing: the faster a journal rubs, the more power it dissipates and the harder its lubrication has to work, so the crank pin and main bearing are sized and oiled for their rubbing speeds, not the engine's output speed.
+
+<details>
+<summary>**Click to reveal the velocity image and rubbing velocities**</summary>
+
+<Steps>
+
+1. **The rod's velocity image.** Every point of the rigid rod $AB$ maps to a point on the line $a\,b$ of the polygon, in the same proportion: a point one-third along $AB$ from $A$ sits one-third along $a\,b$ from $a$. The line $a\,b$ is the **velocity image** of the rod, and reading any point's velocity is just measuring from the pole $o$ to its image. ✅
+
+2. **Velocity of the rod's mid-point $G$.** The mass centre sits at the middle of $AB$, so its image $g$ is the middle of $a\,b$. Measuring $o\,g$ gives $v_G \approx 48.7$ mm/s, the velocity the rod's inertia force will use in the [acceleration analysis](./acceleration-analysis-dynamic-forces). ✅
+
+3. **The least-velocity point.** The slowest point on the rod is the one whose image is the foot of the **perpendicular** from the pole $o$ onto the line $a\,b$ (point $q$). Here it lands about $66$ mm from $A$, close to the mid-point, with $v_\text{min} \approx 48.7$ mm/s. At this instant the rod's points hardly differ in speed, from $48.7$ mm/s near the middle to about $50.8$ mm/s at the piston. ✅
+
+4. **Rubbing velocity at a pin.** At a pin joint the two links turn at different rates, so the journal surface rubs at $v_\text{rub} = (\text{relative angular velocity}) \times (\text{pin radius})$. With $\omega_2 = 1$ rad/s and $|\omega_3| = 0.174$ rad/s, and the journal radii shown:
+
+   | Pin | Links joined | Relative $\omega$ (rad/s) | Radius (mm) | $v_\text{rub}$ (mm/s) |
+   |---|---|:---:|:---:|:---:|
+   | Main bearing $O$ | crank, frame | 1.000 | 25 | 25.0 |
+   | Crank pin $A$ | crank, rod | 1.174 | 20 | 23.5 |
+   | Gudgeon pin $B$ | rod, piston | 0.174 | 15 | 2.6 |
+
+   The crank pin rubs fastest because the crank and rod turn in **opposite** senses there, so their rates add ($1 + 0.174$); the gudgeon pin rubs slowest because only the rod's small $\omega_3$ acts. Multiplying each rubbing velocity by the friction force at that pin gives the power lost there. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Velocity image of the connecting rod: the line a b carries every point of the rod, with midpoint g and least-velocity point q](./images/l3-slider-crank-3-rod-image.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 6: Verify in the Simulator
 
 <details>
 <summary>**Click to reveal the simulator check**</summary>
@@ -407,23 +458,8 @@ Construct the four-bar to scale at $\theta_2 = 120\degree$ using the same arc-in
 
 </details>
 
-### Step 5: Cross-Check with Instantaneous Centers
-
-<details>
-<summary>**Click to reveal Kennedy's construction**</summary>
-
-<Steps>
-
-1. **Six instantaneous centers.** The fixed pivots give $I_{12}$ (crank-ground) at $O_2$ and $I_{14}$ (follower-ground) at $O_4$. Kennedy's theorem places $I_{24}$, the input-output IC, where the coupler line $AB$ extended meets the ground line. ✅
-
-2. **Velocity ratio from the IC.** The ratio of the distances from $I_{24}$ to $O_4$ and to $O_2$ gives $\omega_4/\omega_2$ directly, reproducing $0.51$ with no equations. The polygon, the loop, and the IC all agree because they describe the same motion. ✅
-
-</Steps>
-
-</details>
-
 :::note[Engineering Insight]
-The velocity polygon, the velocity loop, and the instantaneous-center construction give the same $\omega_3$ and $\omega_4$ by three routes. The drawing shows at a glance how the coupler and follower velocities relate; the loop gives precision and the full profile; the IC gives the velocity ratio in one step. The instant you pick matters for the drawing: at $\theta_2 = 60\degree$ the coupler barely rotates and the polygon collapses to a sliver, so $120\degree$ is the clearer instant to construct.
+The velocity polygon and the velocity loop give the same $\omega_3$ and $\omega_4$ by two independent routes: the drawing shows at a glance how the coupler and follower velocities relate, and the loop gives precision and the full profile across the cycle. For a one-step sanity check you can also place the input-output instantaneous center where the coupler line $AB$ extended meets the ground line and read $\omega_4/\omega_2$ from the distance ratio, but the polygon and the loop are the working methods. The instant you pick matters for the drawing: at $\theta_2 = 60\degree$ the coupler barely rotates and the polygon collapses to a sliver, so $120\degree$ is the clearer instant to construct.
 :::
 
 ## Application 3: Platform Velocity of the Scissor Lift
@@ -596,6 +632,107 @@ Sketch the four-bar skeleton at top-dead-centre, where the geometry behind self-
 Self-locking is a velocity-ratio effect. At the toggle position the output stops moving for an instant relative to the input, so the velocity ratio is zero and the mechanical advantage is, in the ideal case, unbounded. Toggle clamps, bolt cutters, and rock crushers all live at this position deliberately. The [force analysis](./force-analysis-mechanism-synthesis) turns this velocity argument into the actual clamping force and the stresses it creates.
 :::
 
+## Application 5: Ram Velocity of the Quick-Return Shaper
+
+<InArticleAd />
+
+
+The metal shaper of the [position analysis](./position-analysis-planar-linkages#application-5-quick-return-position-a-slider-crank-inversion) drives its cutting ram through a **crank-and-slotted-lever** mechanism, an inversion of the slider-crank. It brings in something the engine did not have: the crank pin is a **block that slides inside the slotted lever** while the lever turns. That sliding-in-a-turning-slot is exactly the joint whose velocity polygon carries a slip vector, and whose acceleration will carry a Coriolis term.
+
+<Card title="Hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** This inversion has no simulator of its own; the drawing and the calculation confirm each other here. For the related quick-return *principle*, open the crank-slider simulator's **Quick-Return (offset)** preset and watch the velocity curve go asymmetric, then continue in the [Crank-Slider Experiments](/education/mechanism-design-simulation/crank-slider-experiments/) lab.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Crank-and-slotted-lever quick-return (shaper ram drive)
+- **Task:** Find the ram velocity, and the block's slip velocity in the slot, at the instant drawn
+- **Geometry:** crank $r = 120$ mm, centre distance $AC = 300$ mm, driving length $AP = 450$ mm
+- **Input:** constant crank speed $\omega_2 = 1$ rad/s, crank at the cutting-stroke instant shown (block $205$ mm from the fulcrum $A$)
+:::
+
+### Step 1: Draw the Space Diagram
+
+Fix the mechanism to scale at the chosen instant so the polygon has real directions to work from. The crank $CB$ sets where the block sits, and the line $A$ through $B$ to $P$ is the slotted lever.
+
+<details>
+<summary>**Click to reveal the space-diagram construction**</summary>
+
+<Steps>
+
+1. **Choose and note a scale**, say **1 cm = 40 mm**, and draw the fixed centres $A$ and $C$ with $AC = 300$ mm. ✅
+
+2. **Crank and block.** Draw the crank $CB = r = 120$ mm to the given angle; $B$ is the sliding block. ✅
+
+3. **Slotted lever.** Draw the lever from $A$ through $B$ and on to the driving point $P$ at $AP = 450$ mm. Measure the block distance $AB \approx 205$ mm and the lever angle. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Quick-return shaper at the cutting instant: crank CB, slotted lever A to P, sliding block at B, ram driven from P](./images/l3-quick-return-1-space-diagram.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Construct the Velocity Polygon
+
+The block $B$ is two coincident points at this instant: $B_2$ on the **crank** and $B_3$ on the **lever**. They share a position but not a velocity, and the difference is the slip along the slot: $\vec V_{B_2} = \vec V_{B_3} + \vec V_{B_2/B_3}$.
+
+<details>
+<summary>**Click to reveal the velocity-polygon construction**</summary>
+
+<Steps>
+
+1. **Velocity of the block on the crank.** Pick a pole $o$ and a velocity scale. Draw $o\,b_2$ **perpendicular to the crank** $CB$, length $v_{B_2} = r\omega_2 = 120$ mm/s. ✅
+
+2. **Direction of the coincident lever point.** $B_3$ belongs to the turning lever, so $\vec V_{B_3}$ is **perpendicular to the lever** $AB$. Draw that direction through the pole $o$. ✅
+
+3. **Direction of the slip.** The block slides along the slot, so $\vec V_{B_2/B_3}$ is **parallel to the lever** $AB$. Draw that direction through $b_2$. ✅
+
+4. **Close the polygon.** The two construction lines meet at $b_3$. Then $o\,b_3 = v_{B_3}$ and $b_3\,b_2 = v_{B_2/B_3}$ is the slip. Measuring: $v_{B_3} \approx 81.8$ mm/s and the slip $\approx 87.8$ mm/s. ✅
+
+5. **Lever angular velocity.** $\omega_\text{lever} = \dfrac{v_{B_3}}{AB} = \dfrac{81.8}{205} \approx 0.399$ rad/s. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Quick-return velocity polygon: v(B2) from the crank, v(B3) of the coincident lever point, and the slip v(B2/B3) along the slot](./images/l3-quick-return-2-velocity-polygon.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 3: Ram Velocity and Analytical Check
+
+<details>
+<summary>**Click to reveal the ram velocity and confirmation**</summary>
+
+<Steps>
+
+1. **From lever speed to ram speed.** The driving point $P$ is on the same lever at $AP = 450$ mm, so its velocity is **perpendicular to the lever** with magnitude
+
+   $$v_P = \omega_\text{lever} \times AP = 0.399 \times 450 \approx 179.6 \text{ mm/s}$$ ✅
+
+2. **The ram takes the horizontal part.** The ram slides horizontally, so its speed is the horizontal component of $v_P$, about $172$ mm/s at this instant. ✅
+
+3. **Analytical confirmation.** Resolving the crank-pin velocity $v_{B_2} = 120$ mm/s along and across the lever gives the slip $v_{B_2}\cos\!\angle(CB,\,AB)$ and the transverse part $v_{B_2}\sin\!\angle(CB,\,AB)$; the transverse part divided by $AB$ returns $\omega_\text{lever} = 0.399$ rad/s, and the slip returns $87.8$ mm/s, matching the polygon. ✅
+
+4. **Why it matters.** The ram speed varies through the stroke, and it is deliberately low and steady over the cutting pass and high on the return. The [acceleration analysis](./acceleration-analysis-dynamic-forces) takes the next step: because the block slides while the lever turns, its acceleration carries a **Coriolis** term with no counterpart in the plain slider-crank. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The slotted-lever quick-return turns one steady crank rotation into a slow cutting stroke and a fast return, and the velocity polygon shows why: the block's velocity splits into a part that swings the lever (which drives the ram) and a part that slips harmlessly along the slot. Near the dead positions almost all of the crank-pin velocity becomes slip and the lever barely moves; through mid-stroke the split reverses and the ram runs fastest. The sliding-in-a-turning-slot joint is what makes this mechanism, and it is the reason its acceleration needs the Coriolis term.
+:::
+
 ## Programming Velocity Analysis
 
 <InArticleAd />
@@ -643,8 +780,8 @@ print(f"w3/w2 = {w3:.3f}, w4/w2 = {w4:.3f}")   # w3/w2 = -0.040, w4/w2 = 0.457
   <Card title="Find the real peak" icon="warning">
   Do not assume the maximum speed is at mid-stroke. The secondary harmonic shifts the peak, and components must be sized for the true maximum.
   </Card>
-  <Card title="Use ICs for a quick check" icon="puzzle">
-  Instantaneous centers and velocity polygons give the velocity ratio geometrically, a fast sanity check on the analytical result.
+  <Card title="Draw first, then confirm" icon="puzzle">
+  The velocity polygon gives the velocities geometrically and the velocity loop confirms them exactly. Two independent routes agreeing is your check that both are right.
   </Card>
   <Card title="Watch the limit positions" icon="setting">
   Where the velocity ratio approaches zero, mechanical advantage grows large. Place these positions deliberately, as in a toggle clamp.
@@ -658,10 +795,10 @@ print(f"w3/w2 = {w3:.3f}, w4/w2 = {w4:.3f}")   # w3/w2 = -0.040, w4/w2 = 0.457
 
 ### Key Concepts Mastered
 
-1. **Velocity loop:** differentiating the position loop gives linear equations for the unknown velocities.
-2. **Piston velocity:** the slider-crank peak is about $1.055\,r\omega$ near $73°$ for $l/r = 3$, ahead of mid-stroke, because of the secondary harmonic.
-3. **Four-bar angular velocities:** solved in closed form from the velocity loop, with instantaneous centers and velocity polygons as geometric cross-checks.
-4. **Kennedy's theorem:** locates the input-output instantaneous center, which gives the velocity ratio directly.
+1. **Velocity polygon:** drawn with the drawing set, using the rule that relative velocity between two points on a link is perpendicular to the link; it is the core hand method and becomes the acceleration polygon next lesson.
+2. **Velocity loop:** differentiating the position loop gives linear equations for the unknown velocities, the exact confirmation of the polygon.
+3. **Piston velocity:** the slider-crank peak is about $1.055\,r\omega$ near $73°$ for $l/r = 3$, ahead of mid-stroke, because of the secondary harmonic.
+4. **Instantaneous center:** a velocity-only shortcut for the velocity ratio, worth knowing as a quick check; the course builds on the polygon because that construction also carries into acceleration.
 5. **Mechanical advantage:** the reciprocal of the velocity ratio, large near limit positions, the basis of self-locking.
 
 ### Velocity Results at a Glance
@@ -672,6 +809,7 @@ print(f"w3/w2 = {w3:.3f}, w4/w2 = {w4:.3f}")   # w3/w2 = -0.040, w4/w2 = 0.457
 | Four-bar | $\omega_3$, $\omega_4$ | velocity loop (linear) | [siwit.co/FBL](https://siwit.co/FBL) |
 | Scissor lift | platform velocity | $v = nL\cos\theta\,\dot\theta$ | [siwit.co/SLM](https://siwit.co/SLM) |
 | Toggle clamp | velocity ratio | $\to 0$ at the toggle | [siwit.co/TCM](https://siwit.co/TCM) |
+| Quick-return (shaper) | ram velocity, slip | velocity polygon with slip vector | drawing $+$ calc |
 
 ### A Note on Tools
 

@@ -67,6 +67,38 @@ For an open serial chain (a robot arm), this is direct: add the links nose to ta
   </Card>
 </CardGrid>
 
+## Methods of Kinematic Analysis
+
+<InArticleAd />
+
+
+Position, velocity, and acceleration are solved by **two core methods**, graphical and analytical, that you then **confirm with a simulator**. One further trick, the instantaneous center, is worth knowing as a quick velocity shortcut, but the course does not build on it (the fourth card explains why). These are not rivals: each answers the same question in a different way, so you use them to check one another. The three analysis lessons (this one, [velocity](./velocity-analysis-instantaneous-centers), and [acceleration](./acceleration-analysis-dynamic-forces)) apply the same set to the same mechanisms, so it is worth meeting them together before diving into the algebra.
+
+<CardGrid>
+  <Card title="Graphical (drawing-instrument) method" icon="pencil">
+  **Core method.** Draw the mechanism to scale on paper and read the answer straight off the drawing. Position comes from striking arcs with a **compass**; velocity and acceleration come from **polygons** built with a **set square** and measured with a **scale rule** and **protractor**: the classical *draughtsman's drawing set*. It is intuitive and always works, but it handles one instant at a time and only to drawing-board precision (a few percent).
+  </Card>
+  <Card title="Analytical (vector-loop) method" icon="document">
+  **Core method.** Write the loop-closure condition $\sum \vec{r}_i = 0$ as equations and solve them: in closed form for position (the Freudenstein equation), and by differentiating the *same* loop for velocity and acceleration. It is exact, and once written it can be evaluated at every angle of a full cycle or coded into a spreadsheet.
+  </Card>
+  <Card title="Simulator (confirm and lab)" icon="rocket">
+  **How you confirm.** The interactive simulators in this course (and packages like MATLAB or 2D-linkage software) solve the loop numerically and animate the whole cycle. Every worked example ends by reading the same answer off the simulator, and the hands-on labs are built on it. It is only as trustworthy as the model you set up, so it confirms the two methods above rather than replacing them.
+  </Card>
+  <Card title="Instantaneous centers (worth knowing)" icon="puzzle">
+  **A velocity shortcut, not our main road.** Locate the point each link instantaneously turns about (using Kennedy's theorem) and read a velocity ratio directly, with no equations. It is a neat one-step check, but it gives *velocities only*: there is no instantaneous center for acceleration, so it cannot follow a problem through the full position, velocity, acceleration chain the way the graphical polygon can. We note it and use it as a check; we build on the polygon, the loop, and the simulator.
+  </Card>
+</CardGrid>
+
+### How the methods fit together
+
+Treat them as a sequence, not a menu: **draw, solve, simulate**. **Draw it first** with the drawing set to *see* the mechanism and get a quick answer at the instant of interest. **Solve it analytically** to turn that sketch into an exact number and, crucially, to sweep the *whole* cycle instead of one pose. **Simulate it** to animate the motion, plot a full revolution, confirm the drawing and the algebra, and drive the lab exercises. The **instantaneous center** sits outside this sequence as an optional one-step check on a velocity ratio, nothing more.
+
+The real payoff is cross-checking. The length you *measure* off a velocity polygon should equal the value you *compute* by differentiating the loop, which should match what the *simulator* reports. When all three agree, you can trust the result; when they disagree, one of them has exposed a mistake. Every worked example in these three lessons follows this rhythm, so you build the habit of confirming a kinematic answer three independent ways.
+
+:::note[The draughtsman's drawing set]
+The graphical method is done with a small kit of drawing instruments, the same one used on a traditional drawing board: a **scale rule** (to lay lengths off to a chosen scale, e.g. 1 cm = 20 mm), a **compass and dividers** (to strike arcs and transfer lengths), a pair of **set squares** (to draw the perpendiculars a velocity or acceleration polygon needs), and a **protractor** (to set and read angles). Choosing and *labelling* a sensible scale is the first step of every graphical solution, because every length you later measure is only as good as that scale.
+:::
+
 ## Fundamental Theory: The Vector Loop Method
 
 <InArticleAd />
@@ -135,18 +167,20 @@ This is the central worked example of the lesson. We solve the four-bar position
 
 ### Step 1: Draw the Space Diagram and Measure
 
-Before solving algebraically, find the position graphically: draw the linkage to scale and measure the angles with a protractor.
+The [graphical method](#methods-of-kinematic-analysis) solves the position problem with the drawing set alone, no equations. It is the fastest way to *see* the answer, and it doubles as a check on the algebra that follows. The whole trick is that two of the four link lengths ($b$ and $c$) are fixed, so the joint $B$ must lie at a known distance from *both* $A$ and $O_4$, and the only such points are where two arcs cross.
 
 <details>
-<summary>**Click to reveal the graphical position solution**</summary>
+<summary>**Click to reveal the graphical position solution (arc-intersection)**</summary>
 
 <Steps>
 
-1. **Ground and crank.** Draw $O_2O_4 = d = 100$ mm horizontally. From $O_2$ draw the crank $O_2A$ at $\theta_2 = 60\degree$, length $a = 40$ mm. ✅
+1. **Choose and note a scale.** Pick a length scale that fills the page, say **1 cm = 20 mm**, and write it on the drawing. Every length below is laid off with the scale rule at this scale. ✅
 
-2. **Intersect the arcs.** With centre $A$ and radius $b = 120$ mm, and centre $O_4$ and radius $c = 80$ mm, strike two arcs. The upper intersection (open assembly) is the coupler-follower joint $B$. ✅
+2. **Ground and crank.** Draw the ground $O_2O_4 = d = 100$ mm horizontally. With a **protractor** set $\theta_2 = 60\degree$ at $O_2$ and lay off the crank $O_2A = a = 40$ mm with the scale rule. Point $A$ is the crank pin. ✅
 
-3. **Measure.** With a protractor $\theta_3 \approx 18\degree$ and $\theta_4 \approx 65\degree$. The Freudenstein solution below gives the exact $18.4\degree$ and $64.9\degree$, confirming the drawing. ✅
+3. **Intersect the coupler and follower arcs.** Open the **compass** to the coupler length $b = 120$ mm and strike an arc centred on $A$; reset it to the follower length $c = 80$ mm and strike an arc centred on $O_4$. The arcs cross at **two** points, the two assembly modes. Take the upper crossing (the *open* mode) as the coupler-follower joint $B$; the lower crossing is the *crossed* mode. ✅
+
+4. **Measure the unknowns.** Draw $AB$ (coupler) and $O_4B$ (follower), then read their angles from the horizontal with the **protractor**: $\theta_3 \approx 18\degree$ and $\theta_4 \approx 65\degree$. ✅
 
 </Steps>
 
@@ -157,6 +191,8 @@ Before solving algebraically, find the position graphically: draw the linkage to
 </div>
 
 </details>
+
+The drawing gives each angle to within a degree or so. The closed-form Freudenstein solution below pins them to $\theta_3 = 18.4\degree$ and $\theta_4 = 64.9\degree$, and the simulator confirms both. Reading to about $\pm1\degree$ is normal for board work, enough to catch a gross error and to tell the two assembly modes apart, which is exactly what the graphical method is for.
 
 ### Step 2: Eliminate the Coupler Angle
 
@@ -391,16 +427,20 @@ The slider-crank loop has one unknown angle (the connecting rod) and one unknown
 
 ### Step 1: Draw the Space Diagram and Measure
 
+The [graphical method](#methods-of-kinematic-analysis) locates the piston with the drawing set alone. The crank pin $A$ rides a circle of radius $r$, and the piston $B$ lies on the centre-line exactly one rod length $l$ from $A$, so swinging the rod from $A$ onto the centre-line fixes it.
+
 <details>
-<summary>**Click to reveal the graphical position solution**</summary>
+<summary>**Click to reveal the graphical position solution (rod-swing)**</summary>
 
 <Steps>
 
-1. **Centre-line and crank.** Draw the slider centre-line through $O$. Draw the crank $OA$ at $\theta = 60\degree$, length $r = 50$ mm. ✅
+1. **Choose and note a scale.** Pick a scale that fills the page, say **1 cm = 20 mm**, and mark it on the drawing. ✅
 
-2. **Swing the rod.** With centre $A$ and radius $l = 150$ mm, cut the centre-line at $B$, the piston. ✅
+2. **Centre-line and crank.** Draw the slider centre-line through $O$. With the **protractor** set $\theta = 60\degree$ at $O$ and lay off the crank $OA = r = 50$ mm with the scale rule; $A$ is the crank pin. ✅
 
-3. **Measure.** The piston is $s \approx 169$ mm from $O$ and the rod angle $\phi \approx 17\degree$, matching the closed-form values below. ✅
+3. **Swing the rod.** Open the **compass** to the rod length $l = 150$ mm, centre it on $A$, and cut the centre-line at $B$, the piston. ✅
+
+4. **Measure.** Scale the piston distance $OB \approx 169$ mm, and read the rod angle $\phi \approx 17\degree$ from the centre-line with the protractor. ✅
 
 </Steps>
 
@@ -411,6 +451,8 @@ The slider-crank loop has one unknown angle (the connecting rod) and one unknown
 </div>
 
 </details>
+
+The drawing gives $OB$ and $\phi$ to within a millimetre and a degree. The loop equations below give the exact $s$ and $\phi$, and the simulator confirms both.
 
 ### Step 2: Write and Solve the Loop
 
@@ -487,16 +529,20 @@ Not every position problem is a four-bar loop. The scissor lift is governed by a
 
 ### Step 1: Draw the Space Diagram and Measure
 
+The [graphical method](#methods-of-kinematic-analysis) reads the platform height straight off a scaled drawing of one scissor stage. Each arm pivots at its centre, so the platform rises as the arms swing up from the horizontal.
+
 <details>
 <summary>**Click to reveal the graphical position solution**</summary>
 
 <Steps>
 
-1. **Base and arms.** Draw the base. From the fixed bottom pin draw an arm of length $L = 300$ mm at $\theta = 30\degree$; draw the crossing arm from the sliding bottom pin. ✅
+1. **Choose and note a scale.** A scissor arm is long, so pick a scale such as **1 cm = 40 mm** and mark it on the drawing. ✅
 
-2. **Platform.** Join the upper arm ends with the platform line. ✅
+2. **Base and arms.** Draw the base line. With the **protractor** set $\theta = 30\degree$, lay off one arm of length $L = 300$ mm from the fixed bottom pin with the scale rule, and draw the crossing arm from the sliding bottom pin at the same angle. ✅
 
-3. **Measure.** The platform height scales to $h \approx 150$ mm, matching $h = L\sin\theta$ below. ✅
+3. **Platform.** Join the two upper arm ends with the platform line, parallel to the base. ✅
+
+4. **Measure.** Scale the vertical gap between the base and platform: $h \approx 150$ mm, matching $h = L\sin\theta$ below. ✅
 
 </Steps>
 
@@ -507,6 +553,8 @@ Not every position problem is a four-bar loop. The scissor lift is governed by a
 </div>
 
 </details>
+
+The measured height confirms the closed-form $h = L\sin\theta$ solved next, and the simulator confirms both.
 
 ### Step 2: Height and Spread from Geometry
 
@@ -575,14 +623,18 @@ The toggle clamp is a four-bar, so its general position solution is the Freudens
 
 ### Step 1: Draw the Space Diagram
 
+The [graphical method](#methods-of-kinematic-analysis) finds the toggle (limit) position by construction: the clamp reaches its limit when the handle and the main link line up, so you swing the handle until the drawing shows that alignment.
+
 <details>
 <summary>**Click to reveal the toggle-position construction**</summary>
 
 <Steps>
 
-1. **Skeleton.** Draw the four-bar skeleton: ground $O_2O_4$, handle $O_2A$, main link $AB$, clamp arm $O_4B$. ✅
+1. **Choose a scale and draw the skeleton.** Mark a scale (say **1 cm = 20 mm**) and lay off the four-bar skeleton to scale with the scale rule and compass: ground $O_2O_4$, handle $O_2A$, main link $AB$, clamp arm $O_4B$. ✅
 
-2. **Find top-dead-centre.** Rotate the handle until $O_2$, $A$ and $B$ are collinear. That collinear position is the limit (toggle) position analysed below. ✅
+2. **Find top-dead-centre.** With the compass, swing the handle $O_2A$ until $O_2$, $A$ and $B$ fall on one straight line (check the alignment with the straight edge of a set square). That collinear position is the limit (toggle) position analysed below. ✅
+
+3. **Measure.** Read the handle angle at the toggle position with the protractor; it fixes the clamping geometry solved for exactly next. ✅
 
 </Steps>
 
@@ -650,6 +702,111 @@ Once the position analysis gives $\theta_2$ and $\theta_3$ at each instant, swee
 The four-bar simulator ([siwit.co/FBL](https://siwit.co/FBL)) plots the coupler-point path directly. Change the link lengths and watch the curve change shape, then reproduce a few of its points with the equations above using the $\theta_3$ values from your position solution. Experiment 5 in the four-bar lab is built around this.
 :::
 
+## Application 5: Quick-Return Position (a Slider-Crank Inversion)
+
+<InArticleAd />
+
+
+The metal shaper cuts a flat surface by driving a single-point tool back and forth across the work while the table steps sideways. Cutting happens on the forward stroke only, so the ram should move slowly and steadily as it cuts and then snap back quickly on the idle return. The drive that does this is the **crank-and-slotted-lever quick-return mechanism**, and it is the same four-link slider-crank chain as the engine of Application 2 with a different link held fixed: fix the frame and you get the reciprocating engine, fix the link carrying the sliding block and you get the shaper's quick return. The geometry alone sets how much faster the return is than the cut.
+
+<Card title="Hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** This inversion has no simulator of its own, but the quick-return *principle* is Experiment 2 of the [Crank-Slider Experiments](/education/mechanism-design-simulation/crank-slider-experiments/) lab: add an offset and the forward and return strokes become unequal, the same asymmetry the shaper drives to an extreme. The shaper numbers below come from the drawing and the trigonometry, which confirm each other.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Crank-and-slotted-lever quick-return (a metal shaper ram drive), an inversion of the slider-crank chain
+- **Task:** Find the lever swing, the crank angles for the cutting and return strokes, the time ratio, and the ram stroke
+- **Geometry:** crank $r = 120$ mm, fixed centre distance $AC = 300$ mm (fulcrum $A$ below crank centre $C$), driving-point length $AP = 450$ mm
+- **Key feature:** the extreme lever positions occur where the crank is perpendicular to the lever
+
+**Key Question:** how much faster is the return stroke than the cutting stroke, and how long is the ram stroke?
+:::
+
+### Step 1: Draw the Space Diagram and Measure
+
+The [graphical method](#methods-of-kinematic-analysis) settles this mechanism with the drawing set alone, because the two extreme positions of the lever are simply the two tangents drawn from the fulcrum $A$ to the crank circle. At an extreme, the sliding block sits at the tangent point, so the crank $CB$ is perpendicular to the lever $AB$.
+
+<details>
+<summary>**Click to reveal the graphical position solution (tangent extremes)**</summary>
+
+<Steps>
+
+1. **Choose and note a scale.** Pick a scale that fills the page, say **1 cm = 40 mm**, and mark it on the drawing. ✅
+
+2. **Fixed centres.** Mark the fulcrum $A$, and directly above it the crank centre $C$ with $AC = 300$ mm to scale. The line $AC$ is the centre-line the lever swings about. ✅
+
+3. **Crank circle.** Open the **compass** to $r = 120$ mm and draw the crank circle about $C$. ✅
+
+4. **Extreme lever positions.** Draw the two tangent lines from $A$ to this circle; they touch at $B_1$ and $B_2$. Extend each to the driving point at $AP = 450$ mm to get the ram-end extremes $R_1$ and $R_2$. These two lines are the lever at the ends of its swing. ✅
+
+5. **Measure.** Read the half-swing $\varphi \approx 23.6\degree$ each side of $AC$ (total swing about $47\degree$) with the **protractor**; the crank angle between the extremes on the $A$ side measures about $133\degree$ and on the far side about $227\degree$; the ram travel $R_1R_2 \approx 360$ mm with the scale rule. ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Quick-return space diagram: fulcrum A, crank centre C, crank circle of radius r, the two tangent extreme lever positions reaching R1 and R2, and the ram stroke line](./images/l2-quick-return-space-diagram.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+The drawing gives the swing, the crank angles, and the stroke to within a degree and a millimetre. The trigonometry below gives them exactly, and they agree.
+
+### Step 2: Solve the Geometry
+
+<details>
+<summary>**Click to reveal the closed-form quick-return solution**</summary>
+
+<Steps>
+
+1. **Half-swing of the lever.** At each extreme the crank is perpendicular to the lever, so triangle $ACB$ is right-angled at the tangent point $B$:
+
+   $$\sin\varphi = \frac{r}{AC} = \frac{120}{300} = 0.4 \quad\Rightarrow\quad \varphi = 23.58\degree$$
+
+   The lever swings $2\varphi = 47.16\degree$ in total. ✅
+
+2. **Crank angles for the two strokes.** Because the crank is perpendicular to the lever at both extremes, the crank angle swept while the ram makes its **return** (the arc nearer $A$) is
+
+   $$\alpha_\text{return} = 180\degree - 2\varphi = 132.84\degree, \qquad \alpha_\text{cutting} = 360\degree - \alpha_\text{return} = 227.16\degree$$ ✅
+
+3. **Time ratio.** The crank turns at constant speed, so the stroke times are in the ratio of these angles:
+
+   $$\frac{\text{cutting time}}{\text{return time}} = \frac{\alpha_\text{cutting}}{\alpha_\text{return}} = \frac{227.16}{132.84} = 1.71$$
+
+   The return stroke is about $1.7$ times faster than the cut. ✅
+
+4. **Ram stroke.** The driving point swings through $\pm\varphi$ about $A$ at radius $AP$, so the stroke is the chord between its extremes:
+
+   $$\text{stroke} = 2\,AP\sin\varphi = 2 \times 450 \times 0.4 = 360 \text{ mm}$$ ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Confirm the Principle
+
+<details>
+<summary>**Click to reveal the drawing-versus-calculation check and the simulator principle**</summary>
+
+<Steps>
+
+1. **Drawing against calculation.** The construction measured about $133\degree$ and $227\degree$ for the crank angles and $360$ mm for the stroke; the trigonometry gives $132.84\degree$, $227.16\degree$, and $360$ mm. They agree to within drawing tolerance, which is the confirmation this inversion needs. ✅
+
+2. **The principle in the simulator.** Open the crank-slider simulator and choose the **Quick-Return (offset)** preset (crank $60$, rod $120$, offset $50$ mm). The forward and return strokes take unequal times, a time ratio of about $1.6$: the same quick-return asymmetry, in its milder offset-slider form. The shaper's crank-and-slotted-lever drives that asymmetry harder still by placing the fulcrum close to the crank. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The shaper cuts on the slow forward stroke and flies back on the fast return, so a time ratio above one is the entire purpose: metal is removed only while cutting, and the idle return should waste as little time as possible. Bringing the centre distance $AC$ closer to the crank radius $r$ raises the half-swing $\varphi$, which raises both the stroke and the time ratio. The same slider-crank chain that reciprocates a piston in Application 2, inverted, now drives a cutting ram; the ram velocity and the [Coriolis](./acceleration-analysis-dynamic-forces) term that the block sliding along the lever introduces are the natural next questions for the velocity and acceleration analyses.
+:::
+
 ## Design Guidelines for Position Analysis
 
 <InArticleAd />
@@ -691,12 +848,13 @@ The four-bar simulator ([siwit.co/FBL](https://siwit.co/FBL)) plots the coupler-
 | Slider-crank | $s$, $\phi$ | $s = r\cos\theta + \sqrt{l^2 - (r\sin\theta - e)^2}$ | [siwit.co/CSM](https://siwit.co/CSM) |
 | Scissor lift | $h$, $S$ | $h = nL\sin\theta$ | [siwit.co/SLM](https://siwit.co/SLM) |
 | Toggle clamp | handle angle, TDC | Freudenstein, collinear limit | [siwit.co/TCM](https://siwit.co/TCM) |
+| Quick-return (shaper) | time ratio, stroke | $\sin\varphi = r/AC$, stroke $= 2\,AP\sin\varphi$ | drawing $+$ calc |
 
 ### A Note on Tools
 
 Every result in this lesson was found in closed form by hand and reproduced with a few lines of Python (NumPy). The simulators then confirm the same numbers interactively. No specialised motion-analysis software is needed; the mathematics is the tool.
 
-Next, [Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers) differentiates the very loop equations solved here. The four-bar position equations become velocity equations for $\omega_3$ and $\omega_4$, and the slider-crank position gives the piston velocity, with instantaneous centers offering a second, graphical route to the same answers.
+Next, [Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers) differentiates the very loop equations solved here. The four-bar position equations become velocity equations for $\omega_3$ and $\omega_4$, and the slider-crank position gives the piston velocity, drawn first as a velocity polygon and then confirmed by the differentiated loop.
 
 
 

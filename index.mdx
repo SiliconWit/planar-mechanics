@@ -21,9 +21,9 @@ Each lesson applies one analytical lens to the same mechanisms. The questions bu
 | Lesson | The one question it answers | The skill you gain |
 |--------|-----------------------------|--------------------|
 | **1. [Kinematic Joints and Constraint Analysis](./kinematic-joints-constraint-analysis)** | Will it move, and how many motors does it need? | Count degrees of freedom, classify joints, recognise over-constraint |
-| **2. [Position Analysis of Planar Linkages](./position-analysis-planar-linkages)** | Where is every link? | Solve vector loop equations for any configuration |
-| **3. [Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers)** | How fast is each part moving? | Find velocities by differentiation and by instantaneous centers |
-| **4. [Acceleration Analysis and Dynamic Forces](./acceleration-analysis-dynamic-forces)** | How fast is the motion changing, and what force does that take? | Find accelerations and the inertia forces they create |
+| **2. [Position Analysis of Planar Linkages](./position-analysis-planar-linkages)** | Where is every link? | Construct positions to scale, then solve the vector loop for any configuration |
+| **3. [Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers)** | How fast is each part moving? | Draw velocity polygons, then confirm the velocities by differentiating the loop |
+| **4. [Acceleration Analysis and Dynamic Forces](./acceleration-analysis-dynamic-forces)** | How fast is the motion changing, and what force does that take? | Draw acceleration polygons and find the inertia forces they create |
 | **5. [Cam-Follower Systems and Motion Programming](./cam-follower-systems-motion-programming)** | How do I design a shape that produces a chosen motion? | Program follower motion and generate cam profiles |
 | **6. [Force Analysis and Mechanism Synthesis](./force-analysis-mechanism-synthesis)** | What forces flow through the mechanism, and how do I design for them? | Size actuators and links, then synthesise new mechanisms |
 
@@ -102,8 +102,10 @@ Every calculation in this course can be verified in the browser. Each mechanism 
 </Steps>
 
 :::note[What you will need]
-Keep a **drawing set** beside you: set squares, a compass, a protractor, and a scale rule. Every worked example is constructed to scale by hand first, because drawing the diagrams yourself builds the spatial intuition that the equations and simulators only confirm, and it is direct preparation for sketching in CAD. The reference figure in each Application is the answer key to check your own drawing against.
+Keep a **drawing set** beside you: set squares, a compass, a protractor, and a scale rule. Every worked example is constructed to scale by hand first, because drawing the diagrams yourself builds the spatial intuition that the equations and simulators only confirm, and it is direct preparation for sketching the same mechanisms in [parametric CAD with FreeCAD](/education/parametric-mechanical-cad-freecad/). The reference figure in each Application is the answer key to check your own drawing against.
 :::
+
+The four mechanisms here (the four-bar, slider-crank, scissor lift, and toggle clamp, plus the cam of Lesson 5) are the same ones you build parametrically in the [Parametric Mechanical CAD with FreeCAD](/education/parametric-mechanical-cad-freecad/) course. The kinematics you learn here (loop closure, extreme positions, velocity and acceleration) is exactly what sets the dimensions and constraints of those CAD models, so the two courses reinforce each other: analyse the motion here, then draw and dimension the mechanism there.
 
 ## Prerequisites
 

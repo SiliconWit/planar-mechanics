@@ -96,7 +96,17 @@ When a block slides along a link that is itself rotating, a third term appears: 
 
 ### The Acceleration Polygon
 
-The acceleration polygon is built exactly like the velocity polygon, but each relative-acceleration vector now has two parts laid down in sequence: first the **normal** part (known from the velocity analysis, since $a^n = \omega^2 L$), then the **tangential** part (unknown magnitude, known direction). The intersection closes the polygon and gives both the unknown tangential accelerations and the output acceleration.
+Acceleration uses the same [methods](./position-analysis-planar-linkages#methods-of-kinematic-analysis) in the same **draw, solve, simulate** rhythm as position and velocity: the graphical acceleration polygon and the analytical acceleration loop are the two core routes, and the simulator confirms them. (There is no instantaneous-center shortcut for acceleration; that helper is velocity-only.)
+
+The **acceleration polygon** is built with the drawing set exactly like the velocity polygon, on the same page and to a chosen acceleration scale (e.g. 1 cm = 10 mm/s²), but each relative-acceleration vector now has *two* parts laid down in sequence: first the **normal** part (known from the velocity analysis, since $a^n = \omega^2 L$, directed along the link toward the centre it turns about), then the **tangential** part (unknown magnitude, but known direction, perpendicular to the link). Where the tangential construction lines cross closes the polygon, and you **measure** the unknown tangential accelerations and the output acceleration off it.
+
+:::note[The Coriolis component: when a part slides along a turning link]
+Normal and tangential parts describe a point fixed on a rigid link. When instead a point **slides along a link that is itself turning** (a block moving in a rotating slot, as in the quick-return shaper), its acceleration gains a **third** part, the **Coriolis** component:
+
+$$a^{c} = 2\,\omega\,v_\text{slip}$$
+
+where $\omega$ is the angular velocity of the slotted link and $v_\text{slip}$ the sliding speed along it. Its **direction** is the slip-velocity vector turned $90\degree$ in the sense of $\omega$ (that is, **perpendicular to the slot**). The Coriolis part appears only at a sliding-and-turning joint: the plain slider-crank, four-bar, scissor lift, and toggle clamp have none, which is why it first shows up in the quick-return application below.
+:::
 
 ### From Acceleration to Force: d'Alembert
 
@@ -251,7 +261,7 @@ For the four-bar we differentiate the velocity loop once more and build the acce
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Four-bar acceleration polygon at 120 degrees, with the crank centripetal acceleration, the coupler normal and tangential components, and the follower acceleration](./images/l4-four-bar-accel-polygon.svg)
+	![Four-bar acceleration polygon at 120 degrees: crank centripetal acceleration, the coupler and follower normals drawn from the pole, and the two tangentials meeting at b prime](./images/l4-four-bar-accel-polygon.svg)
   </TailwindWrapper>
 </div>
 
@@ -335,6 +345,14 @@ The scissor lift shows that a constant actuator rate does not give a constant pl
 
 </Steps>
 
+The scissor closes on the single scalar relation $h = nL\sin\theta$, so its acceleration is that one line differentiated twice rather than a polygon: the scaled space diagram below is the geometric reference the two derivatives rest on.
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Single-stage scissor lift drawn to scale at 30 degrees: base, crossed arms of length L, and platform at height h = L sin theta](./images/l3-scissor-1-space-diagram.svg)
+  </TailwindWrapper>
+</div>
+
 </details>
 
 ### Step 2: Verify in the Simulator
@@ -416,6 +434,80 @@ Acceleration becomes force through $F = ma$. For the slider-crank this produces 
 The shaking force is the inertia force of Application 1 seen from the engine block. Its primary part sets the size of the crank counterweights; its secondary part, at twice the running frequency, is the reason high-refinement engines carry balance shafts. Every number traces back to the piston acceleration you drew in the polygon.
 :::
 
+## Application 5: Coriolis Acceleration of the Quick-Return Shaper
+
+<InArticleAd />
+
+
+The shaper of the [velocity analysis](./velocity-analysis-instantaneous-centers#application-5-ram-velocity-of-the-quick-return-shaper) is the one mechanism in this course whose acceleration is *wrong* if you use only normal and tangential parts. Its crank pin is a **block sliding inside a turning slot**, and that joint adds the **Coriolis** component defined in the theory above. This application is where that term earns its place.
+
+<Card title="Hands-on lab" icon="rocket">
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
+  <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
+</div>
+
+**Hands-on lab:** This inversion has no simulator of its own; the drawing and the calculation confirm each other. The related pin-in-slot Coriolis effect also drives the Geneva indexing motion noted below.
+</Card>
+
+:::note[System Problem Statement]
+- **Configuration:** Crank-and-slotted-lever quick-return (shaper ram drive)
+- **Task:** Find the ram-drive acceleration at the instant drawn, showing the Coriolis contribution
+- **Geometry:** crank $r = 120$ mm, $AC = 300$ mm, $AP = 450$ mm
+- **Input:** constant crank speed $\omega_2 = 1$ rad/s ($\alpha_2 = 0$); from the velocity analysis $\omega_\text{lever} = 0.399$ rad/s and slip $v_\text{slip} = 87.8$ mm/s
+:::
+
+### Step 1: Build the Acceleration Polygon with the Coriolis Term
+
+The block's acceleration on the crank splits, on the lever side, into four parts laid head to tail from the pole $o'$: the lever point's **normal** and **tangential** parts, the **Coriolis** part, and the **slip** part. Together they must close on the crank-pin acceleration.
+
+<details>
+<summary>**Click to reveal the acceleration-polygon construction**</summary>
+
+<Steps>
+
+1. **Crank-pin acceleration (the target).** With constant crank speed the block on the crank has only a normal acceleration $a_{B_2} = \omega_2^2\,r = 1^2 \times 120 = 120$ mm/s², directed from $B$ toward $C$. The construction must reproduce this vector. ✅
+
+2. **Normal part of the lever point.** $a_{B_3}^{\,n} = \omega_\text{lever}^2 \times AB = 0.399^2 \times 205 \approx 32.6$ mm/s², directed from $B$ toward the fulcrum $A$. Lay it from $o'$. ✅
+
+3. **Coriolis part.** $a^{c} = 2\,\omega_\text{lever}\,v_\text{slip} = 2 \times 0.399 \times 87.8 \approx 70$ mm/s², directed **perpendicular to the slot** (the slip velocity turned $90\degree$ in the sense of $\omega_\text{lever}$). This is the part a plain slider-crank never has. ✅
+
+4. **Close with the two unknown directions.** The lever's **tangential** part is **perpendicular to the lever** (unknown magnitude); the **slip** acceleration is **parallel to the slot** (unknown magnitude). Drawing those two directions to close the polygon onto $a_{B_2}$ fixes both. Measuring gives the tangential part $a_{B_3}^{\,t} \approx 158$ mm/s² and the slip acceleration $\approx 114$ mm/s². ✅
+
+5. **Lever angular acceleration.** $\alpha_\text{lever} = \dfrac{a_{B_3}^{\,t}}{AB} = \dfrac{158}{205} \approx 0.77$ rad/s². ✅
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Quick-return acceleration polygon: normal, tangential, Coriolis and slip parts closing on the crank-pin acceleration, with the Coriolis component highlighted](./images/l4-quick-return-accel-polygon.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 2: Ram Acceleration and Analytical Check
+
+<details>
+<summary>**Click to reveal the ram acceleration and confirmation**</summary>
+
+<Steps>
+
+1. **Ram-drive acceleration.** The driving point $P$ on the lever has a normal part $\omega_\text{lever}^2\,AP$ (toward $A$) and a tangential part $\alpha_\text{lever}\,AP$ (perpendicular to the lever):
+
+   $$a_P = AP\sqrt{\omega_\text{lever}^4 + \alpha_\text{lever}^2} = 450\sqrt{0.399^4 + 0.77^2} \approx 354 \text{ mm/s}^2$$ ✅
+
+2. **The Coriolis term is not optional.** At $70$ mm/s² it is a large share of the closing polygon; drop it and the tangential part, and hence $\alpha_\text{lever}$ and the ram acceleration, come out wrong. Any mechanism with a block sliding in a moving slot (this shaper, a Whitworth drive, a Geneva index) must carry it. ✅
+
+3. **Analytical confirmation.** Writing the loop $\vec r_{AB} = \vec r_{AC} + \vec r_{CB}$ and differentiating twice, with the block distance $AB$ as a changing length, produces the same four terms: the second derivative of $AB$ is the slip acceleration, and the cross term $2\,\dot{(AB)}\,\omega_\text{lever}$ is exactly the Coriolis part. The numbers match the polygon. ✅
+
+</Steps>
+
+</details>
+
+:::note[Engineering Insight]
+The Coriolis component is the signature of a part that both slides and turns. Here it is a real contributor to the ram-drive acceleration, so the inertia forces on the shaper's slotted lever and ram cannot be found without it. The same term returns wherever a pin slides in a moving slot, which is why the [Geneva indexer](#a-note-on-intermittent-motion-mechanisms) below, and the quick-return itself, are the acceleration problems that most reward drawing the full polygon rather than reaching for a formula.
+:::
+
 ## A Note on Intermittent-Motion Mechanisms
 
 <InArticleAd />
@@ -450,6 +542,10 @@ Not every mechanism runs smoothly. A **Geneva mechanism** converts continuous ro
 <InArticleAd />
 
 
+:::tip[Instrument it]
+Shaking forces are just $F = ma$ acting on the frame, and they reach you as vibration you can measure. Bolt a MEMS accelerometer to the machine frame near the bearings, an ADXL345 for a first look or the wider-band ADXL1002 to resolve the secondary harmonic, and add a shaft encoder or a Hall sensor for the crank angle so every spike lines up with a position. An [ESP32 or STM32](/education/sensor-actuator-interfacing-stm32/) samples both, and once the primary and secondary peaks are tagged it can [flag a balance problem on siliconwit.io](https://siliconwit.io) before the mounts crack.
+:::
+
 ### Key Concepts Mastered
 
 1. **Acceleration loop:** one more derivative of the velocity loop, with normal ($\omega^2 r$) and tangential ($\alpha r$) components.
@@ -465,6 +561,7 @@ Not every mechanism runs smoothly. A **Geneva mechanism** converts continuous ro
 | Four-bar | $\alpha_3$, $\alpha_4$ | acceleration loop (linear) | [siwit.co/FBL](https://siwit.co/FBL) |
 | Scissor lift | platform acceleration | $a = nL(\cos\theta\,\ddot\theta - \sin\theta\,\dot\theta^2)$ | [siwit.co/SLM](https://siwit.co/SLM) |
 | Slider-crank | shaking force | primary $+$ secondary harmonics | [siwit.co/CSM](https://siwit.co/CSM) |
+| Quick-return (shaper) | Coriolis, ram acceleration | $a^{c} = 2\,\omega\,v_\text{slip}$ | drawing $+$ calc |
 
 ### A Note on Tools
 
