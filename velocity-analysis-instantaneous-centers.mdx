@@ -58,10 +58,10 @@ For the crank-slider the key output is the piston velocity. For the four-bar it 
   In a pump or compressor the piston velocity is the volumetric flow rate, so its profile is the delivery curve.
   </Card>
   <Card title="Vibration" icon="setting">
-  A sharp velocity peak means a large acceleration nearby ([acceleration analysis](./acceleration-analysis-dynamic-forces)), and that is what shakes the machine.
+  A sharp velocity peak means a large acceleration nearby ([acceleration analysis](/education/planar-mechanics/acceleration-analysis-dynamic-forces)), and that is what shakes the machine.
   </Card>
   <Card title="Mechanical advantage" icon="rocket">
-  The ratio of input speed to output speed is the velocity ratio, and it is the reciprocal of the force ratio ([force analysis](./force-analysis-mechanism-synthesis)).
+  The ratio of input speed to output speed is the velocity ratio, and it is the reciprocal of the force ratio ([force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis)).
   </Card>
 </CardGrid>
 
@@ -69,6 +69,29 @@ For the crank-slider the key output is the piston velocity. For the four-bar it 
 
 <InArticleAd />
 
+
+### Two Conventions to Fix Before Any Numbers
+
+<Card title="Signs: counterclockwise is positive" icon="document">
+The convention set in the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages) carries straight through: **angles and angular velocities are positive counterclockwise**. It is repeated here because velocity is the first place negative answers become common, and a sign is a physical statement, not bookkeeping.
+
+- $\omega_3 = -0.174$ rad/s means the coupler turns **clockwise** while the crank turns counterclockwise.
+- A negative piston velocity $V_P$ means the piston moves **toward** the crankshaft, that is, in the $-x$ direction.
+
+Read every sign out loud as a direction before moving on. When a later result surprises you, the sign is usually where the story starts.
+</Card>
+
+<Card title="Normalisation: why results are quoted as v/(rω)" icon="document">
+Velocities in this lesson are often reported **normalised**, as $v/(r\omega)$ rather than in mm/s. Dividing by $r\omega$, the crank pin's own speed, produces a **dimensionless** number that answers the question "how fast is this point moving compared with the crank pin?"
+
+$$\frac{v}{r\omega} = 1.055 \quad\text{means}\quad v = 1.055 \times r\omega$$
+
+The payoff is that the normalised result depends **only on the geometry ratio $l/r$**, not on the crank radius or the running speed. One table then covers every engine with that proportion, at every speed. To recover a real velocity, multiply back by $r\omega$: with $r = 50$ mm and $\omega = 100$ rad/s, $1.055$ becomes $1.055 \times 50 \times 100 = 5275$ mm/s $= 5.3$ m/s.
+
+:::caution[Do not attach units to a normalised value]
+A quoted $-1.055$ is **not** $-1.055$ mm/s. It is a pure ratio. Reporting a normalised figure as though it were a velocity is one of the most common errors in this topic, and the fix is simply to state the normalisation whenever you quote one. The same convention applies to accelerations, normalised by $r\omega^2$.
+:::
+</Card>
 
 ### Differentiate the Position Loop
 
@@ -86,16 +109,16 @@ $$a\omega_2\cos\theta_2 + b\omega_3\cos\theta_3 - c\omega_4\cos\theta_4 = 0$$
 These are two **linear** equations in the unknown angular velocities $\omega_3$ and $\omega_4$. The positions from the position analysis are the known coefficients.
 </Card>
 
-This is the central idea of the lesson. Position analysis was nonlinear and needed the Freudenstein trick to solve. Velocity analysis is linear, because differentiation turns the trigonometric position terms into coefficients that multiply the unknown velocities. Once you have the positions, finding the velocities is just solving two linear equations, and the same step repeated in the [acceleration analysis](./acceleration-analysis-dynamic-forces) gives the accelerations.
+This is the central idea of the lesson. Position analysis was nonlinear and needed the Freudenstein trick to solve. Velocity analysis is linear, because differentiation turns the trigonometric position terms into coefficients that multiply the unknown velocities. Once you have the positions, finding the velocities is just solving two linear equations, and the same step repeated in the [acceleration analysis](/education/planar-mechanics/acceleration-analysis-dynamic-forces) gives the accelerations.
 
 ### Ways to Get the Velocity
 
-Velocity uses the same [methods](./position-analysis-planar-linkages#methods-of-kinematic-analysis) as position, in the same **draw, solve, simulate** rhythm: the graphical velocity polygon is the core hand method, the analytical velocity loop is its exact confirmation, and each Application ends by reading the answer off the simulator.
+Velocity uses the same [methods](/education/planar-mechanics/position-analysis-planar-linkages#methods-of-kinematic-analysis) as position, in the same **draw, solve, simulate** rhythm: the graphical velocity polygon is the core hand method, the analytical velocity loop is its exact confirmation, and each Application ends by reading the answer off the simulator.
 
 <Tabs>
   <TabItem label="Graphical (velocity polygon)">
 
-  Build the **velocity polygon** with the drawing set. Draw each velocity vector to scale, head to tail, using the key rule that the velocity of one point *relative to another point on the same rigid link is perpendicular to the line joining them*. Where the construction lines cross closes the polygon, and you **measure** the unknown velocities off it with the scale rule. This is the core hand method, worked in every Application below, and the same construction becomes the acceleration polygon in the [next lesson](./acceleration-analysis-dynamic-forces).
+  Build the **velocity polygon** with the drawing set. Draw each velocity vector to scale, head to tail, using the key rule that the velocity of one point *relative to another point on the same rigid link is perpendicular to the line joining them*. Where the construction lines cross closes the polygon, and you **measure** the unknown velocities off it with the scale rule. This is the core hand method, worked in every Application below, and the same construction becomes the acceleration polygon in the [next lesson](/education/planar-mechanics/acceleration-analysis-dynamic-forces).
 
   </TabItem>
   <TabItem label="Analytical (velocity loop)">
@@ -120,11 +143,11 @@ Two direction rules settle every velocity polygon, and you should commit them to
 - **Turning link.** If $A$ and $B$ are two points on the same rigid link, $\vec V_{B/A}$ is **perpendicular** to the line $AB$, with magnitude $\omega \times AB$. (A rigid link cannot stretch, so $B$ can only swing around $A$.)
 - **Sliding pair.** Where one part slides along another (a piston on its centre-line, a block in a slotted lever), the sliding part of the velocity is **parallel** to the slide.
 
-When a point **both slides along a link and that link turns** (a block in a rotating slot, as in the quick-return shaper), the *acceleration* picks up an extra **Coriolis** term that has no velocity counterpart; it is defined and used in the [acceleration analysis](./acceleration-analysis-dynamic-forces).
+When a point **both slides along a link and that link turns** (a block in a rotating slot, as in the quick-return shaper), the *acceleration* picks up an extra **Coriolis** term that has no velocity counterpart; it is defined and used in the [acceleration analysis](/education/planar-mechanics/acceleration-analysis-dynamic-forces).
 :::
 
 :::note[Instantaneous centers: a shortcut we note, not a road we build on]
-The instantaneous center gives **velocities only**. It has no counterpart for acceleration, so it cannot carry a problem through the full position, then velocity, then acceleration chain that this course follows. The velocity polygon can: it is the same drawing discipline that becomes the [acceleration polygon](./acceleration-analysis-dynamic-forces) in Lesson 4, so the effort you spend learning it pays off twice. Locating every center by **Kennedy's theorem** (for any three links in plane motion, their three instantaneous centers are collinear) also grows quickly with size, since a mechanism of $n$ links has $\tfrac{n(n-1)}{2}$ centers, while the polygon and the loop stay the same size on any linkage. So we treat the instantaneous center as a fact worth knowing and a one-step check on a velocity ratio, and we build the course on the polygon, the loop, and the simulator.
+The instantaneous center gives **velocities only**. It has no counterpart for acceleration, so it cannot carry a problem through the full position, then velocity, then acceleration chain that this course follows. The velocity polygon can: it is the same drawing discipline that becomes the [acceleration polygon](/education/planar-mechanics/acceleration-analysis-dynamic-forces) in Lesson 4, so the effort you spend learning it pays off twice. Locating every center by **Kennedy's theorem** (for any three links in plane motion, their three instantaneous centers are collinear) also grows quickly with size, since a mechanism of $n$ links has $\tfrac{n(n-1)}{2}$ centers, while the polygon and the loop stay the same size on any linkage. So we treat the instantaneous center as a fact worth knowing and a one-step check on a velocity ratio, and we build the course on the polygon, the loop, and the simulator.
 :::
 
 ### Velocity Ratio and Mechanical Advantage
@@ -136,7 +159,7 @@ By conservation of power (input power equals output power in an ideal mechanism)
 
 $$\frac{T_\text{out}}{T_\text{in}} = \frac{\omega_\text{in}}{\omega_\text{out}}$$
 
-This quantity is the **mechanical advantage**. It is defined here from velocities and used again in the [force analysis](./force-analysis-mechanism-synthesis) from forces; the two views are the same number seen from opposite sides. When the output slows to a near stop (a limit position), the velocity ratio approaches zero and the mechanical advantage grows very large.
+This quantity is the **mechanical advantage**. It is defined here from velocities and used again in the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis) from forces; the two views are the same number seen from opposite sides. When the output slows to a near stop (a limit position), the velocity ratio approaches zero and the mechanical advantage grows very large.
 </Card>
 
 ## Application 1: Piston Velocity of the Slider-Crank
@@ -144,7 +167,7 @@ This quantity is the **mechanical advantage**. It is defined here from velocitie
 <InArticleAd />
 
 
-This is the central worked example. We differentiate the slider position from the [position analysis](./position-analysis-planar-linkages) and find where the piston velocity actually peaks, which is not where intuition first suggests.
+This is the central worked example. We differentiate the slider position from the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages) and find where the piston velocity actually peaks, which is not where intuition first suggests.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -226,17 +249,26 @@ The velocity polygon solves $\vec V_B = \vec V_A + \vec V_{B/A}$ graphically: dr
 
 <Steps>
 
-1. **Differentiate the slider position** ($e = 0$) with $\dot\theta = \omega$ and $\sqrt{l^2 - r^2\sin^2\theta} = l\cos\phi$:
+1. **Differentiate the slider position** ($e = 0$) with $\dot\theta = \omega$ and $\sqrt{l^2 - r^2\sin^2\theta} = l\cos\phi$. This is the **exact** result, with no approximation anywhere in it:
 
    $$s = r\cos\theta + \sqrt{l^2 - r^2\sin^2\theta} \;\Rightarrow\; V_P = -r\omega\left(\sin\theta + \frac{r\sin\theta\cos\theta}{l\cos\phi}\right)$$ ✅
 
-2. **Write it as harmonics** ($\cos\phi \approx 1$): the primary plus secondary terms
+2. **Write it as harmonics**, the **approximate** form, obtained by setting $\cos\phi \approx 1$: the primary plus secondary terms
 
    $$V_P \approx -r\omega\left(\sin\theta + \frac{r}{2l}\sin 2\theta\right)$$
 
    The secondary (twice-per-revolution) term from the connecting rod is what engine balancing must handle. ✅
 
-3. **Tabulate** $V_P/(r\omega)$ for $l/r = 3$:
+3. **Know which one you are using, and say so.** The two disagree slightly. At $\theta = 60\degree$ with $l/r = 3$:
+
+   | Form | $V_P/(r\omega)$ |
+   |---|:---:|
+   | Exact | $-1.017$ |
+   | Harmonic (approximate) | $-1.010$ |
+
+   About $0.6\%$ apart, and the gap grows as the rod gets shorter (small $l/r$). The tables in this lesson use the **exact** form throughout, so a value differing from yours in the third digit usually means you used the harmonic one, not that you made an error. The harmonic form is the right tool for balancing work, where separating the once- and twice-per-revolution terms is the whole point; the exact form is the right tool for a numerical answer. State which you used. ✅
+
+4. **Tabulate** $V_P/(r\omega)$, from the exact form, for $l/r = 3$:
 
    | Crank $\theta$ | $V_P/(r\omega)$ |
    |:---:|:---:|
@@ -263,13 +295,25 @@ The velocity polygon solves $\vec V_B = \vec V_A + \vec V_{B/A}$ graphically: dr
 
 <Steps>
 
-1. **Rod angular velocity** from differentiating $\phi = \arcsin((r/l)\sin\theta)$:
+1. **Rod angular velocity** from differentiating $\phi = \arcsin((r/l)\sin\theta)$. Differentiating the vertical closure $r\sin\theta = l\sin\phi$ gives the rate of the rod's *inclination*:
 
-   $$\omega_3 = \frac{r\omega\cos\theta}{l\cos\phi}$$ ✅
+   $$\dot\phi = \frac{r\omega\cos\theta}{l\cos\phi}$$
 
-   At $\theta = 0\degree$: $\omega_3 = (r/l)\omega = 0.333\,\omega$ (rod rotating fastest). At $\theta = 90\degree$: $\omega_3 = 0$ (rod momentarily not rotating, only translating). ✅
+   The rod's angular velocity in the counterclockwise-positive convention carries the opposite sign, because the rod leans to the other side of the centre-line from the crank ($\theta_3 = -\phi$):
 
-2. **A one-step check.** The rod's instantaneous center is where the crank line and the vertical through the piston cross, the same intersection that fixed $b$ in the polygon; dividing $v_A$ by the distance from that center to $A$ reproduces the same $\omega_3$. It is a quick confirmation, not the working method. ✅
+   $$\omega_3 = -\frac{r\omega\cos\theta}{l\cos\phi}$$ ✅
+
+2. **Evaluate at the working instant** $\theta = 60\degree$, with $r = 50$ mm, $l = 150$ mm, $\omega = 1$ rad/s:
+
+   $$\phi = \arcsin\!\left(\tfrac{50}{150}\sin 60\degree\right) = 16.78\degree, \qquad \cos\phi = 0.9574$$
+
+   $$\omega_3 = -\frac{50(1)(0.5)}{150(0.9574)} = -0.174 \text{ rad/s}$$ ✅
+
+   **What the negative sign means physically:** the crank turns counterclockwise while the rod swings clockwise. The sign is not a slip, it is the answer to "which way", and it is what makes the crank-pin rubbing velocity in Step 5 an *addition* rather than a subtraction. Carry it. ✅
+
+3. **Check the extremes.** At $\theta = 0\degree$: $|\omega_3| = (r/l)\omega = 0.333\,\omega$, the rod rotating fastest. At $\theta = 90\degree$: $\omega_3 = 0$, the rod momentarily not rotating, only translating. ✅
+
+4. **A one-step check.** The rod's instantaneous center is where the crank line and the vertical through the piston cross, the same intersection that fixed $b$ in the polygon; dividing $v_A$ by the distance from that center to $A$ reproduces the same $\omega_3$. It is a quick confirmation, not the working method. ✅
 
 </Steps>
 
@@ -286,19 +330,25 @@ In an engine the connecting rod is a real body with mass, and every pin rubs. Tw
 
 1. **The rod's velocity image.** Every point of the rigid rod $AB$ maps to a point on the line $a\,b$ of the polygon, in the same proportion: a point one-third along $AB$ from $A$ sits one-third along $a\,b$ from $a$. The line $a\,b$ is the **velocity image** of the rod, and reading any point's velocity is just measuring from the pole $o$ to its image. ✅
 
-2. **Velocity of the rod's mid-point $G$.** The mass centre sits at the middle of $AB$, so its image $g$ is the middle of $a\,b$. Measuring $o\,g$ gives $v_G \approx 48.7$ mm/s, the velocity the rod's inertia force will use in the [acceleration analysis](./acceleration-analysis-dynamic-forces). ✅
+2. **Velocity of the rod's mid-point $G$.** The mass centre sits at the middle of $AB$, so its image $g$ is the middle of $a\,b$. Measuring $o\,g$ gives $v_G \approx 48.7$ mm/s, the velocity the rod's inertia force will use in the [acceleration analysis](/education/planar-mechanics/acceleration-analysis-dynamic-forces). ✅
 
 3. **The least-velocity point.** The slowest point on the rod is the one whose image is the foot of the **perpendicular** from the pole $o$ onto the line $a\,b$ (point $q$). Here it lands about $66$ mm from $A$, close to the mid-point, with $v_\text{min} \approx 48.7$ mm/s. At this instant the rod's points hardly differ in speed, from $48.7$ mm/s near the middle to about $50.8$ mm/s at the piston. ✅
 
-4. **Rubbing velocity at a pin.** At a pin joint the two links turn at different rates, so the journal surface rubs at $v_\text{rub} = (\text{relative angular velocity}) \times (\text{pin radius})$. With $\omega_2 = 1$ rad/s and $|\omega_3| = 0.174$ rad/s, and the journal radii shown:
+4. **Rubbing velocity at a pin.** At a pin joint the two links turn at different rates, so the journal surface rubs at the *relative* angular velocity times the pin radius:
 
-   | Pin | Links joined | Relative $\omega$ (rad/s) | Radius (mm) | $v_\text{rub}$ (mm/s) |
+   $$v_\text{rub} = r_p\,\lvert\omega_i - \omega_j\rvert$$
+
+   **Use signed angular velocities inside the bars, then take the modulus.** This one rule handles both cases automatically and is the only reliable way to get it right: if the two links turn in opposite senses the difference of the signed values *adds* their magnitudes, and if they turn the same way it *subtracts* them. Guessing add-or-subtract from a sketch is where marks are lost.
+
+   With $\omega_2 = +1$ rad/s (crank, counterclockwise), $\omega_3 = -0.174$ rad/s (rod, clockwise, from Step 4), $\omega_\text{frame} = 0$ and $\omega_\text{piston} = 0$ (the piston translates, it does not rotate):
+
+   | Pin | Links joined | $\lvert\omega_i - \omega_j\rvert$ (rad/s) | $r_p$ (mm) | $v_\text{rub}$ (mm/s) |
    |---|---|:---:|:---:|:---:|
-   | Main bearing $O$ | crank, frame | 1.000 | 25 | 25.0 |
-   | Crank pin $A$ | crank, rod | 1.174 | 20 | 23.5 |
-   | Gudgeon pin $B$ | rod, piston | 0.174 | 15 | 2.6 |
+   | Main bearing $O$ | crank, frame | $\lvert +1 - 0\rvert = 1.000$ | 25 | 25.0 |
+   | Crank pin $A$ | crank, rod | $\lvert +1 - (-0.174)\rvert = 1.174$ | 20 | 23.5 |
+   | Gudgeon pin $B$ | rod, piston | $\lvert -0.174 - 0\rvert = 0.174$ | 15 | 2.6 |
 
-   The crank pin rubs fastest because the crank and rod turn in **opposite** senses there, so their rates add ($1 + 0.174$); the gudgeon pin rubs slowest because only the rod's small $\omega_3$ acts. Multiplying each rubbing velocity by the friction force at that pin gives the power lost there. ✅
+   The crank pin has the highest relative rate because crank and rod turn in **opposite** senses, so the subtraction of a negative adds their magnitudes; the gudgeon pin rubs slowest because only the rod's small $\omega_3$ acts against a non-rotating piston. Note that the crank pin does not rub fastest here despite its highest relative rate, because the main bearing's larger radius wins: **radius and relative speed both matter**. Multiplying each rubbing velocity by the friction force at that pin gives the power lost there. ✅
 
 </Steps>
 
@@ -452,7 +502,7 @@ Construct the four-bar to scale at $\theta_2 = 120\degree$ using the same arc-in
 
    $$\text{MA} = \frac{\omega_2}{\omega_4} = \frac{1}{0.514} = 1.95$$ ✅
 
-   An ideal crank torque appears amplified about twice at the follower here. The value changes through the cycle and grows large near the limit positions, which the [force analysis](./force-analysis-mechanism-synthesis) uses.
+   An ideal crank torque appears amplified about twice at the follower here. The value changes through the cycle and grows large near the limit positions, which the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis) uses.
 
 </Steps>
 
@@ -543,7 +593,7 @@ Draw the scissor to scale at $\theta = 30\degree$ to fix the geometry before fin
 </details>
 
 :::note[Engineering Insight]
-The factor $\cos\theta$ means a scissor lift naturally slows as it nears full height, a gentle, self-limiting behaviour that is convenient for positioning a platform. The same $\cos\theta$ reappears inverted in the [force analysis](./force-analysis-mechanism-synthesis), where it makes the actuator force grow large at low angle.
+The factor $\cos\theta$ means a scissor lift naturally slows as it nears full height, a gentle, self-limiting behaviour that is convenient for positioning a platform. The same $\cos\theta$ reappears inverted in the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis), where it makes the actuator force grow large at low angle.
 :::
 
 ## Application 4: Velocity Ratio of the Toggle Clamp
@@ -605,7 +655,7 @@ Sketch the four-bar skeleton at top-dead-centre, where the geometry behind self-
 
    $$\text{MA} = \frac{1}{\text{velocity ratio}} \to \text{large}$$ ✅
 
-   A modest handle force produces a very large clamping force. This is the quantitative form of the self-locking seen in the [mobility analysis](./kinematic-joints-constraint-analysis).
+   A modest handle force produces a very large clamping force. This is the quantitative form of the self-locking seen in the [mobility analysis](/education/planar-mechanics/kinematic-joints-constraint-analysis).
 
 3. **Mobility is unchanged.** The clamp still has one degree of freedom throughout. What changes at the toggle is the instantaneous velocity ratio, not the number of inputs. This is the difference between a singular configuration and a change in mobility. ✅
 
@@ -629,7 +679,7 @@ Sketch the four-bar skeleton at top-dead-centre, where the geometry behind self-
 </details>
 
 :::note[Engineering Insight]
-Self-locking is a velocity-ratio effect. At the toggle position the output stops moving for an instant relative to the input, so the velocity ratio is zero and the mechanical advantage is, in the ideal case, unbounded. Toggle clamps, bolt cutters, and rock crushers all live at this position deliberately. The [force analysis](./force-analysis-mechanism-synthesis) turns this velocity argument into the actual clamping force and the stresses it creates.
+Self-locking is a velocity-ratio effect. At the toggle position the output stops moving for an instant relative to the input, so the velocity ratio is zero and the mechanical advantage is, in the ideal case, unbounded. Toggle clamps, bolt cutters, and rock crushers all live at this position deliberately. The [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis) turns this velocity argument into the actual clamping force and the stresses it creates.
 :::
 
 ## Application 5: Ram Velocity of the Quick-Return Shaper
@@ -637,7 +687,7 @@ Self-locking is a velocity-ratio effect. At the toggle position the output stops
 <InArticleAd />
 
 
-The metal shaper of the [position analysis](./position-analysis-planar-linkages#application-5-quick-return-position-a-slider-crank-inversion) drives its cutting ram through a **crank-and-slotted-lever** mechanism, an inversion of the slider-crank. It brings in something the engine did not have: the crank pin is a **block that slides inside the slotted lever** while the lever turns. That sliding-in-a-turning-slot is exactly the joint whose velocity polygon carries a slip vector, and whose acceleration will carry a Coriolis term.
+The metal shaper of the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages#application-5-quick-return-position-a-slider-crank-inversion) drives its cutting ram through a **crank-and-slotted-lever** mechanism, an inversion of the slider-crank. It brings in something the engine did not have: the crank pin is a **block that slides inside the slotted lever** while the lever turns. That sliding-in-a-turning-slot is exactly the joint whose velocity polygon carries a slip vector, and whose acceleration will carry a Coriolis term.
 
 <Card title="Hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -723,7 +773,7 @@ The block $B$ is two coincident points at this instant: $B_2$ on the **crank** a
 
 3. **Analytical confirmation.** Resolving the crank-pin velocity $v_{B_2} = 120$ mm/s along and across the lever gives the slip $v_{B_2}\cos\!\angle(CB,\,AB)$ and the transverse part $v_{B_2}\sin\!\angle(CB,\,AB)$; the transverse part divided by $AB$ returns $\omega_\text{lever} = 0.399$ rad/s, and the slip returns $87.8$ mm/s, matching the polygon. ✅
 
-4. **Why it matters.** The ram speed varies through the stroke, and it is deliberately low and steady over the cutting pass and high on the return. The [acceleration analysis](./acceleration-analysis-dynamic-forces) takes the next step: because the block slides while the lever turns, its acceleration carries a **Coriolis** term with no counterpart in the plain slider-crank. ✅
+4. **Why it matters.** The ram speed varies through the stroke, and it is deliberately low and steady over the cutting pass and high on the return. The [acceleration analysis](/education/planar-mechanics/acceleration-analysis-dynamic-forces) takes the next step: because the block slides while the lever turns, its acceleration carries a **Coriolis** term with no counterpart in the plain slider-crank. ✅
 
 </Steps>
 
@@ -805,7 +855,9 @@ print(f"w3/w2 = {w3:.3f}, w4/w2 = {w4:.3f}")   # w3/w2 = -0.040, w4/w2 = 0.457
 
 | Mechanism | What you solve for | Key relation | Simulator |
 |-----------|--------------------|--------------|-----------|
-| Slider-crank | piston velocity $V_P$ | $V_P = -r\omega(\sin\theta + \tfrac{r}{2l}\sin 2\theta)$ | [siwit.co/CSM](https://siwit.co/CSM) |
+| Slider-crank | piston velocity $V_P$ | exact: $-r\omega\left(\sin\theta + \tfrac{r\sin\theta\cos\theta}{l\cos\phi}\right)$; &nbsp; approx: $-r\omega(\sin\theta + \tfrac{r}{2l}\sin 2\theta)$ | [siwit.co/CSM](https://siwit.co/CSM) |
+| Slider-crank | rod angular velocity $\omega_3$ | $\omega_3 = -\dfrac{r\omega\cos\theta}{l\cos\phi}$ (negative: rod swings opposite the crank) | [siwit.co/CSM](https://siwit.co/CSM) |
+| Any pin joint | rubbing velocity | $v_\text{rub} = r_p\lvert\omega_i - \omega_j\rvert$ (signed $\omega$, then modulus) | drawing $+$ calc |
 | Four-bar | $\omega_3$, $\omega_4$ | velocity loop (linear) | [siwit.co/FBL](https://siwit.co/FBL) |
 | Scissor lift | platform velocity | $v = nL\cos\theta\,\dot\theta$ | [siwit.co/SLM](https://siwit.co/SLM) |
 | Toggle clamp | velocity ratio | $\to 0$ at the toggle | [siwit.co/TCM](https://siwit.co/TCM) |
@@ -815,7 +867,7 @@ print(f"w3/w2 = {w3:.3f}, w4/w2 = {w4:.3f}")   # w3/w2 = -0.040, w4/w2 = 0.457
 
 Every velocity here was found by hand and reproduced with a few lines of Python (NumPy). The simulators confirm the same profiles interactively. No specialised motion software is involved; differentiating the loop is the whole method.
 
-Next, [Acceleration Analysis and Dynamic Forces](./acceleration-analysis-dynamic-forces) differentiates once more. The velocity equations become acceleration equations, the piston acceleration reveals the primary and secondary inertia forces that shake an engine, and Newton's second law turns those accelerations into the dynamic loads on bearings and links.
+Next, [Acceleration Analysis and Dynamic Forces](/education/planar-mechanics/acceleration-analysis-dynamic-forces) differentiates once more. The velocity equations become acceleration equations, the piston acceleration reveals the primary and secondary inertia forces that shake an engine, and Newton's second law turns those accelerations into the dynamic loads on bearings and links.
 
 
 

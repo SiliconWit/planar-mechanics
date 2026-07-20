@@ -42,7 +42,7 @@ By the end of this lesson, you will be able to:
 
 An engine valve must snap open, stay fully open while gas flows, then close, all in a fixed fraction of a crank revolution, and repeat without fail millions of times. A packaging machine must advance a film, pause precisely while a print head fires, then advance again. These are **dwell** motions: the output must hold still for part of the cycle and move on a programmed schedule for the rest. A linkage cannot dwell cleanly, but a cam can: its profile is a stored motion program that the follower reads off as the cam turns.
 
-The cam-follower contact is the **higher pair** from the [joint classification](./kinematic-joints-constraint-analysis): line contact that both rolls and slides, removing only one degree of freedom. That single contact is where all the force passes, so the shape of the cam decides both the motion and whether the follower is driven smoothly or hammered.
+The cam-follower contact is the **higher pair** from the [joint classification](/education/planar-mechanics/kinematic-joints-constraint-analysis): line contact that both rolls and slides, removing only one degree of freedom. That single contact is where all the force passes, so the shape of the cam decides both the motion and whether the follower is driven smoothly or hammered.
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1rem 0' }}>
   <TailwindWrapper>
@@ -92,14 +92,22 @@ The **fundamental law of cam design**: for a cam to run at speed, the displaceme
 ### Comparing the Motion Laws
 
 <Card title="Four Motion Laws for a Rise of Height h over Angle β" icon="document">
-| Motion law | Peak acceleration | Acceleration at the ends | Suitability |
-|------------|:-----------------:|--------------------------|-------------|
-| Uniform (constant velocity) | zero (infinite at ends) | infinite velocity jump | only with rounded ends |
-| Parabolic (constant accel) | $4h/\beta^2$ | jumps (finite, but step) | low speed |
-| Simple harmonic (SHM) | $\dfrac{\pi^2 h}{2\beta^2} \approx 4.93\,h/\beta^2$ | jumps from zero at a dwell | moderate speed |
-| Cycloidal | $\dfrac{2\pi h}{\beta^2} \approx 6.28\,h/\beta^2$ | zero at both ends | high speed, smoothest |
+Every peak below has the same shape: a pure number times $h/\beta$ for velocity, and a pure number times $h/\beta^2$ for acceleration. Those pure numbers are the **motion-law factors** $C_v$ and $C_a$. They depend only on the *law*, never on the rise height, the rise angle or the cam speed, which is what makes them worth memorising.
+
+$$v_\text{max} = C_v\,\frac{h}{\beta}, \qquad a_\text{max} = C_a\,\frac{h}{\beta^2}$$
+
+| Motion law | $C_v$ | $C_a$ | Acceleration at the ends | Suitability |
+|------------|:-----:|:-----:|--------------------------|-------------|
+| Uniform (constant velocity) | $1.000$ | $\to\infty$ at the ends | infinite velocity jump | only with rounded ends |
+| Parabolic (constant accel) | $2.000$ | $4.000$ | jumps (finite, but step) | low speed |
+| Simple harmonic (SHM) | $\pi/2 = 1.571$ | $\pi^2/2 = 4.935$ | jumps from zero at a dwell | moderate speed |
+| Cycloidal | $2.000$ | $2\pi = 6.283$ | zero at both ends | high speed, smoothest |
 
 Cycloidal motion has the **highest peak acceleration** of the four, yet it is the best for high speed because its acceleration **starts and ends at zero**, so it joins a dwell with no jump and no infinite jerk. Simple harmonic motion looks smooth but its acceleration is a cosine that is at full value at the ends, so where a rise meets a dwell the acceleration steps from a maximum to zero, an infinite jerk.
+
+:::tip[Read the units off the factor]
+$C_v$ and $C_a$ are dimensionless, so $C_v h/\beta$ carries the units of $h$ per **radian** of cam angle, and $C_a h/\beta^2$ per radian squared. $\beta$ must therefore be in radians, never degrees, before you divide. To reach millimetres per **second** you multiply by $\omega$; for mm/s² multiply by $\omega^2$. Keeping the factor and the speed separate means one calculation covers every cam speed.
+:::
 </Card>
 
 ### Pressure Angle and the Base Circle
@@ -110,6 +118,16 @@ For a radial translating follower (no offset), the **pressure angle** $\phi$ bet
 $$\tan\phi = \frac{ds/d\theta}{R_b + s}$$
 
 where $R_b$ is the **base-circle** radius (the smallest radius of the cam). A large pressure angle means most of the contact force pushes sideways on the follower stem rather than driving it, which causes jamming and wear. The standard guide is to keep $\phi \le 30\degree$ for a translating follower. The denominator shows the fix: **a larger base circle lowers the pressure angle**, at the cost of a bigger cam.
+
+For a **roller** follower, replace $R_b$ with the prime-circle radius $R_p = R_b + R_r$, where $R_r$ is the roller radius; the contact geometry is set by the roller centre path, not the cam surface.
+
+**Where the maximum falls.** The numerator $ds/d\theta$ peaks at mid-rise while the denominator keeps growing, so the true maximum of $\phi$ sits slightly *before* mid-rise. Evaluating at mid-rise is close enough for design and gives a formula you can use by hand. For a cycloidal rise, $s = h/2$ and $ds/d\theta = 2h/\beta$ there, so:
+
+$$\tan\phi_\text{max} \approx \frac{2h/\beta}{R_b + h/2}$$
+
+This runs about half a degree below the true peak, so treat it as a slight under-estimate and keep a little margin against the $30\degree$ guide. Turning it around gives the base circle a specification demands:
+
+$$R_b \ge \frac{2h/\beta}{\tan\phi_\text{allow}} - \frac{h}{2}$$
 </Card>
 
 ## Application 1: Program the Motion and Draw the SVAJ Diagram
@@ -117,7 +135,7 @@ where $R_b$ is the **base-circle** radius (the smallest radius of the cam). A la
 <InArticleAd />
 
 
-This is the central worked example. We program a rise and draw its displacement, velocity, and acceleration to scale, the graphical heart of cam design. It follows the same [draw, solve, simulate](./position-analysis-planar-linkages#methods-of-kinematic-analysis) rhythm as the linkage lessons: draw the motion to scale, find its peaks analytically, then confirm in the simulator.
+This is the central worked example. We program a rise and draw its displacement, velocity, and acceleration to scale, the graphical heart of cam design. It follows the same [draw, solve, simulate](/education/planar-mechanics/position-analysis-planar-linkages#methods-of-kinematic-analysis) rhythm as the linkage lessons: draw the motion to scale, find its peaks analytically, then confirm in the simulator.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -131,7 +149,7 @@ This is the central worked example. We program a rise and draw its displacement,
 - **Configuration:** Radial translating follower, rise-dwell-fall-dwell cam
 - **Task:** Program a cycloidal rise and draw its S, V, A diagrams
 - **Specification:** rise $h = 25$ mm over $\beta = 90\degree$, then dwell $90\degree$, cycloidal fall $90\degree$, dwell $90\degree$
-- **Input:** constant cam speed $\omega$
+- **Input:** constant cam speed $\omega = 30$ rad/s (about 287 rev/min)
 
 **Key Question:** What motion law gives the rise with no acceleration jump at the dwells, and what are its peak velocity and acceleration?
 :::
@@ -172,15 +190,27 @@ Plot the three curves to scale against cam angle. Choose a vertical scale for ea
 
 <Steps>
 
-1. **Peak velocity** at mid-rise ($\theta = \beta/2$):
+1. **Convert the rise angle to radians first.** $\beta = 90\degree = \pi/2 = 1.5708$ rad. Every factor formula divides by $\beta$, so a rise angle left in degrees is the single most common way to lose these marks. ✅
 
-   $$v_\text{max} = \frac{2h}{\beta} = \frac{2(25)}{\pi/2} = 31.8 \text{ mm/rad} \quad (\times\omega \text{ for mm/s})$$ ✅
+2. **Write down the factors** for the cycloidal law: $C_v = 2.000$ and $C_a = 2\pi = 6.283$. ✅
 
-2. **Peak acceleration** at the quarter points:
+3. **Peak velocity per unit cam angle**, at mid-rise ($\theta = \beta/2$):
 
-   $$a_\text{max} = \frac{2\pi h}{\beta^2} = \frac{2\pi(25)}{(\pi/2)^2} = 63.7 \text{ mm/rad}^2 \quad (\times\omega^2)$$ ✅
+   $$v_\text{max} = C_v\frac{h}{\beta} = \frac{2(25)}{1.5708} = 31.8 \text{ mm/rad}$$ ✅
 
-3. **Compare with simple harmonic motion.** SHM over the same rise peaks at $a_\text{max} = \pi^2 h/(2\beta^2) = 50.0$ mm/rad², lower than cycloidal. Yet SHM acceleration is a cosine at full value at the start of the rise: where it meets the preceding dwell it jumps from 0 to 50, an infinite jerk. The cycloidal law trades a slightly higher peak acceleration for zero jumps, which is the right trade for a high-speed cam. ✅
+4. **Peak acceleration per unit cam angle**, at the quarter points:
+
+   $$a_\text{max} = C_a\frac{h}{\beta^2} = \frac{6.283(25)}{(1.5708)^2} = 63.7 \text{ mm/rad}^2$$ ✅
+
+5. **Convert to real units at the cam speed** $\omega = 30$ rad/s. The per-radian figures are geometry alone; the speed enters only here:
+
+   $$v_\text{max} = 31.8 \times 30 = 955 \text{ mm/s} = 0.955 \text{ m/s}$$
+
+   $$a_\text{max} = 63.7 \times 30^2 = 57{,}300 \text{ mm/s}^2 = 57.3 \text{ m/s}^2$$ ✅
+
+6. **Sanity-check the size of the answer.** $57.3$ m/s² is about $5.8g$. A follower of mass $0.2$ kg therefore needs roughly $11.5$ N just to be accelerated, before any spring or load force. Doubling the cam speed would quadruple it, which is exactly why acceleration, not velocity, sets the limit on how fast a cam can run. ✅
+
+7. **Compare with simple harmonic motion.** SHM over the same rise peaks at $a_\text{max} = \pi^2 h/(2\beta^2) = 50.0$ mm/rad², lower than cycloidal. Yet SHM acceleration is a cosine at full value at the start of the rise: where it meets the preceding dwell it jumps from 0 to 50, an infinite jerk. The cycloidal law trades a slightly higher peak acceleration for zero jumps, which is the right trade for a high-speed cam. ✅
 
 </Steps>
 
@@ -289,11 +319,21 @@ The base circle is not free: too small and the pressure angle grows until the fo
 
 <Steps>
 
-1. **Compute** $\tan\phi = (ds/d\theta)/(R_b + s)$ across the rise. With a first guess $R_b = 30$ mm, the pressure angle peaks at $\phi_\text{max} = 37.8\degree$, well above the $30\degree$ guide. The follower would jam. ✅
+1. **Check the first guess by hand.** Use the mid-rise form $\tan\phi_\text{max} \approx (2h/\beta)/(R_b + h/2)$, with $2h/\beta = 31.8$ mm/rad from Application 1. At $R_b = 30$ mm:
 
-2. **Increase the base circle.** Raising $R_b$ enlarges the denominator. At $R_b = 45$ mm the peak falls to $\phi_\text{max} = 29.4\degree$, just inside the guide. ✅
+   $$\tan\phi_\text{max} \approx \frac{31.8}{30 + 12.5} = 0.749 \;\Rightarrow\; \phi_\text{max} \approx 36.8\degree$$
 
-3. **Read the trade-off** from the plot below: the larger base circle lowers the whole pressure-angle curve under the $30\degree$ line, at the cost of a physically larger cam. This is why Application 2 used $R_b = 45$ mm. ✅
+   A full numerical sweep of the rise gives $37.8\degree$, so the hand estimate sits about a degree low, as expected. Either way it is well above the $30\degree$ guide and the follower would jam. ✅
+
+2. **Size the base circle directly** rather than guessing again. Rearranging for $\phi_\text{allow} = 30\degree$:
+
+   $$R_b \ge \frac{31.8}{\tan 30\degree} - 12.5 = 55.1 - 12.5 = 42.6 \text{ mm}$$
+
+   Because the hand form under-estimates by about a degree, round up rather than taking $42.6$ mm as final. ✅
+
+3. **Confirm the chosen size.** At $R_b = 45$ mm the hand form gives $\phi_\text{max} \approx 29.0\degree$ and the full sweep gives $29.4\degree$, just inside the guide with a little margin. This is why Application 2 used $R_b = 45$ mm. ✅
+
+4. **Read the trade-off** from the plot below: the larger base circle lowers the whole pressure-angle curve under the $30\degree$ line, at the cost of a physically larger cam. Note the direction of the lever, the base circle buys pressure angle back cheaply at small $R_b$ and expensively at large $R_b$, so there is little point oversizing far beyond the guide. ✅
 
 </Steps>
 
@@ -361,15 +401,19 @@ The pressure angle ties the motion program to the cam's physical size. A faster 
 | Quantity | Relation |
 |----------|----------|
 | Cycloidal displacement | $s = h[\theta/\beta - \tfrac{1}{2\pi}\sin(2\pi\theta/\beta)]$ |
-| Peak velocity / acceleration | $2h/\beta$ &nbsp;/&nbsp; $2\pi h/\beta^2$ |
-| Pressure angle | $\tan\phi = (ds/d\theta)/(R_b + s)$ |
+| Motion-law factors | $v_\text{max} = C_v h/\beta$, &nbsp; $a_\text{max} = C_a h/\beta^2$ &nbsp; ($\beta$ in radians) |
+| Factors: cycloidal / SHM / parabolic | $C_v = 2.000$ / $1.571$ / $2.000$; &nbsp; $C_a = 6.283$ / $4.935$ / $4.000$ |
+| Peaks at cam speed $\omega$ | $v_\text{max}\times\omega$ (mm/s), &nbsp; $a_\text{max}\times\omega^2$ (mm/s²) |
+| Pressure angle | $\tan\phi = (ds/d\theta)/(R_b + s)$; roller: use $R_p = R_b + R_r$ |
+| Max pressure angle (cycloidal) | $\tan\phi_\text{max} \approx (2h/\beta)/(R_b + h/2)$, slightly low |
+| Base circle for a given $\phi_\text{allow}$ | $R_b \ge (2h/\beta)/\tan\phi_\text{allow} - h/2$ |
 | Pitch-curve radius | $R = R_b + s(\theta)$ |
 
 ### A Note on Tools
 
 The SVAJ diagrams, cam profile, and pressure-angle curves here were drawn from the motion equations and reproduced with a few lines of Python (NumPy). To do all of it interactively, the **[Cam and Follower Mechanism Simulator](/product-development/cam-follower-mechanism-simulator/)** plots the live SVAJ chain, flags any motion law that violates the fundamental law, sizes the base circle against the pressure angle, and checks the radius of curvature for undercutting, the same analysis this lesson does by hand. The [Cam and Follower Experiments](/education/mechanism-design-simulation/cam-follower-experiments) turn it into structured, Python-verified exercises. To turn the profile into a part, build it in the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) CAD lesson, which sweeps the same program into a solid cam.
 
-Next, [Force Analysis and Mechanism Synthesis](./force-analysis-mechanism-synthesis) returns to the linkages and closes the course: free-body diagrams and force polygons give the joint reactions, the transmission angle measures force quality, and synthesis runs the whole process backward to design a mechanism that meets a force and motion specification.
+Next, [Force Analysis and Mechanism Synthesis](/education/planar-mechanics/force-analysis-mechanism-synthesis) returns to the linkages and closes the course: free-body diagrams and force polygons give the joint reactions, the transmission angle measures force quality, and synthesis runs the whole process backward to design a mechanism that meets a force and motion specification.
 
 
 

@@ -182,7 +182,7 @@ A **higher pair** makes contact along a line or at a point rather than over a su
 
 **This is a *higher pair*** (line/point contact, only 1 constraint). In the Kutzbach-Grübler equation it is counted as $j_2$.
 
-**Applications:** [Cam-follower systems](./cam-follower-systems-motion-programming), gear-tooth contact, wheel rolling on a surface, ball bearings.
+**Applications:** [Cam-follower systems](/education/planar-mechanics/cam-follower-systems-motion-programming), gear-tooth contact, wheel rolling on a surface, ball bearings.
 </Card>
 
   </TabItem>
@@ -206,7 +206,7 @@ For a mechanism of $n$ links, **one link is the fixed ground**, so the moving bo
 ### The Kutzbach-Grübler Equation
 
 <Card title="Kutzbach-Grübler Equation for Planar Mechanisms" icon="document">
-$$\text{DOF} = 3(n-1) - 2j_1 - j_2$$
+$$M = \text{DOF} = 3(n-1) - 2j_1 - j_2$$
 
 **Where:**
 - $n$ = total number of links, **including the ground/frame**
@@ -214,6 +214,18 @@ $$\text{DOF} = 3(n-1) - 2j_1 - j_2$$
 - $j_2$ = number of **higher pairs** (cam or gear contact, each removing 1 constraint)
 
 **Reading the equation:** $3(n-1)$ is the total freedom of all moving links; $2j_1 + j_2$ is the total constraint imposed by all joints. Mobility is what is left over.
+
+Mobility is written $M$ as often as DOF, and both appear in this course and in most textbooks. They are the same quantity.
+
+**A counting discipline that avoids most errors.** Set the count out as an inventory before substituting anything:
+
+| Count | Rule |
+|-------|------|
+| $n$ | every rigid body, **plus the frame as one link**, however many places it is bolted down |
+| $j_1$ | every revolute **and** every prismatic joint, since both remove 2 constraints |
+| $j_2$ | every rolling or sliding **contact**: cam on follower, gear tooth on gear tooth |
+
+Two traps account for most lost marks. Forgetting the frame gives an answer exactly $3$ too low. Counting a joint where **three** links meet at one pin as a single joint is wrong: $k$ links sharing one pin make $k-1$ joints.
 </Card>
 
 :::tip[Interpreting the result]
@@ -221,6 +233,42 @@ $$\text{DOF} = 3(n-1) - 2j_1 - j_2$$
 - **DOF = 0**: a *structure*: statically determinate, no motion
 - **DOF < 0**: *over-constrained*: statically indeterminate, and may bind unless special geometry helps (see Application 3)
 - **DOF = 1**: a single-input mechanism, the most common and most controllable design target
+:::
+
+### Counting a Higher Pair: Three Worked Cases
+
+Every mechanism analysed later in this lesson happens to have $j_2 = 0$, so the higher-pair term never does any work. These three short counts exercise it, because a cam or gear contact changes the arithmetic and is easy to miscount.
+
+<Card title="Case 1: Cam with a knife-edge translating follower" icon="document">
+**Links** ($n = 3$): frame, cam, follower.
+**Lower pairs** ($j_1 = 2$): cam-to-frame revolute, follower-in-guide prismatic.
+**Higher pairs** ($j_2 = 1$): the knife edge touching the cam surface. It is a *contact*, not a pin, so it removes only 1 constraint: the follower cannot penetrate the cam, but it is free to slide along the profile.
+
+$$M = 3(3-1) - 2(2) - 1 = 6 - 4 - 1 = 1$$
+
+One degree of freedom, one actuator: turn the cam and everything else follows. This is what a cam is for.
+</Card>
+
+<Card title="Case 2: The same cam with a roller follower" icon="document">
+Adding a roller adds a link and a pin:
+
+**Links** ($n = 4$): frame, cam, roller, follower. &nbsp; **Lower pairs** ($j_1 = 3$): cam-to-frame revolute, roller-to-follower revolute, follower-in-guide prismatic. &nbsp; **Higher pairs** ($j_2 = 1$): roller rolling on the cam surface.
+
+$$M = 3(4-1) - 2(3) - 1 = 9 - 6 - 1 = 2$$
+
+Two, not one. The equation is not wrong: the roller really can spin about its own pin without moving the follower at all. That is a **passive degree of freedom**, the second trap listed below. The mechanism still needs only **one** actuator, because the extra freedom drives no output. Report it as $M = 2$ with one passive freedom, so the useful mobility is 1.
+</Card>
+
+<Card title="Case 3: A simple gear pair" icon="document">
+**Links** ($n = 3$): frame, gear 1, gear 2. &nbsp; **Lower pairs** ($j_1 = 2$): each gear pinned to the frame. &nbsp; **Higher pairs** ($j_2 = 1$): the meshing teeth.
+
+$$M = 3(3-1) - 2(2) - 1 = 1$$
+
+One input turns both gears at a fixed ratio. Had the teeth been welded rather than meshed, that contact would be a lower pair and $M$ would drop to $0$, a structure. The single constraint difference between a contact and a pin is the whole distinction between $j_1$ and $j_2$.
+</Card>
+
+:::tip[The pattern worth remembering]
+Swapping one lower pair for one higher pair **adds** one degree of freedom, because a contact constrains half as much as a pin. When a mobility answer comes out one higher than expected, a miscounted contact is the first thing to check, and a passive roller freedom is the second.
 :::
 
 ### Systematic Joint Analysis Process
@@ -330,7 +378,7 @@ The four-bar linkage is the most widely used closed-chain mechanism in engineeri
 
    - The linkage has **mobility 1**: a single input fully determines every link's position.
    - **Motors required: 1**, applied at the crank ($O_2$).
-   - With one input fixed, the coupler and follower angles are completely determined by the geometry (you solve for them explicitly in the [position analysis](./position-analysis-planar-linkages)). ✅
+   - With one input fixed, the coupler and follower angles are completely determined by the geometry (you solve for them explicitly in the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages)). ✅
 
 </Steps>
 
@@ -469,7 +517,7 @@ The slider-crank converts rotation into straight-line motion and is the heart of
 :::note[Engineering Insight]
 A prismatic joint and a revolute joint are interchangeable in the mobility equation: each is a lower pair removing 2 constraints. The slider-crank and four-bar are mobility-equivalent, which is why one input drives each.
 
-**Practical Impact:** This equivalence lets designers swap rotary and linear elements (a pin-jointed rocker for a hydraulic cylinder, say) without disturbing the degree-of-freedom budget. You will use exactly this freedom when sizing actuators in the [force analysis](./force-analysis-mechanism-synthesis).
+**Practical Impact:** This equivalence lets designers swap rotary and linear elements (a pin-jointed rocker for a hydraulic cylinder, say) without disturbing the degree-of-freedom budget. You will use exactly this freedom when sizing actuators in the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis).
 :::
 
 ## Application 3: Scissor Lift (When the Equation Lies: Grübler's Paradox)
@@ -804,7 +852,7 @@ $$n = 7, \quad j_1 = 6 \quad \Rightarrow \quad \text{DOF} = 3(7-1) - 2(6) = 18 -
   **Considerations:** larger footprint; needs linear actuators; excellent for pick-and-place and lifting.
   </Card>
   <Card title="Higher Pairs (cam, gear)">
-  **Best for:** programmed motion profiles and timed motion ([cam design](./cam-follower-systems-motion-programming)), speed/torque conversion.
+  **Best for:** programmed motion profiles and timed motion ([cam design](/education/planar-mechanics/cam-follower-systems-motion-programming)), speed/torque conversion.
 
   **Considerations:** line/point contact means higher stress; needs careful lubrication and surface hardening.
   </Card>
@@ -876,7 +924,7 @@ This joint-and-constraint methodology underpins:
 - **Automotive systems:** suspension linkages, steering mechanisms, engine slider-cranks
 - **Service and mobile platforms:** lifts, grippers, inspection arms
 
-Next, [Position Analysis of Planar Linkages](./position-analysis-planar-linkages) takes the four-bar linkage whose mobility we just confirmed and solves for the exact position of every link using vector loop equations, the foundation for the velocity, acceleration, and force analysis that follows.
+Next, [Position Analysis of Planar Linkages](/education/planar-mechanics/position-analysis-planar-linkages) takes the four-bar linkage whose mobility we just confirmed and solves for the exact position of every link using vector loop equations, the foundation for the velocity, acceleration, and force analysis that follows.
 
 
 

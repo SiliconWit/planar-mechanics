@@ -50,7 +50,7 @@ A toggle clamp on a machining fixture must hold a part down with several hundred
 
 <CardGrid>
   <Card title="Mechanical advantage" icon="rocket">
-  The force ratio is the reciprocal of the [velocity ratio](./velocity-analysis-instantaneous-centers). Motion and force are two views of one machine.
+  The force ratio is the reciprocal of the [velocity ratio](/education/planar-mechanics/velocity-analysis-instantaneous-centers). Motion and force are two views of one machine.
   </Card>
   <Card title="Joint reactions" icon="setting">
   Free-body diagrams and force polygons give the pin loads that bearings and links must carry.
@@ -86,7 +86,7 @@ An ideal (lossless) mechanism conserves power: input power equals output power. 
 
 $$F_\text{in}\,v_\text{in} = F_\text{out}\,v_\text{out} \quad\Rightarrow\quad \text{MA} = \frac{F_\text{out}}{F_\text{in}} = \frac{v_\text{in}}{v_\text{out}}$$
 
-The mechanical advantage is the **reciprocal of the velocity ratio** found in the [velocity analysis](./velocity-analysis-instantaneous-centers). Where the output slows (a limit or toggle position, velocity ratio toward zero), the mechanical advantage grows large. This is why the same toggle position that stopped the output in the velocity analysis amplifies force here. Real mechanisms lose a little to friction, so an efficiency $\eta < 1$ multiplies the ideal value.
+The mechanical advantage is the **reciprocal of the velocity ratio** found in the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers). Where the output slows (a limit or toggle position, velocity ratio toward zero), the mechanical advantage grows large. This is why the same toggle position that stopped the output in the velocity analysis amplifies force here. Real mechanisms lose a little to friction, so an efficiency $\eta < 1$ multiplies the ideal value.
 </Card>
 
 ### Transmission Angle and Stress
@@ -94,7 +94,31 @@ The mechanical advantage is the **reciprocal of the velocity ratio** found in th
 <Card title="Transmission Angle and Allowable Stress" icon="document">
 The **transmission angle** $\mu$ is the angle between the coupler and the follower at their joint. The component of the coupler force that drives the follower scales with $\sin\mu$, so $\mu$ near $90\degree$ transmits force well and $\mu$ near $0\degree$ or $180\degree$ transmits almost none. The usual guide is $\mu \ge 40\degree$ throughout the motion.
 
-Once a joint force $F$ is known, a **pin** of diameter $d$ in single shear carries $\tau = F/(\pi d^2/4)$, and a rectangular **link** of thickness $t$ and width $w$ under a bending moment $M$ carries $\sigma = M/Z$ with $Z = t w^2/6$. Both must stay under the **allowable stress** $\sigma_\text{all} = \sigma_\text{yield}/N$ for a safety factor $N$.
+Once a joint force $F$ is known, the two parts that usually govern are the pin and the link.
+
+**The pin, in shear.** The pin is cut across its section by the joint force:
+
+$$\tau = \frac{F}{A_s}, \qquad A_s = \frac{\pi d^2}{4} \ \text{(single shear)}, \qquad A_s = 2\times\frac{\pi d^2}{4} \ \text{(double shear)}$$
+
+Count the shear planes before anything else. A pin in a simple lap joint is cut on **one** plane; a pin in a clevis or fork, supported on both sides, is cut on **two**, which halves the stress for the same force. Most linkage pins are in double shear, so assuming single shear is the safe, conservative choice when a question does not say.
+
+**The link, in bending.** A rectangular link of thickness $t$ and width $w$ (with $w$ in the plane of bending) under a moment $M = FL$:
+
+$$\sigma = \frac{Mc}{I} = \frac{M}{Z}, \qquad I = \frac{t w^3}{12}, \qquad c = \frac{w}{2}, \qquad Z = \frac{I}{c} = \frac{t w^2}{6} \;\Rightarrow\; \sigma = \frac{6FL}{t w^2}$$
+
+Note that $w$ is **cubed** in $I$: doubling the width in the bending plane cuts the stress by four. Orientation matters far more than material here.
+
+:::caution[Do not check a shear stress against a tensile allowable]
+Yield strength $\sigma_y$ is measured in **tension**, so it cannot be compared directly with a shear stress. Convert first. The maximum-shear-stress (Tresca) theory gives the shear yield as
+
+$$\tau_y = 0.5\,\sigma_y \qquad\text{(von Mises gives the less conservative } 0.577\,\sigma_y\text{)}$$
+
+Then each part is checked against its **own** allowable, and the safety factor is the strength divided by the actual stress:
+
+$$N_\text{pin} = \frac{\tau_y}{\tau}, \qquad N_\text{link} = \frac{\sigma_y}{\sigma}$$
+
+The design is acceptable only if **both** exceed the required $N$, and the part with the **lowest** safety factor is the one that governs. Quoting a design safety factor without naming the governing part leaves the answer incomplete.
+:::
 </Card>
 
 ## Application 1: Toggle-Clamp Force Amplification and Sizing
@@ -102,7 +126,7 @@ Once a joint force $F$ is known, a **pin** of diameter $d$ in single shear carri
 <InArticleAd />
 
 
-This is the capstone worked example: from hand force to clamping force by force polygon, then the pin and link stresses. The force polygon is the same [graphical method](./position-analysis-planar-linkages#methods-of-kinematic-analysis) used for velocities and accelerations, now applied to forces: draw the balance to scale, solve it exactly, and confirm in the simulator.
+This is the capstone worked example: from hand force to clamping force by force polygon, then the pin and link stresses. The force polygon is the same [graphical method](/education/planar-mechanics/position-analysis-planar-linkages#methods-of-kinematic-analysis) used for velocities and accelerations, now applied to forces: draw the balance to scale, solve it exactly, and confirm in the simulator.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -150,21 +174,39 @@ The main link is a two-force member, so its force is along the link. The clamp a
 
 <Steps>
 
-1. **Mechanical advantage** at the $5\degree$ lock margin:
+1. **Mechanical advantage** at the $5\degree$ lock margin. Ideal geometry first, then the efficiency, or both in one step:
 
-   $$\text{MA}_\text{ideal} = \frac{1}{2\tan 5\degree} = 5.72, \qquad \text{MA}_\text{real} = \eta\,\text{MA}_\text{ideal} = 0.75(5.72) = 4.3$$ ✅
+   $$\text{MA} = \frac{\eta}{2\tan\alpha} = \frac{0.75}{2\tan 5\degree} = 4.3$$
+
+   taking it in two stages, $\text{MA}_\text{ideal} = 1/(2\tan 5\degree) = 5.72$ and $\text{MA}_\text{real} = 0.75(5.72) = 4.3$. ✅
 
 2. **Clamping force:**
 
-   $$F_\text{clamp} = \text{MA}_\text{real}\times F_h = 4.3 \times 100 = 430 \text{ N}$$ ✅
+   $$F_\text{clamp} = \text{MA}\times F_h = 4.3 \times 100 = 430 \text{ N}$$ ✅
 
    The closer the rest position is set to top-dead-centre, the higher this rises, the over-centre design from Lessons 1 and 3 seen as force.
 
-3. **Stress check** at a representative link/pin force of $800$ N (the internal forces exceed the pad force near the joints):
+3. **Pin shear** at a representative link/pin force of $800$ N (the internal forces exceed the pad force near the joints). Taking the conservative single-shear case:
 
-   $$\tau_\text{pin} = \frac{800}{\pi(8)^2/4} = 15.9 \text{ MPa}, \qquad \sigma_\text{link} = \frac{6 F L_\text{arm}}{t w^2} = \frac{6(800)(40)}{6(20)^2} = 80 \text{ MPa}$$ ✅
+   $$A_s = \frac{\pi (8)^2}{4} = 50.3 \text{ mm}^2, \qquad \tau_\text{pin} = \frac{800}{50.3} = 15.9 \text{ MPa}$$ ✅
 
-   With allowable $\sigma_\text{all} = 350/2 = 175$ MPa, both are well within limits. ✅
+4. **Pin safety factor**, against the *shear* yield, not the tensile yield:
+
+   $$\tau_y = 0.5(350) = 175 \text{ MPa}, \qquad N_\text{pin} = \frac{175}{15.9} = 11.0$$ ✅
+
+   Had the pin been in double shear the stress would halve to $7.96$ MPa and $N_\text{pin}$ would double to $22$. ✅
+
+5. **Link bending stress**, with $M = FL_\text{arm} = 800(40) = 32{,}000$ N·mm:
+
+   $$\sigma_\text{link} = \frac{6 F L_\text{arm}}{t w^2} = \frac{6(800)(40)}{6(20)^2} = 80 \text{ MPa}$$
+
+   The same result through $Mc/I$: $I = 6(20)^3/12 = 4000$ mm⁴ and $c = 10$ mm, so $\sigma = 32{,}000(10)/4000 = 80$ MPa. ✅
+
+6. **Link safety factor** and the verdict:
+
+   $$N_\text{link} = \frac{350}{80} = 4.4$$
+
+   Both parts clear the required $N = 2$, so the design is acceptable. The **link in bending governs** at $N = 4.4$, against $11.0$ for the pin, so the clamp would fail by the link bending before the pin ever sheared. Any weight saving should come off the pin, and any increase in clamping force is limited by the link. ✅
 
 </Steps>
 
@@ -186,7 +228,7 @@ The main link is a two-force member, so its force is along the link. The clamp a
 </details>
 
 :::note[Engineering Insight]
-The toggle clamp is the whole course in one device: a 1-DOF four-bar ([mobility](./kinematic-joints-constraint-analysis)), positioned at top-dead-centre ([position](./position-analysis-planar-linkages)), where the velocity ratio vanishes ([velocity](./velocity-analysis-instantaneous-centers)), so the mechanical advantage and clamping force spike here in the force analysis, and the resulting pin and link forces must be carried without yielding.
+The toggle clamp is the whole course in one device: a 1-DOF four-bar ([mobility](/education/planar-mechanics/kinematic-joints-constraint-analysis)), positioned at top-dead-centre ([position](/education/planar-mechanics/position-analysis-planar-linkages)), where the velocity ratio vanishes ([velocity](/education/planar-mechanics/velocity-analysis-instantaneous-centers)), so the mechanical advantage and clamping force spike here in the force analysis, and the resulting pin and link forces must be carried without yielding.
 :::
 
 ## Application 2: Four-Bar Transmission Angle
@@ -234,7 +276,7 @@ The transmission angle tells you where in its cycle a four-bar transmits force w
 </details>
 
 :::note[Engineering Insight]
-The transmission angle is a force-quality gauge that costs nothing to check: it comes straight from the [position analysis](./position-analysis-planar-linkages). Keeping it above about $40\degree$ through the working stroke is one of the first rules of good linkage design.
+The transmission angle is a force-quality gauge that costs nothing to check: it comes straight from the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages). Keeping it above about $40\degree$ through the working stroke is one of the first rules of good linkage design.
 :::
 
 ## Application 3: Scissor-Lift Actuator Force
@@ -285,7 +327,7 @@ The scissor lift shows mechanical advantage working against the designer: the ac
 </details>
 
 :::note[Engineering Insight]
-The $\cot\theta$ runaway is the same geometry that gave the platform its gentle velocity in the [velocity analysis](./velocity-analysis-instantaneous-centers) (the $\cos\theta$ there), now inverted into force. Good and bad mechanical advantage are two ends of one relationship, and virtual work is the bridge between motion and force.
+The $\cot\theta$ runaway is the same geometry that gave the platform its gentle velocity in the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers) (the $\cos\theta$ there), now inverted into force. Good and bad mechanical advantage are two ends of one relationship, and virtual work is the bridge between motion and force.
 :::
 
 ## Application 4: Synthesise a Four-Bar for a Target
@@ -314,9 +356,9 @@ Analysis takes a mechanism and finds its behaviour. **Synthesis** takes a requir
 
 <Steps>
 
-1. **Type synthesis.** Choose the mechanism family from the task. A continuous input turning an oscillating output points to a **crank-rocker** four-bar; a straight-line output points to a slider-crank; a clamp pointed to a toggle. The degrees-of-freedom check from the [mobility analysis](./kinematic-joints-constraint-analysis) confirms one input drives it. ✅
+1. **Type synthesis.** Choose the mechanism family from the task. A continuous input turning an oscillating output points to a **crank-rocker** four-bar; a straight-line output points to a slider-crank; a clamp pointed to a toggle. The degrees-of-freedom check from the [mobility analysis](/education/planar-mechanics/kinematic-joints-constraint-analysis) confirms one input drives it. ✅
 
-2. **Dimensional synthesis.** Choose the link lengths to meet the motion. For a required rocker swing, fix the ground and rocker, then size the crank and coupler so the rocker reaches both extreme (limit) positions at the wanted angles. The Grashof test from the [position analysis](./position-analysis-planar-linkages) must pass so the crank fully rotates. ✅
+2. **Dimensional synthesis.** Choose the link lengths to meet the motion. For a required rocker swing, fix the ground and rocker, then size the crank and coupler so the rocker reaches both extreme (limit) positions at the wanted angles. The Grashof test from the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages) must pass so the crank fully rotates. ✅
 
 3. **Check force quality.** Run the position analysis and plot the transmission angle (Application 2). If it dips below $40\degree$ inside the working stroke, adjust the link lengths and repeat. Synthesis is this loop: propose lengths, analyse, refine. ✅
 
@@ -340,7 +382,7 @@ Synthesis is the reason for the other five lessons. Each analysis tool becomes a
   A link loaded at only two joints carries force along its line. Finding these first collapses most of the force polygon.
   </Card>
   <Card title="Force is the reciprocal of motion" icon="setting">
-  Use the [velocity ratio](./velocity-analysis-instantaneous-centers): mechanical advantage is its reciprocal. No separate force derivation is needed for the ideal value.
+  Use the [velocity ratio](/education/planar-mechanics/velocity-analysis-instantaneous-centers): mechanical advantage is its reciprocal. No separate force derivation is needed for the ideal value.
   </Card>
   <Card title="Keep the transmission angle up" icon="warning">
   Hold $\mu \ge 40\degree$ through the working stroke. Check it from the position analysis before sizing anything.
@@ -371,10 +413,20 @@ The joint and bearing forces you solve for here are what wear the pins and overl
 
 | Mechanism | What you solve for | Key relation | Simulator |
 |-----------|--------------------|--------------|-----------|
-| Toggle clamp | clamping force, stresses | $\text{MA} = 1/(2\tan\alpha)$ | [siwit.co/TCM](https://siwit.co/TCM) |
+| Toggle clamp | clamping force, stresses | $\text{MA} = \eta/(2\tan\alpha)$ | [siwit.co/TCM](https://siwit.co/TCM) |
 | Four-bar | transmission angle | $\mu$ between coupler and follower | [siwit.co/FBL](https://siwit.co/FBL) |
 | Scissor lift | actuator force | $F = W\cot\theta$ | [siwit.co/SLM](https://siwit.co/SLM) |
 | Crank-slider | crank torque | $T = F\,(ds/d\theta)$ | [siwit.co/CSM](https://siwit.co/CSM) |
+
+### Sizing a Part at a Glance
+
+| Step | Relation |
+|------|----------|
+| Pin shear stress | $\tau = F/A_s$; &nbsp; $A_s = \pi d^2/4$ single, $2(\pi d^2/4)$ double |
+| Shear yield | $\tau_y = 0.5\,\sigma_y$ (Tresca), $0.577\,\sigma_y$ (von Mises) |
+| Link bending stress | $\sigma = Mc/I = 6FL/(t w^2)$, &nbsp; $I = t w^3/12$, &nbsp; $Z = t w^2/6$ |
+| Safety factors | $N_\text{pin} = \tau_y/\tau$, &nbsp; $N_\text{link} = \sigma_y/\sigma$ |
+| Verdict | both must exceed the required $N$; the **lowest** governs, and must be named |
 
 ### The Course in One Thread
 

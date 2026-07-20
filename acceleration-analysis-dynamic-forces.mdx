@@ -91,12 +91,12 @@ where $a_{B/A}^{n} = \omega^2 L_{AB}$ points from $B$ to $A$, and $a_{B/A}^{t} =
 </Card>
 
 :::note[A note on Coriolis]
-When a block slides along a link that is itself rotating, a third term appears: the **Coriolis acceleration** $a^{c} = 2\,\omega v_{\text{slip}}$, perpendicular to the slip velocity. None of the four mechanisms in this course has a block sliding on a rotating link (the slider-crank's piston slides on the fixed frame, so its Coriolis term is zero), but the term matters for quick-return and Geneva mechanisms, noted at the end.
+When a block slides along a link that is itself rotating, a third term appears: the **Coriolis acceleration** $a^{c} = 2\,\omega v_{\text{slip}}$, perpendicular to the slip velocity. The **four canonical mechanisms of this course have no Coriolis term**: the slider-crank's piston slides on the fixed frame, and the four-bar, scissor lift and toggle clamp have no sliding-on-a-turning-link joint at all. The **quick-return shaper, introduced later as a fifth mechanism precisely for this purpose, does**. That is not a contradiction between the theory and Application 5; it is why the fifth mechanism is in the course.
 :::
 
 ### The Acceleration Polygon
 
-Acceleration uses the same [methods](./position-analysis-planar-linkages#methods-of-kinematic-analysis) in the same **draw, solve, simulate** rhythm as position and velocity: the graphical acceleration polygon and the analytical acceleration loop are the two core routes, and the simulator confirms them. (There is no instantaneous-center shortcut for acceleration; that helper is velocity-only.)
+Acceleration uses the same [methods](/education/planar-mechanics/position-analysis-planar-linkages#methods-of-kinematic-analysis) in the same **draw, solve, simulate** rhythm as position and velocity: the graphical acceleration polygon and the analytical acceleration loop are the two core routes, and the simulator confirms them. (There is no instantaneous-center shortcut for acceleration; that helper is velocity-only.)
 
 The **acceleration polygon** is built with the drawing set exactly like the velocity polygon, on the same page and to a chosen acceleration scale (e.g. 1 cm = 10 mm/s²), but each relative-acceleration vector now has *two* parts laid down in sequence: first the **normal** part (known from the velocity analysis, since $a^n = \omega^2 L$, directed along the link toward the centre it turns about), then the **tangential** part (unknown magnitude, but known direction, perpendicular to the link). Where the tangential construction lines cross closes the polygon, and you **measure** the unknown tangential accelerations and the output acceleration off it.
 
@@ -108,6 +108,43 @@ $$a^{c} = 2\,\omega\,v_\text{slip}$$
 where $\omega$ is the angular velocity of the slotted link and $v_\text{slip}$ the sliding speed along it. Its **direction** is the slip-velocity vector turned $90\degree$ in the sense of $\omega$ (that is, **perpendicular to the slot**). The Coriolis part appears only at a sliding-and-turning joint: the plain slider-crank, four-bar, scissor lift, and toggle clamp have none, which is why it first shows up in the quick-return application below.
 :::
 
+#### Where the Factor of 2 Comes From
+
+Almost everyone memorises the $2$ and then cannot decide, in an unfamiliar mechanism, whether the term applies at all. It is worth six lines to see it appear, because once you have watched it arise you can always reconstruct it.
+
+Let a point sit at distance $s$ along a link that is turning at $\omega$. Put $\hat u$ along the link and $\hat n$ perpendicular to it. Because these directions rotate with the link:
+
+$$\dot{\hat u} = \omega\,\hat n, \qquad \dot{\hat n} = -\omega\,\hat u$$
+
+The position is $\vec r = s\,\hat u$. Differentiate once, using the product rule:
+
+$$\vec v = \dot s\,\hat u + s\,\dot{\hat u} = \underbrace{\dot s\,\hat u}_{\text{slip}} + \underbrace{s\omega\,\hat n}_{\text{transport}}$$
+
+Differentiate again, applying the product rule to **both** of those terms:
+
+$$\vec a = \ddot s\,\hat u + \dot s\,\dot{\hat u} + \dot s\omega\,\hat n + s\dot\omega\,\hat n + s\omega\,\dot{\hat n} = \ddot s\,\hat u + \dot s\omega\,\hat n + \dot s\omega\,\hat n + s\alpha\,\hat n - s\omega^2\,\hat u$$
+
+Collecting gives the four-term acceleration of a point that both slides and turns:
+
+$$\vec a = \underbrace{-s\omega^2\,\hat u}_{\text{normal}} + \underbrace{s\alpha\,\hat n}_{\text{tangential}} + \underbrace{2\dot s\omega\,\hat n}_{\text{Coriolis}} + \underbrace{\ddot s\,\hat u}_{\text{slip}}$$
+
+:::tip[The answer to "why 2?"]
+The term $\dot s\omega\,\hat n$ appeared **twice**, from two different places in the product rule:
+
+- once from differentiating the **slip** term $\dot s\,\hat u$, because the direction $\hat u$ is itself turning;
+- once from differentiating the **transport** term $s\omega\,\hat n$, because the distance $s$ is itself changing.
+
+Two independent physical effects, of equal size, pointing the same way. That, and nothing else, is where the $2$ comes from. It also tells you exactly when the term exists: you need $\dot s \ne 0$ (something is sliding) **and** $\omega \ne 0$ (the thing it slides on is turning). Kill either and the term vanishes, which is the test to apply to any unfamiliar mechanism.
+:::
+
+| Situation | Coriolis present? |
+|---|:---:|
+| Piston sliding on a fixed cylinder (slider-crank) | No: the frame does not rotate |
+| Pin joint between two rotating links (four-bar) | No: nothing slides |
+| Scissor lift, toggle clamp | No |
+| Block sliding in a rotating slot (quick-return shaper) | **Yes** |
+| Pin sliding in a moving slot (Geneva mechanism) | **Yes** |
+
 ### From Acceleration to Force: d'Alembert
 
 <Card title="Inertia Force and d'Alembert's Principle" icon="document">
@@ -115,7 +152,7 @@ Newton's second law says $\sum \vec F = m\vec a$. d'Alembert rewrites this as a 
 
 $$\sum \vec F + (-m\vec a) = 0$$
 
-The inertia force acts opposite to the acceleration, through the centre of mass. Once the accelerations are known, the dynamic bearing loads follow from a static force balance with these inertia forces included (the [force analysis](./force-analysis-mechanism-synthesis) carries this through to the joint reactions).
+The inertia force acts opposite to the acceleration, through the centre of mass. Once the accelerations are known, the dynamic bearing loads follow from a static force balance with these inertia forces included (the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis) carries this through to the joint reactions).
 </Card>
 
 ## Application 1: Piston Acceleration of the Slider-Crank
@@ -144,7 +181,7 @@ This is the central worked example. We build the acceleration polygon on top of 
 
 ### Step 1: Build the Acceleration Polygon
 
-Construct it on the velocity polygon from the [velocity analysis](./velocity-analysis-instantaneous-centers), at the same instant $\theta = 60\degree$.
+Construct it on the velocity polygon from the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers), at the same instant $\theta = 60\degree$.
 
 <details>
 <summary>**Click to reveal the acceleration-polygon construction**</summary>
@@ -283,7 +320,15 @@ For the four-bar we differentiate the velocity loop once more and build the acce
 
    $$\alpha_3 = +0.139 \text{ rad/s}^2, \qquad \alpha_4 = -0.117 \text{ rad/s}^2$$ ✅
 
-   The follower is decelerating ($\alpha_4 < 0$) at this instant even though it is still driving the output forward, which the simulator's angular-acceleration trace confirms.
+   :::tip[A positive ω₄ with a negative α₄ is not an error]
+   From the velocity analysis, $\omega_4 = +0.514$ rad/s: the follower is turning **counterclockwise**. Here $\alpha_4 = -0.117$ rad/s²: its angular acceleration points **clockwise**. Both are correct at once, and the combination is worth pausing on because it looks wrong to most students the first time.
+
+   Velocity says which way it is going. Acceleration says how that is changing. Opposite signs simply mean the follower is still turning counterclockwise but is **slowing down**, exactly as a car moving forward with the brakes on has positive velocity and negative acceleration. Had both been positive, the follower would be speeding up.
+
+   The rule: **same sign means speeding up, opposite signs mean slowing down.** Nothing about the two signs disagreeing indicates a mistake.
+   :::
+
+   So the follower is decelerating at this instant even though it is still driving the output forward, which the simulator's angular-acceleration trace confirms.
 
 </Steps>
 
@@ -305,7 +350,7 @@ For the four-bar we differentiate the velocity loop once more and build the acce
 </details>
 
 :::note[Engineering Insight]
-Each angular acceleration multiplied by a link's mass moment of inertia is an inertia torque, and each link's mass times its centre-of-mass acceleration is an inertia force. The acceleration polygon is therefore the direct input to the [dynamic force analysis](./force-analysis-mechanism-synthesis).
+Each angular acceleration multiplied by a link's mass moment of inertia is an inertia torque, and each link's mass times its centre-of-mass acceleration is an inertia force. The acceleration polygon is therefore the direct input to the [dynamic force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis).
 :::
 
 ## Application 3: Platform Acceleration of the Scissor Lift
@@ -341,7 +386,7 @@ The scissor lift shows that a constant actuator rate does not give a constant pl
 
 2. **Read the two terms.** The first, $nL\cos\theta\,\ddot\theta$, is the tangential part, present only when the scissor angle is speeding up. The second, $-nL\sin\theta\,\dot\theta^2$, is a centripetal-type term present **even at a constant angular rate** ($\ddot\theta = 0$), and it always acts downward. So a lift raised at a steady angular rate still decelerates as it nears full height. ✅
 
-3. **Actuator consequence.** The actuator must supply the platform weight plus the inertia force $m\,a_\text{platform}$. Near the flat position, where the mechanical advantage is poor ([force analysis](./force-analysis-mechanism-synthesis)), this dynamic term adds appreciably to the actuator load. ✅
+3. **Actuator consequence.** The actuator must supply the platform weight plus the inertia force $m\,a_\text{platform}$. Near the flat position, where the mechanical advantage is poor ([force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis)), this dynamic term adds appreciably to the actuator load. ✅
 
 </Steps>
 
@@ -439,7 +484,7 @@ The shaking force is the inertia force of Application 1 seen from the engine blo
 <InArticleAd />
 
 
-The shaper of the [velocity analysis](./velocity-analysis-instantaneous-centers#application-5-ram-velocity-of-the-quick-return-shaper) is the one mechanism in this course whose acceleration is *wrong* if you use only normal and tangential parts. Its crank pin is a **block sliding inside a turning slot**, and that joint adds the **Coriolis** component defined in the theory above. This application is where that term earns its place.
+The shaper of the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers#application-5-ram-velocity-of-the-quick-return-shaper) is the one mechanism in this course whose acceleration is *wrong* if you use only normal and tangential parts. Its crank pin is a **block sliding inside a turning slot**, and that joint adds the **Coriolis** component defined in the theory above. This application is where that term earns its place.
 
 <Card title="Hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -567,7 +612,7 @@ Shaking forces are just $F = ma$ acting on the frame, and they reach you as vibr
 
 Every acceleration here was drawn as a polygon, confirmed by hand calculation, and reproduced with a few lines of Python (NumPy). The simulators confirm the same profiles. No specialised dynamics software is needed; the method is one derivative beyond velocity.
 
-Next, [Cam-Follower Systems and Motion Programming](./cam-follower-systems-motion-programming) inverts the problem: instead of analysing a given linkage, you specify the motion you want (its displacement, velocity, acceleration, and jerk) and design the cam surface that produces it.
+Next, [Cam-Follower Systems and Motion Programming](/education/planar-mechanics/cam-follower-systems-motion-programming) inverts the problem: instead of analysing a given linkage, you specify the motion you want (its displacement, velocity, acceleration, and jerk) and design the cam surface that produces it.
 
 
 

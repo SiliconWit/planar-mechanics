@@ -72,7 +72,7 @@ For an open serial chain (a robot arm), this is direct: add the links nose to ta
 <InArticleAd />
 
 
-Position, velocity, and acceleration are solved by **two core methods**, graphical and analytical, that you then **confirm with a simulator**. One further trick, the instantaneous center, is worth knowing as a quick velocity shortcut, but the course does not build on it (the fourth card explains why). These are not rivals: each answers the same question in a different way, so you use them to check one another. The three analysis lessons (this one, [velocity](./velocity-analysis-instantaneous-centers), and [acceleration](./acceleration-analysis-dynamic-forces)) apply the same set to the same mechanisms, so it is worth meeting them together before diving into the algebra.
+Position, velocity, and acceleration are solved by **two core methods**, graphical and analytical, that you then **confirm with a simulator**. One further trick, the instantaneous center, is worth knowing as a quick velocity shortcut, but the course does not build on it (the fourth card explains why). These are not rivals: each answers the same question in a different way, so you use them to check one another. The three analysis lessons (this one, [velocity](/education/planar-mechanics/velocity-analysis-instantaneous-centers), and [acceleration](/education/planar-mechanics/acceleration-analysis-dynamic-forces)) apply the same set to the same mechanisms, so it is worth meeting them together before diving into the algebra.
 
 <CardGrid>
   <Card title="Graphical (drawing-instrument) method" icon="pencil">
@@ -98,6 +98,28 @@ The real payoff is cross-checking. The length you *measure* off a velocity polyg
 :::note[The draughtsman's drawing set]
 The graphical method is done with a small kit of drawing instruments, the same one used on a traditional drawing board: a **scale rule** (to lay lengths off to a chosen scale, e.g. 1 cm = 20 mm), a **compass and dividers** (to strike arcs and transfer lengths), a pair of **set squares** (to draw the perpendiculars a velocity or acceleration polygon needs), and a **protractor** (to set and read angles). Choosing and *labelling* a sensible scale is the first step of every graphical solution, because every length you later measure is only as good as that scale.
 :::
+
+### How Close Is Close Enough?
+
+You draw a polygon, measure $50.2$ mm/s, then compute $50.84$ mm/s. Is that a success or a mistake? Without a stated tolerance the cross-check is worthless, because any disagreement can be explained away. Here is what board work actually costs you.
+
+| Source of error | Typical size | How to reduce it |
+|---|---|---|
+| Scale rule reading | $\pm 0.5$ mm on the page | choose a scale that fills the page |
+| Protractor reading | $\pm 0.5\degree$ | construct perpendiculars with a set square, not a protractor |
+| Compass slip | $\pm 0.5$ mm | sharp lead, re-check the opening against the rule |
+| Line thickness | $\pm 0.3$ mm | 0.3 mm pencil, hard grade |
+| Near-tangent intersection | unbounded | re-draw at a different instant |
+| **Combined, carefully drawn** | **1 to 2 percent** | |
+| **Combined, hurried** | **5 to 10 percent** | |
+
+:::tip[The acceptance rule]
+Agreement between drawing and calculation of **better than 2 percent** confirms both, and you should move on. Between **2 and 5 percent**, re-draw before suspecting the algebra. **Beyond 5 percent**, one of them contains a real error, and the fastest route to it is to check the **directions** first, then the **scale label**, then the arithmetic. Direction errors dominate by a wide margin; scale-label errors are second.
+
+By this rule, $50.2$ against $50.84$ is a $1.3\%$ agreement. That is a pass. Say so, and move on.
+:::
+
+The drawing is not just a warm-up for the algebra. It catches what algebra hides: a wrongly signed $\omega_3$ still produces a plausible number, but it produces a visibly wrong polygon. A sliver of a triangle warns you the mechanism is near a singularity long before you notice a small denominator in a formula. And the arcs, tangents and perpendiculars you strike by hand are the same geometric constraints you will later apply in a parametric CAD sketch.
 
 ## Fundamental Theory: The Vector Loop Method
 
@@ -285,6 +307,12 @@ The drawing gives each angle to within a degree or so. The closed-form Freudenst
 
    $$K_4 = \frac{100}{120} = 0.8333, \qquad K_5 = \frac{6400 - 10000 - 1600 - 14400}{2(40)(120)} = \frac{-19600}{9600} = -2.0417$$ ✅
 
+   :::caution[Two families of constants, and one shared member]
+   $K_1$, $K_2$, $K_3$ came from eliminating $\theta_3$ to solve for the **follower** angle $\theta_4$. $K_4$ and $K_5$ come from eliminating the **other** angle, $\theta_4$, to solve for the **coupler** angle $\theta_3$. They are different derivations that happen to use similar notation, which is why they are easy to mix up.
+
+   $K_1 = d/a$ appears in **both** sets, and is not recomputed here. $K_2$ and $K_3$ belong only to the $\theta_4$ solution; $K_4$ and $K_5$ only to the $\theta_3$ solution. Never substitute one family into the other's quadratic.
+   :::
+
 2. **Quadratic coefficients:**
 
    $$D = \cos\theta_2 - K_1 + K_4\cos\theta_2 + K_5 = -3.625$$
@@ -295,10 +323,18 @@ The drawing gives each angle to within a degree or so. The closed-form Freudenst
 
    $$\theta_3 = 2\arctan\!\left(\frac{-E - \sqrt{E^2 - 4DF}}{2D}\right) = 2\arctan(0.1617) = 18.4°$$ ✅
 
-4. **Check the result in the original loop equation** ($\theta_2=60°$, $\theta_3=18.4°$, $\theta_4=64.9°$):
+   :::caution[The mode sign must match in both solutions]
+   The minus sign here is the **same** choice that gave $\theta_4 = 64.9\degree$ in Step 4. This is not optional. A physical linkage is assembled in one mode, so $\theta_3$ and $\theta_4$ must both be read from that mode: minus with minus for open, plus with plus for crossed.
+
+   Mixing them, taking $\theta_4$ from the open branch and $\theta_3$ from the crossed, produces two angles that are each individually valid but describe a linkage that does not exist. Nothing in the arithmetic warns you. The residual check in the next step is what catches it, which is precisely why that step is not optional.
+   :::
+
+4. **Substitute back into the original loop equation.** This is the mandatory last step of every position solution, not a flourish ($\theta_2=60°$, $\theta_3=18.4°$, $\theta_4=64.9°$):
 
    $$40\cos 60° + 120\cos 18.4° - 80\cos 64.9° - 100 = 20 + 113.9 - 33.9 - 100 \approx 0$$
    $$40\sin 60° + 120\sin 18.4° - 80\sin 64.9° = 34.6 + 37.8 - 72.5 \approx 0$$ ✅
+
+   Both residuals should come out to a fraction of a millimetre against link lengths of tens of millimetres. If either is a few millimetres or more, something is wrong: most often a mismatched assembly mode, an angle left in degrees where radians were needed, or a sign slip in a quadratic coefficient. **The loop either closes or it does not**, and this check takes fifteen seconds. Make it a habit now and it will save an entire question later. ✅
 
 </Steps>
 
@@ -359,7 +395,7 @@ The drawing gives each angle to within a degree or so. The closed-form Freudenst
 :::note[Engineering Insight]
 The Freudenstein equation reduces the entire four-bar position problem to evaluating three constants and solving one quadratic. There is no iteration and no guessing, which is exactly why it is the standard method coded into mechanism software and into our simulator.
 
-**Key Concept:** The two roots of the quadratic are the **open** and **crossed** assembly modes. A physical linkage stays in whichever mode it was assembled in; the math gives both, and you select the one that matches your build. The same two equations you solved here are the ones the [velocity analysis](./velocity-analysis-instantaneous-centers) differentiates to find velocities.
+**Key Concept:** The two roots of the quadratic are the **open** and **crossed** assembly modes. A physical linkage stays in whichever mode it was assembled in; the math gives both, and you select the one that matches your build. The same two equations you solved here are the ones the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers) differentiates to find velocities.
 :::
 
 ## Theory: Grashof Classification
@@ -502,7 +538,7 @@ The drawing gives $OB$ and $\phi$ to within a millimetre and a degree. The loop 
 </details>
 
 :::note[Engineering Insight]
-Adding the offset $e$ makes the equation asymmetric, which produces the quick-return behavior taken up in the [velocity analysis](./velocity-analysis-instantaneous-centers). Notice that the slider position is the part of the four-bar story where the follower link has been stretched to infinity: the rocker arc becomes a straight slide, and the two-unknown quadratic collapses to one closed-form distance.
+Adding the offset $e$ makes the equation asymmetric, which produces the quick-return behavior taken up in the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers). Notice that the slider position is the part of the four-bar story where the follower link has been stretched to infinity: the rocker arc becomes a straight slide, and the two-unknown quadratic collapses to one closed-form distance.
 :::
 
 ## Application 3: Scissor-Lift Position
@@ -588,7 +624,7 @@ The measured height confirms the closed-form $h = L\sin\theta$ solved next, and 
 
 1. **Verify in the simulator.** Set $L = 300$, one stage, and drive the angle to $30°$. The reported platform height is $150$ mm. ✅
 
-2. **Limit positions.** Height is maximum as $\theta \to 90°$ (arms vertical, $h \to nL$) and minimum as $\theta \to 0°$ (arms flat, $h \to 0$). Real lifts work in a bounded band, for example $10°$ to $80°$, because the force demand near the flat position grows without bound, a result derived in the [force analysis](./force-analysis-mechanism-synthesis). ✅
+2. **Limit positions.** Height is maximum as $\theta \to 90°$ (arms vertical, $h \to nL$) and minimum as $\theta \to 0°$ (arms flat, $h \to 0$). Real lifts work in a bounded band, for example $10°$ to $80°$, because the force demand near the flat position grows without bound, a result derived in the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis). ✅
 
 3. **Multi-stage scaling.** Setting $n = 2$ or $3$ in the simulator multiplies the height by $n$ for the same arm length, confirming $h = nL\sin\theta$. ✅
 
@@ -597,7 +633,7 @@ The measured height confirms the closed-form $h = L\sin\theta$ solved next, and 
 </details>
 
 :::note[Engineering Insight]
-The scissor lift shows that position analysis is about finding the closure relationship, whatever its form. Here it is a one-line trigonometric identity rather than a vector-loop quadratic, yet it plays the same role: it is the foundation that the [velocity analysis](./velocity-analysis-instantaneous-centers) differentiates for platform velocity and the [acceleration analysis](./acceleration-analysis-dynamic-forces) differentiates again for platform acceleration.
+The scissor lift shows that position analysis is about finding the closure relationship, whatever its form. Here it is a one-line trigonometric identity rather than a vector-loop quadratic, yet it plays the same role: it is the foundation that the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers) differentiates for platform velocity and the [acceleration analysis](/education/planar-mechanics/acceleration-analysis-dynamic-forces) differentiates again for platform acceleration.
 :::
 
 ## Application 4: Toggle-Clamp Limit Position
@@ -657,7 +693,7 @@ The [graphical method](#methods-of-kinematic-analysis) finds the toggle (limit) 
 
 2. **Why this is a position-analysis result.** It is found purely from the geometry of the loop, with no forces involved: solve the loop closure for the handle angle that makes the two link vectors parallel. The clamp is set to rest a few degrees past this angle, the "lock margin". ✅
 
-3. **Why it matters.** At the collinear position a small handle motion produces almost no pad motion, so the velocity ratio collapses. This is the same singular configuration seen in the [mobility analysis](./kinematic-joints-constraint-analysis); the [velocity analysis](./velocity-analysis-instantaneous-centers) quantifies the velocity ratio while the [force analysis](./force-analysis-mechanism-synthesis) quantifies the force amplification it creates. ✅
+3. **Why it matters.** At the collinear position a small handle motion produces almost no pad motion, so the velocity ratio collapses. This is the same singular configuration seen in the [mobility analysis](/education/planar-mechanics/kinematic-joints-constraint-analysis); the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers) quantifies the velocity ratio while the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis) quantifies the force amplification it creates. ✅
 
 </Steps>
 
@@ -804,7 +840,7 @@ The drawing gives the swing, the crank angles, and the stroke to within a degree
 </details>
 
 :::note[Engineering Insight]
-The shaper cuts on the slow forward stroke and flies back on the fast return, so a time ratio above one is the entire purpose: metal is removed only while cutting, and the idle return should waste as little time as possible. Bringing the centre distance $AC$ closer to the crank radius $r$ raises the half-swing $\varphi$, which raises both the stroke and the time ratio. The same slider-crank chain that reciprocates a piston in Application 2, inverted, now drives a cutting ram; the ram velocity and the [Coriolis](./acceleration-analysis-dynamic-forces) term that the block sliding along the lever introduces are the natural next questions for the velocity and acceleration analyses.
+The shaper cuts on the slow forward stroke and flies back on the fast return, so a time ratio above one is the entire purpose: metal is removed only while cutting, and the idle return should waste as little time as possible. Bringing the centre distance $AC$ closer to the crank radius $r$ raises the half-swing $\varphi$, which raises both the stroke and the time ratio. The same slider-crank chain that reciprocates a piston in Application 2, inverted, now drives a cutting ram; the ram velocity and the [Coriolis](/education/planar-mechanics/acceleration-analysis-dynamic-forces) term that the block sliding along the lever introduces are the natural next questions for the velocity and acceleration analyses.
 :::
 
 ## Design Guidelines for Position Analysis
@@ -854,7 +890,7 @@ The shaper cuts on the slow forward stroke and flies back on the fast return, so
 
 Every result in this lesson was found in closed form by hand and reproduced with a few lines of Python (NumPy). The simulators then confirm the same numbers interactively. No specialised motion-analysis software is needed; the mathematics is the tool.
 
-Next, [Velocity Analysis and Instantaneous Centers](./velocity-analysis-instantaneous-centers) differentiates the very loop equations solved here. The four-bar position equations become velocity equations for $\omega_3$ and $\omega_4$, and the slider-crank position gives the piston velocity, drawn first as a velocity polygon and then confirmed by the differentiated loop.
+Next, [Velocity Analysis and Instantaneous Centers](/education/planar-mechanics/velocity-analysis-instantaneous-centers) differentiates the very loop equations solved here. The four-bar position equations become velocity equations for $\omega_3$ and $\omega_4$, and the slider-crank position gives the piston velocity, drawn first as a velocity polygon and then confirmed by the differentiated loop.
 
 
 
