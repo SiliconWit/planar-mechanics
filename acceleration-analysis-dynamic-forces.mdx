@@ -325,16 +325,52 @@ Construct it beside the velocity polygon from Step 1, at the same instant $\thet
 
 ### Step 4: Verify in the Simulator
 
+Everything above is in units of $r\omega^2$, because that keeps the result true for any speed. The simulator plots raw mm/s². Converting between the two is one multiplication, and doing it once makes the whole chart readable.
+
 <details>
 <summary>**Click to reveal the simulator check**</summary>
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/CSM](https://siwit.co/CSM)), set $r = 50$, $l = 150$, $e = 0$, and read the acceleration chart. ✅
+1. **Set it up and fix a speed.** Open the simulator ([siwit.co/CSM](https://siwit.co/CSM)) and set $r = 50$, $l = 150$, $e = 0$ and $60$ RPM. A speed must be chosen before any absolute number exists: ✅
 
-2. **Confirm** the peak-to-peak split: the TDC peak is about twice the BDC peak ($1.33$ versus $0.67$ times $r\omega^2$), the signature of the secondary harmonic. ✅
+   $$\omega = \frac{2\pi (60)}{60} = 6.283 \text{ rad/s}, \qquad r\omega^2 = 50 (6.283)^2 = 1974 \text{ mm/s}^2$$
 
-3. **Lengthen the rod.** Increasing $l/r$ shrinks the secondary term, bringing the two peaks closer together and smoothing the motion. ✅
+   That single number converts every result in this Application into what the chart shows. ✅
+
+2. **Predict before you look.** Multiply the values already found by $1974$: ✅
+
+   | Where | This lesson | The chart should read |
+   |---|---|---|
+   | TDC ($\theta = 0\degree$) | $-1.333\,r\omega^2$ | $-2632$ mm/s² |
+   | BDC ($\theta = 180\degree$) | $+0.667\,r\omega^2$ | $+1316$ mm/s² |
+   | $\theta = 60\degree$ | $-0.333\,r\omega^2$ | $-659$ mm/s² |
+
+3. **Mind what the readouts are called.** This is where most people go wrong. The panel reports **Maximum Acceleration** and **Minimum Acceleration**, and because the top-dead-centre value is *negative*, the biggest acceleration in the machine appears under **Minimum**: ✅
+
+   $$\text{Minimum Acceleration} = -2632 \text{ mm/s}^2 \quad (\text{this is the TDC peak, the one that sizes the parts})$$
+
+   $$\text{Maximum Acceleration} = +1377 \text{ mm/s}^2 \quad (\text{a hump at } 138\degree, \textbf{not} \text{ the BDC value})$$
+
+   **Peak-to-Peak** then reads about $4009$ mm/s², the distance between them. ✅
+
+4. **Read the sign as a direction.** Negative means the acceleration points back toward the crank centre. At top-dead-centre the piston is being hauled to a stop and reversed, which is why the number is both negative and the largest. ✅
+
+5. **Find the twin humps.** The positive side has two peaks with a shallow dip between them at bottom-dead-centre, not a single peak. Differentiating the two-harmonic result gives $\sin\theta\,(1 + \tfrac{4}{3}\cos\theta) = 0$, so besides the dead centres there are turning points at $\cos\theta = -3/4$, that is $138.6\degree$ and $221.4\degree$. This is the feature students most often mistake for an error in the simulator. ✅
+
+</Steps>
+
+The chart you should be looking at, with the same three landmarks named:
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![The slider-crank acceleration trace as the simulator plots it, in millimetres per second squared against crank angle, with the top dead centre peak, the two positive humps and the bottom dead centre dip labelled with both their raw values and their values as multiples of r omega squared](./images/l4-simulator-acceleration-annotated.svg)
+  </TailwindWrapper>
+</div>
+
+<Steps>
+
+6. **Lengthen the rod.** Increasing $l/r$ shrinks the secondary term, bringing the two peaks closer together and smoothing the motion. Watch **Peak-to-Peak** fall as you do it. ✅
 
 </Steps>
 
@@ -487,9 +523,23 @@ The four-bar needs this step more than the slider-crank did, because here **two*
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/FBL](https://siwit.co/FBL)), set the standard four-bar link lengths, and read the angular-acceleration values at $\theta_2 = 120\degree$. ✅
+1. **Set it up and fix a speed.** Open the simulator ([siwit.co/FBL](https://siwit.co/FBL)), set $a = 40$, $b = 120$, $c = 80$, $d = 100$ and $60$ RPM, so $\omega_2 = 6.283$ rad/s and $\omega_2^2 = 39.48$. Everything solved above was per unit crank speed, and these two factors convert it to what the simulator reports. ✅
 
-2. **Confirm** $\alpha_3 \approx +0.14$ and $\alpha_4 \approx -0.12$ rad/s² (per unit crank speed), matching the loop solution. ✅
+2. **Check the velocities on screen first.** The $\omega_3$ and $\omega_4$ charts are tabs in the simulator. At $\theta_2 = 120\degree$ they should read about ✅
+
+   $$\omega_3 = 0.876 \text{ rad/s}, \qquad \omega_4 = 3.231 \text{ rad/s}$$
+
+   Divide each by $\omega_2 = 6.283$ and you recover the $0.139$ and $0.514$ of Step 1. ✅
+
+3. **The angular accelerations are not plotted.** The simulator charts $\theta_3$, $\theta_4$, $\omega_3$, $\omega_4$, the transmission angle, the coupler curve and mechanical advantage, but it has no angular-acceleration chart. It does compute them, so **export the data** and open the CSV: the columns are `Alpha3 (rad/s2)` and `Alpha4 (rad/s2)`, against `Input Angle (deg)`. ✅
+
+4. **Read the row at 120 degrees.** Expect ✅
+
+   $$\alpha_3 \approx +5.50 \text{ rad/s}^2, \qquad \alpha_4 \approx -4.61 \text{ rad/s}^2$$
+
+   Divide by $\omega_2^2 = 39.48$ to get $+0.139$ and $-0.117$ rad/s², matching the loop solution exactly. The signs survive the conversion, so the follower is still decelerating while turning forward. ✅
+
+   Angular acceleration scales with the **square** of crank speed, so doubling the RPM quadruples every one of these numbers while leaving the per-unit values untouched. That is why the working above is done per unit crank speed. ✅
 
 </Steps>
 
