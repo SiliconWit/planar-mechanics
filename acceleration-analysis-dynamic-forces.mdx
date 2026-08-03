@@ -523,7 +523,7 @@ The four-bar needs this step more than the slider-crank did, because here **two*
 
 <Steps>
 
-1. **Set it up and fix a speed.** Open the simulator ([siwit.co/FBL](https://siwit.co/FBL)), set $a = 40$, $b = 120$, $c = 80$, $d = 100$ and $60$ RPM, so $\omega_2 = 6.283$ rad/s and $\omega_2^2 = 39.48$. Everything solved above was per unit crank speed, and these two factors convert it to what the simulator reports. ✅
+1. **Set it up and fix a speed.** Open the simulator ([siwit.co/FBL](https://siwit.co/FBL)), set $a = 40$, $b = 120$, $c = 80$, $d = 100$, the assembly to **open**, and $60$ RPM, so $\omega_2 = 6.283$ rad/s and $\omega_2^2 = 39.48$. Everything solved above was per unit crank speed, and these two factors convert it to what the simulator reports. The assembly setting matters as much as the link lengths: the crossed circuit is a different linkage with different angles and a different $\alpha_4$, so check it before comparing anything. ✅
 
 2. **Check the velocities on screen first.** The $\omega_3$ and $\omega_4$ charts are tabs in the simulator. At $\theta_2 = 120\degree$ they should read about ✅
 
@@ -531,9 +531,9 @@ The four-bar needs this step more than the slider-crank did, because here **two*
 
    Divide each by $\omega_2 = 6.283$ and you recover the $0.139$ and $0.514$ of Step 1. ✅
 
-3. **The angular accelerations are not plotted.** The simulator charts $\theta_3$, $\theta_4$, $\omega_3$, $\omega_4$, the transmission angle, the coupler curve and mechanical advantage, but it has no angular-acceleration chart. It does compute them, so **export the data** and open the CSV: the columns are `Alpha3 (rad/s2)` and `Alpha4 (rad/s2)`, against `Input Angle (deg)`. ✅
+3. **Open the angular-acceleration tabs.** Alongside $\theta_3$, $\theta_4$, $\omega_3$ and $\omega_4$ the simulator plots $\alpha_3$ and $\alpha_4$ against crank angle. Select the $\alpha_3$ tab, then $\alpha_4$. (The same values are in the downloadable CSV as `Alpha3 (rad/s2)` and `Alpha4 (rad/s2)` if you would rather read exact numbers than measure off a curve.) ✅
 
-4. **Read the row at 120 degrees.** Expect ✅
+4. **Read the value at 120 degrees.** Expect ✅
 
    $$\alpha_3 \approx +5.50 \text{ rad/s}^2, \qquad \alpha_4 \approx -4.61 \text{ rad/s}^2$$
 
