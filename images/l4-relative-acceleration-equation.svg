@@ -1,0 +1,30 @@
+<svg viewBox="0 0 1125 563" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Left: a rigid link AB with the acceleration of A drawn at A, and at B the normal part pointing from B toward A along the link and the tangential part perpendicular to the link. Right: the same vectors laid head to tail from a pole, the acceleration of A then the normal then the tangential part, closing on the acceleration of B.">
+<rect data-bg="1" x="0" y="0" width="1125" height="563" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<defs><marker id="t059669" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#059669"/></marker><marker id="t2563eb" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#2563eb"/></marker><marker id="t374151" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#374151"/></marker><marker id="td97706" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#d97706"/></marker></defs>
+<line x1="251.3" y1="438.9" x2="101.8" y2="180.0" stroke="#9ca3af" stroke-width="3.2" stroke-linecap="round"/>
+<line x1="251.3" y1="438.9" x2="456.6" y2="364.2" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round" marker-end="url(#t2563eb)"/>
+<line x1="101.8" y1="180.0" x2="188.0" y2="329.4" stroke="#059669" stroke-width="2.6" stroke-linecap="round" marker-end="url(#t059669)"/>
+<line x1="101.8" y1="180.0" x2="237.2" y2="101.8" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" marker-end="url(#td97706)"/>
+<path d="M 116.8 205.9 L 142.6 190.9 L 127.7 165.0" fill="none" stroke="#9ca3af" stroke-width="1.3"/>
+<circle cx="251.3" cy="438.9" r="5" fill="#fff" stroke="#374151" stroke-width="2.2"/>
+<circle cx="101.8" cy="180.0" r="5" fill="#fff" stroke="#374151" stroke-width="2.2"/>
+<text x="261.3" y="458.9" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="start">A</text>
+<text x="91.8" y="170.0" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="end">B</text>
+<text x="371.3" y="449.1" fill="#2563eb" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="middle">a<tspan baseline-shift="sub" font-size="70%">A</tspan></text>
+<text x="105.4" y="287.5" fill="#059669" font-size="14.5" font-family="sans-serif" font-weight="600" text-anchor="end">a<tspan baseline-shift="super" font-size="70%">n</tspan><tspan baseline-shift="sub" font-size="70%">B/A</tspan></text>
+<text x="201.5" y="164.9" fill="#d97706" font-size="14.5" font-family="sans-serif" font-weight="600" text-anchor="end">a<tspan baseline-shift="super" font-size="70%">t</tspan><tspan baseline-shift="sub" font-size="70%">B/A</tspan></text>
+<text x="228.3" y="279.6" fill="#9ca3af" font-size="12.5" font-family="sans-serif" font-weight="600" text-anchor="middle">rigid link</text>
+<line x1="596.3" y1="323.9" x2="801.6" y2="249.2" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round" marker-end="url(#t2563eb)"/>
+<line x1="801.6" y1="249.2" x2="887.9" y2="398.6" stroke="#059669" stroke-width="2.6" stroke-linecap="round" marker-end="url(#t059669)"/>
+<line x1="887.9" y1="398.6" x2="1023.3" y2="320.4" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" marker-end="url(#td97706)"/>
+<line x1="596.3" y1="323.9" x2="1023.3" y2="320.4" stroke="#374151" stroke-width="2.9" stroke-linecap="round" marker-end="url(#t374151)"/>
+<circle cx="596.3" cy="323.9" r="3.8" fill="#374151"/>
+<text x="586.3" y="343.9" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="end">o&#8242;</text>
+<text x="795.6" y="237.2" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="end">a&#8242;</text>
+<text x="1034.3" y="312.4" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="start">b&#8242;</text>
+<text x="680.1" y="234.7" fill="#2563eb" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="end">a<tspan baseline-shift="sub" font-size="70%">A</tspan></text>
+<text x="875.3" y="266.4" fill="#059669" font-size="14.5" font-family="sans-serif" font-weight="600" text-anchor="start">a<tspan baseline-shift="super" font-size="70%">n</tspan><tspan baseline-shift="sub" font-size="70%">B/A</tspan></text>
+<text x="985.5" y="411.3" fill="#d97706" font-size="14.5" font-family="sans-serif" font-weight="600" text-anchor="start">a<tspan baseline-shift="super" font-size="70%">t</tspan><tspan baseline-shift="sub" font-size="70%">B/A</tspan></text>
+<text x="724.4" y="352.9" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="middle">a<tspan baseline-shift="sub" font-size="70%">B</tspan></text>
+<text x="42" y="555" fill="#6b7280" font-size="11.5" font-family="sans-serif">The same four vectors twice: pointing where they act on the link (left), then head to tail from the pole o&#8242; (right).</text>
+</svg>

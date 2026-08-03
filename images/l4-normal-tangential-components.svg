@@ -1,0 +1,24 @@
+<svg viewBox="0 0 658 536" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A link turning about a fixed pivot O with a point P at its end. The normal component of P's acceleration points back along the link toward O and equals omega squared times r. The tangential component is perpendicular to the link and equals alpha times r. Their resultant is the acceleration of P.">
+<rect data-bg="1" x="0" y="0" width="658" height="536" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<defs><marker id="t059669" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#059669"/></marker><marker id="t2563eb" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#2563eb"/></marker><marker id="t374151" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#374151"/></marker><marker id="td97706" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="10" refX="11.5" refY="5" orient="auto"><path d="M0,0 L12,5 L0,10 Z" fill="#d97706"/></marker></defs>
+<line x1="114.8" y1="399.4" x2="387.9" y2="228.8" stroke="#2563eb" stroke-width="3.6" stroke-linecap="round"/>
+<line x1="240.7" y1="320.8" x2="169.4" y2="206.8" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="316.7" y1="114.8" x2="169.4" y2="206.8" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="3 4"/>
+<line x1="387.9" y1="228.8" x2="169.4" y2="206.8" stroke="#374151" stroke-width="2.9" stroke-linecap="round" marker-end="url(#t374151)"/>
+<line x1="387.9" y1="228.8" x2="240.7" y2="320.8" stroke="#059669" stroke-width="2.6" stroke-linecap="round" marker-end="url(#t059669)"/>
+<line x1="387.9" y1="228.8" x2="316.7" y2="114.8" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" marker-end="url(#td97706)"/>
+<path d="M 357.0 248.1 L 337.7 217.2 L 368.6 197.9" fill="none" stroke="#9ca3af" stroke-width="1.3"/>
+<path d="M 104.8 411.4 L 114.8 399.4 L 124.8 411.4 Z" fill="none" stroke="#374151" stroke-width="1.6"/>
+<line x1="99.8" y1="411.4" x2="129.8" y2="411.4" stroke="#374151" stroke-width="1.6"/>
+<circle cx="114.8" cy="399.4" r="5" fill="#fff" stroke="#374151" stroke-width="2.2"/>
+<circle cx="387.9" cy="228.8" r="5" fill="#fff" stroke="#374151" stroke-width="2.2"/>
+<path d="M 208.2 302.7 A 134 134 0 0 0 119.5 265.1" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#t2563eb)"/>
+<text x="104.8" y="429.4" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="end">O</text>
+<text x="418.7" y="209.5" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="start">P</text>
+<text x="257.7" y="372.9" fill="#2563eb" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="start">r</text>
+<text x="159.5" y="315.4" fill="#2563eb" font-size="14" font-family="sans-serif" font-weight="600" text-anchor="end">&#969;, &#945;</text>
+<text x="345.4" y="324.6" fill="#059669" font-size="14.5" font-family="sans-serif" font-weight="600" text-anchor="start">a<tspan baseline-shift="super" font-size="70%">n</tspan> = &#969;&#178;r</text>
+<text x="392.6" y="146.6" fill="#d97706" font-size="14.5" font-family="sans-serif" font-weight="600" text-anchor="start">a<tspan baseline-shift="super" font-size="70%">t</tspan> = &#945;r</text>
+<text x="253.4" y="177.4" fill="#374151" font-size="15" font-family="sans-serif" font-weight="600" text-anchor="end">a<tspan baseline-shift="sub" font-size="70%">P</tspan></text>
+<text x="42" y="528" fill="#6b7280" font-size="11.5" font-family="sans-serif">The normal part points back at the pivot, the tangential part across the link. Always 90&#176; apart.</text>
+</svg>

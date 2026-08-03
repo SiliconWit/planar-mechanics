@@ -960,7 +960,312 @@ def quick_return_accel_polygon(theta_deg, r, AC, AP, fname):
 # ----------------------------------------------------------------------------
 # build every current figure
 # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# Lesson 4 theory figures (the two ideas every acceleration polygon rests on)
+# ----------------------------------------------------------------------------
+def _heads(colors):
+    """Fixed-size arrowheads.
+
+    The shared arrowheads() scales with stroke width, which is right for the
+    polygons but makes a theory figure's short vectors almost all head.
+    """
+    return "".join(
+        f'<marker id="t{c[1:]}" markerUnits="userSpaceOnUse" markerWidth="13" '
+        f'markerHeight="10" refX="11.5" refY="5" orient="auto">'
+        f'<path d="M0,0 L12,5 L0,10 Z" fill="{c}"/></marker>'
+        for c in sorted(set(colors)))
+
+
+def _text_w(s, sz):
+    """Rendered width of a label, counting entities and tspans as one glyph."""
+    plain = re.sub(r"<[^>]+>", "", re.sub(r"&#?\w+;", "x", s))
+    return len(plain) * sz * 0.52
+
+
+def _frame(pts, pad, caption, sc=1.0, cap=22, m=42, csz=11.5):
+    """Fit points into a canvas wide enough for its caption.
+
+    Sizing the box by eye leaves the caption clipped, so the width is taken
+    from the caption's own character count when the drawing is narrower.
+    """
+    xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+    xmin, xmax = min(xs) - pad, max(xs) + pad
+    ymin, ymax = min(ys) - pad, max(ys) + pad
+    W = max((xmax - xmin) * sc, _text_w(caption, csz)) + 2 * m
+    H = (ymax - ymin) * sc + 2 * m + cap
+    return (W, H,
+            lambda x: m + (x - xmin) * sc,
+            lambda y: H - m - cap - (y - ymin) * sc)
+
+
+def _vec(X, Y, p, q, c, w=2.6, dash=""):
+    d = f' stroke-dasharray="{dash}"' if dash else ""
+    return (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" x2="{X(q[0]):.1f}" '
+            f'y2="{Y(q[1]):.1f}" stroke="{c}" stroke-width="{w}"{d} '
+            f'stroke-linecap="round" marker-end="url(#t{c[1:]})"/>')
+
+
+def _txt(X, Y, p, s, c, dx=0, dy=0, sz=14.5, anchor="start"):
+    return (f'<text x="{X(p[0])+dx:.1f}" y="{Y(p[1])+dy:.1f}" fill="{c}" '
+            f'font-size="{sz}" font-family="sans-serif" font-weight="600" '
+            f'text-anchor="{anchor}">{s}</text>')
+
+
+def _rightangle(X, Y, corner, d1, d2, c, s=11):
+    """Small square marking a right angle between directions d1 and d2."""
+    p1 = corner + d1 * s; p2 = corner + d2 * s; p3 = corner + (d1 + d2) * s
+    return (f'<path d="M {X(p1[0]):.1f} {Y(p1[1]):.1f} L {X(p3[0]):.1f} {Y(p3[1]):.1f} '
+            f'L {X(p2[0]):.1f} {Y(p2[1]):.1f}" fill="none" stroke="{c}" stroke-width="1.3"/>')
+
+
+def normal_tangential(fname):
+    """One rotating link: where the two parts of a point's acceleration come from.
+
+    Drawn for a link that is both turning and speeding up, so neither part is
+    zero and the right angle between them is the point of the figure. Labels are
+    placed by stepping perpendicular to the vector they name, because the normal
+    part lies along the link and anything offset in screen x-y collides with it.
+    """
+    ang = np.radians(32.0)
+    u = np.array([np.cos(ang), np.sin(ang)])          # along the link, O -> P
+    n = np.array([-np.sin(ang), np.cos(ang)])         # perpendicular, sense of omega
+    O = np.array([0.0, 0.0]); P = 115.0 * u
+    an, at = 62.0, 48.0
+    Pn = P - an * u                                   # normal: back toward the pivot
+    Pt = P + at * n                                   # tangential: perpendicular
+    Pr = Pn + at * n                                  # resultant corner
+
+    cn, ct, cr, ck = COL["follower"], COL["coupler"], COL["pt"], COL["crank"]
+    capt = ("The normal part points back at the pivot, the tangential part across "
+            "the link. Always 90&#176; apart.")
+    W, H, X, Y = _frame([O, P, Pn, Pt, Pr], 26, capt, sc=2.8)
+    dash = lambda p, q: (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" '
+                         f'x2="{X(q[0]):.1f}" y2="{Y(q[1]):.1f}" stroke="{COL["con"]}" '
+                         f'stroke-width="1.2" stroke-dasharray="3 4"/>')
+
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" '
+         f'xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A link turning about '
+         f'a fixed pivot O with a point P at its end. The normal component of P\'s '
+         f'acceleration points back along the link toward O and equals omega squared '
+         f'times r. The tangential component is perpendicular to the link and equals '
+         f'alpha times r. Their resultant is the acceleration of P.">',
+         plate(W, H), f'<defs>{_heads([cn, ct, cr, ck])}</defs>',
+         f'<line x1="{X(O[0]):.1f}" y1="{Y(O[1]):.1f}" x2="{X(P[0]):.1f}" '
+         f'y2="{Y(P[1]):.1f}" stroke="{ck}" stroke-width="3.6" stroke-linecap="round"/>',
+         dash(Pn, Pr), dash(Pt, Pr),
+         _vec(X, Y, P, Pr, cr, 2.9), _vec(X, Y, P, Pn, cn), _vec(X, Y, P, Pt, ct),
+         _rightangle(X, Y, P, -u, n, COL["con"], 13),
+         f'<path d="M {X(O[0])-10:.1f} {Y(O[1])+12:.1f} L {X(O[0]):.1f} {Y(O[1]):.1f} '
+         f'L {X(O[0])+10:.1f} {Y(O[1])+12:.1f} Z" fill="none" stroke="{COL["pt"]}" stroke-width="1.6"/>',
+         f'<line x1="{X(O[0])-15:.1f}" y1="{Y(O[1])+12:.1f}" x2="{X(O[0])+15:.1f}" '
+         f'y2="{Y(O[1])+12:.1f}" stroke="{COL["pt"]}" stroke-width="1.6"/>',
+         f'<circle cx="{X(O[0]):.1f}" cy="{Y(O[1]):.1f}" r="5" fill="#fff" '
+         f'stroke="{COL["pt"]}" stroke-width="2.2"/>',
+         f'<circle cx="{X(P[0]):.1f}" cy="{Y(P[1]):.1f}" r="5" fill="#fff" '
+         f'stroke="{COL["pt"]}" stroke-width="2.2"/>',
+         # turning sense: an arc about O, kept off the link so it reads as rotation
+         f'<path d="M {X(48*np.cos(ang+np.radians(14))):.1f} '
+         f'{Y(48*np.sin(ang+np.radians(14))):.1f} A {48*2.8:.0f} {48*2.8:.0f} 0 0 0 '
+         f'{X(48*np.cos(ang+np.radians(56))):.1f} {Y(48*np.sin(ang+np.radians(56))):.1f}" '
+         f'fill="none" stroke="{ck}" stroke-width="2" marker-end="url(#t{ck[1:]})"/>',
+         _txt(X, Y, O, "O", COL["pt"], -10, 30, 15, "end"),
+         _txt(X, Y, P + 13 * u, "P", COL["pt"], 0, 0, 15),
+         _txt(X, Y, 0.42 * P - 19 * n, "r", ck, 0, 0, 15),
+         _txt(X, Y, 34 * np.array([np.cos(ang + np.radians(30)),
+                                   np.sin(ang + np.radians(30))]),
+              "&#969;, &#945;", ck, 0, 0, 14, "end"),
+         _txt(X, Y, (P + Pn) / 2 - 21 * n, sup("a", "n") + " = &#969;&#178;r", cn),
+         _txt(X, Y, (P + Pt) / 2 + 17 * u, sup("a", "t") + " = &#945;r", ct),
+         _txt(X, Y, (P + Pr) / 2 + 17 * n, sub("a", "P"), cr, 0, 0, 15, "end"),
+         f'<text x="42" y="{H-8:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">{capt}</text>',
+         "</svg>"]
+    write(fname, g)
+
+
+def relative_acceleration(fname):
+    """The equation and the polygon it draws, side by side from one set of numbers.
+
+    Left: the two parts shown where they physically point on the link. Right: the
+    same vectors laid head to tail from the pole. Students meet these as separate
+    objects and often never connect them.
+    """
+    # Directions are chosen so all four vectors are well separated in angle. The
+    # obvious values leave the tangential part and the closing vector ~10 degrees
+    # apart, which draws as one thick line and teaches nothing.
+    ang = np.radians(120.0)                     # link direction, A -> B
+    u = np.array([np.cos(ang), np.sin(ang)])
+    n = np.array([u[1], -u[0]])                 # perpendicular, at 30 degrees
+    A = np.array([150.0, 0.0]); B = A + 130.0 * u
+    aA = 95.0 * np.array([np.cos(np.radians(20)), np.sin(np.radians(20))])
+    anBA = -75.0 * u                            # omega^2 L, directed B -> A
+    atBA = 68.0 * n                             # alpha L, perpendicular to AB
+    aB = aA + anBA + atBA
+
+    cA, cn, ct, cB = COL["crank"], COL["follower"], COL["coupler"], COL["pt"]
+    o = np.array([300.0, 50.0])
+    p_a = o + aA; p_n = p_a + anBA; p_b = p_n + atBA
+
+    capt = ("The same four vectors twice: pointing where they act on the link (left), "
+            "then head to tail from the pole o&#8242; (right).")
+    pts = [A, B, A + aA, B + anBA, B + atBA, o, p_a, p_n, p_b]
+    W, H, X, Y = _frame(pts, 26, capt, sc=2.3)
+
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" '
+         f'xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Left: a rigid link '
+         f'AB with the acceleration of A drawn at A, and at B the normal part pointing '
+         f'from B toward A along the link and the tangential part perpendicular to the '
+         f'link. Right: the same vectors laid head to tail from a pole, the acceleration '
+         f'of A then the normal then the tangential part, closing on the acceleration '
+         f'of B.">',
+         plate(W, H), f'<defs>{_heads([cA, cn, ct, cB])}</defs>',
+         # ---- left: where the parts point on the link. The link is drawn thin and
+         # neutral so the normal vector lying along it still reads as a vector.
+         f'<line x1="{X(A[0]):.1f}" y1="{Y(A[1]):.1f}" x2="{X(B[0]):.1f}" '
+         f'y2="{Y(B[1]):.1f}" stroke="{COL["con"]}" stroke-width="3.2" stroke-linecap="round"/>',
+         _vec(X, Y, A, A + aA, cA), _vec(X, Y, B, B + anBA, cn), _vec(X, Y, B, B + atBA, ct),
+         _rightangle(X, Y, B, -u, n, COL["con"], 13),
+         f'<circle cx="{X(A[0]):.1f}" cy="{Y(A[1]):.1f}" r="5" fill="#fff" '
+         f'stroke="{COL["pt"]}" stroke-width="2.2"/>',
+         f'<circle cx="{X(B[0]):.1f}" cy="{Y(B[1]):.1f}" r="5" fill="#fff" '
+         f'stroke="{COL["pt"]}" stroke-width="2.2"/>',
+         _txt(X, Y, A, "A", COL["pt"], 10, 20, 15),
+         _txt(X, Y, B, "B", COL["pt"], -10, -10, 15, "end"),
+         _txt(X, Y, A + 0.5 * aA - 22 * np.array([-aA[1], aA[0]]) / np.hypot(*aA),
+              sub("a", "A"), cA, 0, 0, 15, "middle"),
+         _txt(X, Y, B + 0.55 * anBA - 22 * n, sup("a", "n") + sub("", "B/A"), cn, 0, 0, 14.5, "end"),
+         _txt(X, Y, B + 0.6 * atBA - 16 * u, sup("a", "t") + sub("", "B/A"), ct, 0, 0, 14.5, "end"),
+         _txt(X, Y, (A + B) / 2 + 26 * n, "rigid link", COL["con"], 0, 0, 12.5, "middle"),
+         # ---- right: the polygon those same vectors draw
+         _vec(X, Y, o, p_a, cA), _vec(X, Y, p_a, p_n, cn),
+         _vec(X, Y, p_n, p_b, ct), _vec(X, Y, o, p_b, cB, 2.9),
+         f'<circle cx="{X(o[0]):.1f}" cy="{Y(o[1]):.1f}" r="3.8" fill="{COL["pt"]}"/>',
+         _txt(X, Y, o, "o&#8242;", COL["pt"], -10, 20, 15, "end"),
+         _txt(X, Y, p_a, "a&#8242;", COL["pt"], -6, -12, 15, "end"),
+         _txt(X, Y, p_b, "b&#8242;", COL["pt"], 11, -8, 15),
+         _txt(X, Y, o + 0.5 * aA + 24 * np.array([-aA[1], aA[0]]) / np.hypot(*aA),
+              sub("a", "A"), cA, 0, 0, 15, "end"),
+         _txt(X, Y, p_a + 0.3 * anBA + 24 * n, sup("a", "n") + sub("", "B/A"), cn),
+         _txt(X, Y, p_n + 0.5 * atBA - 26 * u, sup("a", "t") + sub("", "B/A"), ct, 0, 0, 14.5),
+         _txt(X, Y, o + 0.3 * (p_b - o), sub("a", "B"), cB, 0, 30, 15, "middle"),
+         f'<text x="42" y="{H-8:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">{capt}</text>',
+         "</svg>"]
+    write(fname, g)
+
+
+def shaking_force_harmonics(l_over_r, fname):
+    """Primary and secondary shaking force, and their sum, over one revolution.
+
+    The whole balancing argument is that one curve repeats once per revolution
+    and the other twice, so a crank counterweight can cancel the first and
+    nothing turning at crank speed can cancel the second. That is a statement
+    about two waveforms, and it is far easier to see than to read.
+    """
+    th = np.linspace(0, 360, 361)
+    t = np.radians(th)
+    k = 1.0 / l_over_r
+    primary = np.cos(t)
+    secondary = k * np.cos(2 * t)
+    xy_plot([(th, primary + secondary, COL["pt"], "total"),
+             (th, primary, COL["crank"], "primary (1&#215;)"),
+             (th, secondary, COL["follower"], "secondary (2&#215;)")],
+            (0, 360), (-1.25, 1.55), "crank angle &#952; (degrees)",
+            "F / (m r &#969;&#178;)",
+            # xy_plot draws the caption as one unwrapped line in a 470-wide
+            # canvas, so it clips past roughly 74 characters.
+            f"l/r = {l_over_r:.0f}. The secondary runs twice per rev; so must a "
+            f"balance shaft.",
+            fname,
+            "Shaking force against crank angle: the primary component completes one "
+            "cycle per revolution, the secondary completes two, and their sum peaks "
+            "higher at top dead centre than at bottom dead centre")
+
+
+def synthesis_construction(c, d, psi_deg, mid_deg, fname):
+    """Limit-position synthesis: the rocker's two extremes fix the crank and coupler.
+
+    At a limit position the crank and coupler are collinear, so the distance from
+    the crank centre to the rocker pin is b - a folded and b + a extended. Two
+    measurements off this one drawing therefore give both unknown links.
+
+    The swing angle alone does not determine the linkage: the designer also
+    chooses where that swing sits relative to the ground line. mid_deg is the
+    bisector of the two extremes, measured at O4 anticlockwise from the positive
+    x axis (the ground direction away from O2). Different placements of the same
+    swing give different crank and coupler.
+    """
+    a1 = np.radians(mid_deg + psi_deg / 2)
+    a2 = np.radians(mid_deg - psi_deg / 2)
+    O2 = np.array([0.0, 0.0]); O4 = np.array([d, 0.0])
+    B1 = O4 + c * np.array([np.cos(a1), np.sin(a1)])
+    B2 = O4 + c * np.array([np.cos(a2), np.sin(a2)])
+    r1, r2 = np.hypot(*(B1 - O2)), np.hypot(*(B2 - O2))
+    crank, coupler = abs(r2 - r1) / 2, (r1 + r2) / 2
+
+    cg, cr, cc = COL["ground"], COL["follower"], COL["con"]
+    capt = (f"Rocker c = {c:.0f} on ground d = {d:.0f} swinging {psi_deg:.1f}&#176; gives "
+            f"crank a = {crank:.0f} and coupler b = {coupler:.0f} mm.")
+    W, H, X, Y = _frame([O2, O4, B1, B2], 24, capt, sc=2.5)
+
+    def pivot(p):
+        cx, cy = X(p[0]), Y(p[1])
+        return (f'<path d="M {cx-9:.1f} {cy+11:.1f} L {cx:.1f} {cy:.1f} L {cx+9:.1f} '
+                f'{cy+11:.1f} Z" fill="none" stroke="{COL["pt"]}" stroke-width="1.6"/>'
+                f'<line x1="{cx-13:.1f}" y1="{cy+11:.1f}" x2="{cx+13:.1f}" y2="{cy+11:.1f}" '
+                f'stroke="{COL["pt"]}" stroke-width="1.6"/>'
+                f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="5" fill="#fff" '
+                f'stroke="{COL["pt"]}" stroke-width="2.2"/>')
+
+    def seg(p, q, col, w=3.0, dash=""):
+        da = f' stroke-dasharray="{dash}"' if dash else ""
+        return (f'<line x1="{X(p[0]):.1f}" y1="{Y(p[1]):.1f}" x2="{X(q[0]):.1f}" '
+                f'y2="{Y(q[1]):.1f}" stroke="{col}" stroke-width="{w}"{da} stroke-linecap="round"/>')
+
+    g = [f'<svg viewBox="0 0 {W:.0f} {H:.0f}" width="100%" '
+         f'xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Limit-position '
+         f'synthesis of a crank-rocker: the ground from O2 to O4, the rocker drawn in '
+         f'its two extreme positions separated by the required swing angle, and the two '
+         f'construction distances from O2 to each rocker extreme, whose half-difference '
+         f'is the crank length and half-sum the coupler length">',
+         plate(W, H), f'<defs>{_heads([cr])}</defs>',
+         seg(O2, O4, cg, 3.0),
+         seg(O2, B1, cc, 1.6, "5 4"), seg(O2, B2, cc, 1.6, "5 4"),
+         seg(O4, B1, cr), seg(O4, B2, cr),
+         # swing angle arc at O4
+         f'<path d="M {X(O4[0]+0.42*c*np.cos(a1)):.1f} {Y(O4[1]+0.42*c*np.sin(a1)):.1f} '
+         f'A {0.42*c*2.5:.0f} {0.42*c*2.5:.0f} 0 0 1 '
+         f'{X(O4[0]+0.42*c*np.cos(a2)):.1f} {Y(O4[1]+0.42*c*np.sin(a2)):.1f}" fill="none" '
+         f'stroke="{cr}" stroke-width="1.8" marker-end="url(#t{cr[1:]})"/>',
+         pivot(O2), pivot(O4),
+         f'<circle cx="{X(B1[0]):.1f}" cy="{Y(B1[1]):.1f}" r="4.5" fill="#fff" '
+         f'stroke="{COL["pt"]}" stroke-width="2"/>',
+         f'<circle cx="{X(B2[0]):.1f}" cy="{Y(B2[1]):.1f}" r="4.5" fill="#fff" '
+         f'stroke="{COL["pt"]}" stroke-width="2"/>',
+         _txt(X, Y, O2, "O&#8322;", COL["pt"], -8, 30, 15, "end"),
+         _txt(X, Y, O4, "O&#8324;", COL["pt"], 10, 30, 15),
+         _txt(X, Y, B1, "B&#8321;", COL["pt"], -10, -10, 15, "end"),
+         _txt(X, Y, B2, "B&#8322;", COL["pt"], 11, -10, 15),
+         _txt(X, Y, (O2 + O4) / 2, f"d = {d:.0f}", cg, 0, 24, 13, "middle"),
+         _txt(X, Y, (O4 + B1) / 2, f"c = {c:.0f}", cr, -8, -6, 13, "end"),
+         _txt(X, Y, (O4 + B2) / 2, f"c = {c:.0f}", cr, 10, -4, 13),
+         _txt(X, Y, 0.5 * B1, f"b &#8722; a = {r1:.0f}", COL["pt"], -4, -8, 13, "end"),
+         _txt(X, Y, 0.82 * B2, f"b + a = {r2:.0f}", COL["pt"], 0, -11, 13, "middle"),
+         _txt(X, Y, O4 + 0.26 * c * np.array([np.cos(np.radians(mid_deg)),
+                                              np.sin(np.radians(mid_deg))]),
+              f"&#968; = {psi_deg:.1f}&#176;", cr, 0, 4, 14, "middle"),
+         f'<text x="42" y="{H-8:.0f}" fill="{COL["ground"]}" font-size="11.5" '
+         f'font-family="sans-serif">{capt}</text>',
+         "</svg>"]
+    write(fname, g)
+    return crank, coupler
+
+
 def main():
+    synthesis_construction(80, 100, 73.78, 91.79, "l6-synthesis-construction.svg")
+    normal_tangential("l4-normal-tangential-components.svg")
+    relative_acceleration("l4-relative-acceleration-equation.svg")
+    shaking_force_harmonics(3.0, "l4-shaking-force-harmonics.svg")
     quick_return_space(120, 300, 450, "l2-quick-return-space-diagram.svg")
     # Lesson 3/4 quick-return (shaper) at crank angle 300 deg
     quick_return_config(300, 120, 300, 450, "l3-quick-return-1-space-diagram.svg")
