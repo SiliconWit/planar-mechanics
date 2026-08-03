@@ -90,6 +90,20 @@ The two parts are easiest to keep straight by where they point rather than by th
   </TailwindWrapper>
 </div>
 
+The figure shows both parts because the link drawn is both turning and speeding up. That is the general case, not a rule: the two conditions are independent, so a part of a mechanism may carry both, one, or neither.
+
+One misreading is worth heading off before the applications. When a problem says **constant crank speed**, that sets $\alpha_2 = 0$ for the crank **and for nothing else**. The coupler and follower are dragged through a changing geometry, so their own angular speeds rise and fall through the cycle and their tangential parts are very much alive. In the slider-crank at $\theta = 60\degree$, with the crank held at a rigidly constant speed, the rod's tangential part is nearly **ten times** its normal part.
+
+| Part of the mechanism | Turning? | Its own $\omega$ constant? | $a^n = \omega^2 r$ | $a^t = \alpha r$ |
+|---|:---:|:---:|:---:|:---:|
+| Crank, driven at constant speed | yes | yes, by assumption | yes | no |
+| Coupler, rod or follower | yes | no, it is dragged | yes | yes |
+| Piston or slider | no, it translates | not applicable | no | no |
+
+The piston row is the one people forget: a part that only slides has no $\omega$ and no $\alpha$, so it has neither component. Its acceleration is a single vector along the slide, which is why the polygon closes on a plain horizontal line.
+
+Nor is either part permanent for a link that does turn. The rod's **normal** part vanishes at $\theta = 90\degree$ and $270\degree$, where $\omega_3$ passes through zero and the rod is momentarily translating rather than turning; its **tangential** part vanishes at top and bottom dead centre, where $\omega_3$ is at a maximum and so is instantaneously not changing. The two never vanish at the same instant, which is why the polygon never collapses.
+
 <Card title="The Relative-Acceleration Equation" icon="document">
 For two points on the same rigid link,
 
@@ -116,7 +130,7 @@ When a block slides along a link that is itself rotating, a third term appears: 
 
 Acceleration uses the same [methods](/education/planar-mechanics/position-analysis-planar-linkages#methods-of-kinematic-analysis) in the same **draw, solve, simulate** rhythm as position and velocity: the graphical acceleration polygon and the analytical acceleration loop are the two core routes, and the simulator confirms them. (There is no instantaneous-center shortcut for acceleration; that helper is velocity-only.)
 
-The **acceleration polygon** is built with the drawing set exactly like the velocity polygon, on the same page and to a chosen acceleration scale (e.g. 1 cm = 10 mm/s²), but each relative-acceleration vector now has *two* parts laid down in sequence: first the **normal** part (known from the velocity analysis, since $a^n = \omega^2 L$, directed along the link toward the centre it turns about), then the **tangential** part (unknown magnitude, but known direction, perpendicular to the link). Where the tangential construction lines cross closes the polygon, and you **measure** the unknown tangential accelerations and the output acceleration off it.
+The **acceleration polygon** is built with the drawing set exactly like the velocity polygon, on the same page and to a chosen acceleration scale (e.g. 1 cm = 10 mm/s²), but each relative-acceleration vector now has up to *two* parts laid down in sequence: first the **normal** part (known from the velocity analysis, since $a^n = \omega^2 L$, directed along the link toward the centre it turns about), then the **tangential** part (unknown magnitude, but known direction, perpendicular to the link). Which of the two are present follows the table above, so a constant-speed crank contributes only a normal part while the links it drives contribute both. Where the tangential construction lines cross closes the polygon, and you **measure** the unknown tangential accelerations and the output acceleration off it.
 
 :::note[The Coriolis component: when a part slides along a turning link]
 Normal and tangential parts describe a point fixed on a rigid link. When instead a point **slides along a link that is itself turning** (a block moving in a rotating slot, as in the quick-return shaper), its acceleration gains a **third** part, the **Coriolis** component:
