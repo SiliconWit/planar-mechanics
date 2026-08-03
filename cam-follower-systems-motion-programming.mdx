@@ -292,6 +292,29 @@ The [Cam and Follower Simulator](/product-development/cam-follower-mechanism-sim
 
 3. **Roller offset.** Drawing the pitch curve first and offsetting by the roller radius is the standard route, and it is exactly what the CAD model does when you sweep the roller around the program. ✅
 
+4. **The offset is not always possible.** Offsetting inward only works while the roller is smaller than the profile's tightest curve. Where the pitch curve is convex with radius of curvature $\rho$, a roller of radius $r_r$ cuts into the flanks either side once $r_r$ approaches $\rho$, and the cam can no longer deliver the motion you programmed. This is **undercutting**, and the usual working rule is $\rho_{min} > 1.5\,r_r$ or so. It is checked in Step 3, not assumed. ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the profile and undercutting check**</summary>
+
+<Steps>
+
+1. **Rebuild the same cam.** Open the simulator ([siwit.co/CFM](https://siwit.co/CFM)), choose **cycloidal** for both rise and fall, and set the program of Application 1: lift $25$ mm, rise $90\degree$, dwell $90\degree$, fall $90\degree$, dwell $90\degree$, base radius $45$ mm. Tick **Show pitch curve**. ✅
+
+2. **Check the two radii you drew.** The pitch curve should sit at a constant $45$ mm through the low dwell and a constant $70$ mm through the high dwell, with the rise and fall as the shaped transitions between the two arcs. Those are the same numbers as Step 2, read off a different construction. ✅
+
+3. **Watch the roller offset appear.** Set the follower type to **Roller** and increase the roller radius from $10$ mm. The cam surface pulls inward from the pitch curve by exactly the roller radius, which is the offset you were told to apply by hand. ✅
+
+4. **Push it until it fails.** Read **Min radius of curvature**: for this program it is about $36$ mm. Keep raising the roller radius and watch the ratio to $\rho_{min}$ close up, until the **Undercut** result reports the profile is no longer usable. A $10$ mm roller is comfortable here ($\rho_{min}/r_r \approx 3.6$), $20$ mm is still workable, and by $30$ mm you are into trouble. ✅
+
+   This is worth doing once deliberately, because undercutting is invisible on the pitch curve you drew. The hand layout will happily give you a profile that no roller of the chosen size can actually trace. ✅
+
 </Steps>
 
 </details>
