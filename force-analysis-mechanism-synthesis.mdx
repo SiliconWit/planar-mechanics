@@ -275,6 +275,50 @@ The transmission angle tells you where in its cycle a four-bar transmits force w
 
 </details>
 
+### Step 2: Turn the Angle into a Force
+
+An angle on a chart is not yet an engineering answer. The coupler is a two-force member, so it pushes on the follower along its own line; only the component across the follower does useful work.
+
+<details>
+<summary>**Click to reveal what the transmission angle costs in force**</summary>
+
+<Steps>
+
+1. **Split the coupler force at the joint.** With coupler force $F_{34}$ arriving at $B$ at transmission angle $\mu$ to the follower: ✅
+
+   $$F_\perp = F_{34}\sin\mu \quad (\text{drives the follower}), \qquad F_\parallel = F_{34}\cos\mu \quad (\text{pushes into the bearing})$$
+
+   The output torque is $T_4 = F_{34}\,c\sin\mu$, so **all** of the angle's effect lands on $\sin\mu$. ✅
+
+2. **Price the good instant and the bad one.** At $\theta_2 = 120\degree$, $\mu = 74.3\degree$ and $\sin\mu = 0.963$: almost the whole coupler force turns the follower. At the worst instant, $\mu = 26.4\degree$ and $\sin\mu = 0.445$. For the **same output torque** you therefore need ✅
+
+   $$\frac{F_{34,\text{worst}}}{F_{34,\text{best}}} = \frac{0.963}{0.445} = 2.2$$
+
+   Rather more than twice the coupler force, and with it rather more than twice the pin and link stresses of Application 1, for no extra useful work. ✅
+
+3. **Note where the rest of it goes.** At $\mu = 26.4\degree$, $\cos\mu = 0.896$, so nearly **90% of the coupler force is driven straight along the follower into its bearing**. It does no work at all; it only wears the pin and deflects the link. That is what a poor transmission angle actually costs. ✅
+
+4. **Read the guide as a force statement.** The $\mu \ge 40\degree$ rule is just $\sin\mu \ge 0.64$: a promise that no more than about a third of the coupler force is wasted. This linkage spends about a quarter of every turn below that line, which is acceptable only if the working stroke avoids those zones. ✅
+
+</Steps>
+
+</details>
+
+### Step 3: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/FBL](https://siwit.co/FBL)), set $a = 40$, $b = 120$, $c = 80$, $d = 100$, and read the transmission-angle trace: peak about $86\degree$, minimum about $26\degree$. ✅
+
+2. **Cross-check against mechanical advantage.** The mechanical-advantage trace should collapse at exactly the crank angles where $\mu$ dips, because both are measuring the same loss of leverage from two directions. ✅
+
+</Steps>
+
+</details>
+
 :::note[Engineering Insight]
 The transmission angle is a force-quality gauge that costs nothing to check: it comes straight from the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages). Keeping it above about $40\degree$ through the working stroke is one of the first rules of good linkage design.
 :::
@@ -299,22 +343,57 @@ The scissor lift shows mechanical advantage working against the designer: the ac
 - **Task:** Find how the actuator force depends on the scissor angle
 :::
 
-### Step 1: Actuator Force by Virtual Work
+### Step 1: Draw the Geometry the Work Balance Rests On
+
+Virtual work is quick, but only once you know which two lengths change and how. Both come off the space diagram, so draw it before writing anything down.
+
+<details>
+<summary>**Click to reveal the two lengths that matter**</summary>
+
+<Steps>
+
+1. **Draw the lift to scale** at the angle of interest, say $\theta = 30\degree$, choosing and marking a length scale (1 cm = 50 mm works for $L = 300$ mm). ✅
+
+   <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+     <TailwindWrapper>
+   	![Single-stage scissor lift drawn to scale at 30 degrees: base, crossed arms of length L, and platform at height h = L sin theta](./images/l3-scissor-1-space-diagram.svg)
+     </TailwindWrapper>
+   </div>
+
+2. **Mark the two lengths that change.** The platform height and the base spread the actuator works across: ✅
+
+   $$h = L\sin\theta \quad (\text{the load rises through this}), \qquad x = L\cos\theta \quad (\text{the actuator shortens this})$$
+
+3. **Note that they move in opposite senses.** Raising the platform ($\theta$ increasing) makes $h$ grow and $x$ shrink, so the actuator pulls the base pins together as the load goes up. That opposition is the whole reason a $\cot\theta$ appears rather than a $\tan\theta$. ✅
+
+</Steps>
+
+</details>
+
+### Step 2: Actuator Force by Virtual Work
 
 <details>
 <summary>**Click to reveal the actuator-force relation**</summary>
 
 <Steps>
 
-1. **Apply virtual work.** The actuator does work as the base spread changes, the load rises through the height change. Equating, the horizontal-base actuator force to hold load $W$ at scissor angle $\theta$ is:
+1. **Differentiate both lengths** with respect to the scissor angle, giving the virtual displacements for a small rotation $\delta\theta$: ✅
 
-   $$F_\text{act} = W\cot\theta$$ ✅
+   $$\delta h = L\cos\theta\,\delta\theta, \qquad \delta x = -L\sin\theta\,\delta\theta$$
 
-   (the exact constant depends on the actuator placement; the simulator gives the precise value for each type).
+2. **Equate the work.** Over a frictionless virtual displacement the actuator's work equals the work done lifting the load. The actuator shortens $x$ while the load rises, so both are positive: ✅
 
-2. **Read the runaway.** At $\theta = 45\degree$, $F_\text{act} = W = 500$ N; at $\theta = 30\degree$, $866$ N; at $\theta = 10\degree$, $2840$ N. As the platform nears the floor, the mechanical advantage works against the actuator and the force spikes. ✅
+   $$F_\text{act}\,\lvert\delta x\rvert = W\,\delta h \;\Rightarrow\; F_\text{act}\,L\sin\theta\,\delta\theta = W\,L\cos\theta\,\delta\theta$$
 
-3. **Design response.** This is why scissor lifts work over a limited low-angle band, use a diagonal or pantograph actuator placement to improve the low-angle advantage, and never start fully flat. ✅
+3. **Cancel and read the result.** Both $L$ and $\delta\theta$ drop out, which is why the answer depends on the angle alone and not on the size of the lift: ✅
+
+   $$F_\text{act} = W\cot\theta$$
+
+   This is for an actuator mounted horizontally across the base. A diagonal or pantograph placement changes the geometry factor, and the simulator reports the value for each type. ✅
+
+4. **Read the runaway.** At $\theta = 45\degree$, $F_\text{act} = W = 500$ N; at $\theta = 30\degree$, $866$ N; at $\theta = 10\degree$, $2840$ N. As the platform nears the floor, the mechanical advantage works against the actuator and the force spikes. ✅
+
+5. **Design response.** This is why scissor lifts work over a limited low-angle band, use a diagonal or pantograph actuator placement to improve the low-angle advantage, and never start fully flat. ✅
 
 </Steps>
 
@@ -323,6 +402,23 @@ The scissor lift shows mechanical advantage working against the designer: the ac
 	![Scissor-lift actuator force rising steeply as the scissor angle approaches zero, following F equals W cot theta](./images/l6-actuator-force.svg)
   </TailwindWrapper>
 </div>
+
+</details>
+
+### Step 3: Verify in the Simulator
+
+<details>
+<summary>**Click to reveal the simulator check**</summary>
+
+<Steps>
+
+1. **Open the simulator** ([siwit.co/SLM](https://siwit.co/SLM)), set the platform load to $500$ N and the actuator type to **Horizontal Base**, then read the actuator-force trace at $\theta = 45\degree$, $30\degree$ and $10\degree$. They should land on $500$, $866$ and about $2840$ N. ✅
+
+2. **Change the actuator placement.** Switch the actuator type to **Diagonal Base** and watch the low-angle end of the curve drop: the geometry factor has changed, so $\cot\theta$ no longer describes it, and the trade-off between the two ends of the stroke becomes visible. This is the mounting choice that makes low-angle work practical. ✅
+
+3. **Check the link stress.** With the actuator force known, the arm stress follows as in Application 1. The lowest angles are the worst case for both force and stress at once, which is why a lift is rated from its lowest working height. ✅
+
+</Steps>
 
 </details>
 
@@ -346,23 +442,119 @@ Analysis takes a mechanism and finds its behaviour. **Synthesis** takes a requir
 </Card>
 
 :::note[System Problem Statement]
-- **Task:** Design a crank-rocker that swings a rocker through a required angle while keeping a good transmission angle
+- **Task:** Design a crank-rocker whose rocker oscillates through $\psi = 73.8\degree$ under continuous crank rotation, keeping $\mu \ge 40\degree$ throughout
+- **Fixed by the mounting:** ground $d = 100$ mm, and a first choice of rocker $c = 80$ mm
+- **To be found:** crank $a$ and coupler $b$
+
+**Key Question:** Can one construction give both unknown links, and will the linkage it produces actually transmit force well?
 :::
 
-### Step 1: Type and Dimensional Synthesis
+### Step 1: Type Synthesis
 
 <details>
-<summary>**Click to reveal the synthesis process**</summary>
+<summary>**Click to reveal the choice of mechanism family**</summary>
 
 <Steps>
 
-1. **Type synthesis.** Choose the mechanism family from the task. A continuous input turning an oscillating output points to a **crank-rocker** four-bar; a straight-line output points to a slider-crank; a clamp pointed to a toggle. The degrees-of-freedom check from the [mobility analysis](/education/planar-mechanics/kinematic-joints-constraint-analysis) confirms one input drives it. ✅
+1. **Read the family off the task.** A continuous input turning an oscillating output points to a **crank-rocker** four-bar; a straight-line output would point to a slider-crank; a clamping action would point to a toggle. ✅
 
-2. **Dimensional synthesis.** Choose the link lengths to meet the motion. For a required rocker swing, fix the ground and rocker, then size the crank and coupler so the rocker reaches both extreme (limit) positions at the wanted angles. The Grashof test from the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages) must pass so the crank fully rotates. ✅
+2. **Confirm one input drives it.** The [mobility check](/education/planar-mechanics/kinematic-joints-constraint-analysis) gives one degree of freedom for a four-bar, so a single motor on the crank fully determines the motion. ✅
 
-3. **Check force quality.** Run the position analysis and plot the transmission angle (Application 2). If it dips below $40\degree$ inside the working stroke, adjust the link lengths and repeat. Synthesis is this loop: propose lengths, analyse, refine. ✅
+</Steps>
 
-4. **Verify the whole design.** Confirm mobility, positions, velocities and mechanical advantage, accelerations and inertia loads, and finally the forces and stresses. A design is finished only when all six checks pass. ✅
+</details>
+
+### Step 2: Dimensional Synthesis by Limit Positions
+
+The construction rests on one fact from the position analysis: at a **limit position** the crank and coupler fall into one straight line. Folded, the distance from $O_2$ to the rocker pin is $b - a$; extended, it is $b + a$. Two distances measured off a single drawing therefore give both unknown links.
+
+<details>
+<summary>**Click to reveal the construction**</summary>
+
+<Steps>
+
+1. **Set out the frame.** Choose and mark a length scale, say 1 cm = 20 mm. Draw the ground $O_2O_4 = 100$ mm. ✅
+
+2. **Draw the rocker at both extremes.** Swing the rocker $c = 80$ mm about $O_4$ into its two limit positions $O_4B_1$ and $O_4B_2$, separated by the required $\psi = 73.8\degree$. Where that swing sits relative to the ground is **your choice**, not the specification's; here the bisector is placed at $91.8\degree$ to the ground line. ✅
+
+3. **Measure the two distances** from the crank centre to each rocker extreme: ✅
+
+   $$O_2B_1 = 80 \text{ mm} = b - a, \qquad O_2B_2 = 160 \text{ mm} = b + a$$
+
+4. **Solve the pair.** Adding and subtracting the two measurements separates the unknowns: ✅
+
+   $$a = \frac{O_2B_2 - O_2B_1}{2} = \frac{160 - 80}{2} = 40 \text{ mm}, \qquad b = \frac{O_2B_2 + O_2B_1}{2} = \frac{160 + 80}{2} = 120 \text{ mm}$$
+
+</Steps>
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![Limit-position synthesis of a crank-rocker: the ground from O2 to O4, the rocker drawn in its two extreme positions separated by the required swing angle, and the two construction distances from O2 to each rocker extreme, whose half-difference is the crank length and half-sum the coupler length](./images/l6-synthesis-construction.svg)
+  </TailwindWrapper>
+</div>
+
+</details>
+
+### Step 3: Test the Candidate, and Watch It Fail
+
+A set of link lengths that meets the motion is only a candidate. It has to survive every analysis in this course before it is a design.
+
+<details>
+<summary>**Click to reveal the checks on the first attempt**</summary>
+
+<Steps>
+
+1. **Grashof, so the crank can actually turn all the way round.** Shortest plus longest against the other two: $40 + 120 = 160 < 80 + 100 = 180$. It passes, and since the shortest link is the crank and it is adjacent to the ground, the linkage is a **crank-rocker**, which is the family asked for. ✅
+
+2. **Swing, to confirm the construction did its job.** Running the position analysis over a full turn gives a rocker oscillation of $73.8\degree$, exactly the target. The motion requirement is met. ✅
+
+3. **Transmission angle, and here it fails.** These are the very link lengths analysed in Application 2, where $\mu$ was found to dip to $26.4\degree$ and to spend about a **quarter of every turn below the $40\degree$ guide**. By the force reading of Step 2 there, that means stretches of the cycle where nearly $90\%$ of the coupler force is wasted into the bearings. ❌
+
+   This is the ordinary outcome of a first synthesis, not a mistake in the construction. The limit-position method controls the *motion* and says nothing whatever about *force quality*. ✅
+
+</Steps>
+
+</details>
+
+### Step 4: Refine, and Test Again
+
+<details>
+<summary>**Click to reveal one turn of the design loop**</summary>
+
+<Steps>
+
+1. **Identify what is actually free.** The ground $d$ is fixed by the mounting and the swing $\psi$ is the requirement. That leaves the rocker length $c$ and the placement of the swing, and both feed back into $a$ and $b$ through the same construction. ✅
+
+2. **Shorten the rocker and re-place the swing.** Repeating Step 2 with $c = 60$ mm and the bisector moved to $115\degree$ gives ✅
+
+   $$a = 36 \text{ mm}, \qquad b = 91 \text{ mm}$$
+
+3. **Re-run every check.** Grashof still passes ($36 + 100 = 136 < 60 + 91 = 151$), still a crank-rocker. The rocker swing comes out at $74.0\degree$, within a fifth of a degree of the target. And the transmission angle now has a minimum of $44.5\degree$: ✅
+
+   $$\mu_{min} = 44.5\degree \;>\; 40\degree \quad \text{for the whole revolution}$$
+
+   The linkage no longer drops below the guide at any point in the cycle, against $26\%$ of the cycle before. Same motion, far better force. ✅
+
+4. **Recognise the loop.** Nothing here was solved in one pass. Synthesis is propose, analyse, refine, repeated until every check clears, and the analysis tools of the previous five lessons are precisely the tests being run. ✅
+
+</Steps>
+
+</details>
+
+### Step 5: Verify the Whole Design
+
+<details>
+<summary>**Click to reveal the final verification**</summary>
+
+<Steps>
+
+1. **Check the swing without trusting your drawing.** Enter the refined lengths in the simulator ([siwit.co/FBL](https://siwit.co/FBL)) and read the **Oscillation** result: it reports the rocker's total swing directly, and should show about $74\degree$. That is the synthesis target verified by an independent route. ✅
+
+2. **Compare both candidates side by side.** Put in $a=40$, $b=120$, $c=80$, $d=100$ and note the minimum transmission angle, then the refined $a=36$, $b=91$, $c=60$, $d=100$. The reported minimum should rise from about $26\degree$ to about $45\degree$, and the transmission-angle trace should stop crossing the guide. ✅
+
+2. **Run the full sequence on the survivor.** Mobility, position, velocity and mechanical advantage, acceleration and inertia loads, then joint forces and pin and link stresses as in Application 1. A design is finished only when all of them pass. ✅
+
+3. **Take it to CAD.** The surviving link lengths and limit positions become the sketch constraints of a real part in the [Parametric Mechanical CAD with FreeCAD](/education/parametric-mechanical-cad-freecad/) course. ✅
 
 </Steps>
 
