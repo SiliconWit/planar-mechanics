@@ -362,16 +362,46 @@ In an engine the connecting rod is a real body with mass, and every pin rubs. Tw
 
 ### Step 6: Verify in the Simulator
 
+Everything above is in units of $r\omega$, which keeps it true at any speed. The simulator plots raw mm/s, so fix a speed first and the two become the same numbers.
+
 <details>
 <summary>**Click to reveal the simulator check**</summary>
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/CSM](https://siwit.co/CSM)), set $r = 50$, $l = 150$, $e = 0$, and run it. ✅
+1. **Set it up and fix a speed.** Open the simulator ([siwit.co/CSM](https://siwit.co/CSM)), set $r = 50$, $l = 150$, $e = 0$ and $60$ RPM. Then ✅
 
-2. **Read the velocity chart.** The reported maximum piston velocity divided by $r\omega$ is about $1.05$, with the peak before mid-stroke, matching the table. The mean of $|V_P|/(r\omega)$ over a cycle is $2/\pi \approx 0.637$. ✅
+   $$\omega = \frac{2\pi(60)}{60} = 6.283 \text{ rad/s}, \qquad r\omega = 50(6.283) = 314 \text{ mm/s}$$
 
-3. **Add an offset.** Set $e \ne 0$ and the forward and return peaks become unequal (the quick-return of Experiment 2). Mobility stays one; only the velocity profile changes. ✅
+   That one number converts every result in this Application into what the panel shows. ✅
+
+2. **Predict, then read.** Multiply the normalised values by $314$: ✅
+
+   | Quantity | This lesson | Panel reads |
+   |---|---|---|
+   | Maximum Velocity | $1.05\,r\omega$ | $331$ mm/s |
+   | Average Velocity | $0.637\,r\omega$ | $200$ mm/s |
+   | RMS Velocity | $0.717\,r\omega$ | $225$ mm/s |
+
+3. **Note that speeds are reported unsigned.** The fastest instant is at $\theta = 73\degree$, on the **inward** stroke, so the velocity there is negative. The simulator takes the magnitude before reporting, so **Maximum Velocity** shows $+331$ mm/s. Unlike the acceleration readouts, there is no Minimum Velocity to catch the sign. ✅
+
+4. **Check the average against something you already know.** The piston covers two strokes per revolution, so $4r = 200$ mm per turn. At 60 RPM that is one turn per second, giving exactly $200$ mm/s. Reassuringly, $2/\pi \times 314 = 200$ too. ✅
+
+5. **Confirm the peak sits before mid-stroke.** It falls at $73\degree$, not $90\degree$, and the return peak mirrors it at $287\degree$. That asymmetry is the finite rod length; the two would sit at $90\degree$ and $270\degree$ only for an infinitely long rod. ✅
+
+</Steps>
+
+The chart you should be looking at, with the same landmarks named:
+
+<div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
+  <TailwindWrapper>
+	![The slider-crank piston velocity trace as the simulator plots it, in millimetres per second against crank angle, with the peak speed before mid-stroke, the mirrored return peak and the zeros at the dead centres labelled](./images/l3-simulator-velocity-annotated.svg)
+  </TailwindWrapper>
+</div>
+
+<Steps>
+
+6. **Add an offset.** Set $e \ne 0$ and the forward and return peaks become unequal (the quick-return of Experiment 2). Mobility stays one; only the velocity profile changes. ✅
 
 </Steps>
 

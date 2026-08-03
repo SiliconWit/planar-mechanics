@@ -1261,41 +1261,32 @@ def synthesis_construction(c, d, psi_deg, mid_deg, fname):
     return crank, coupler
 
 
-def simulator_acceleration_annotated(r, l, rpm, fname):
-    """The acceleration trace as the simulator actually draws it, annotated.
+def _annotated_trace(th, y, ann, yr, ystep, ylabel, caption, aria, fname,
+                     colour=None):
+    """A simulator trace redrawn with real axes and its landmarks named.
 
-    The lesson works in units of r*omega^2 while the simulator plots raw mm/s^2,
-    and nothing connected the two. A student reading -2632 on the chart had no
-    way to see it as -1.33 r*omega^2. This figure is the bridge: real axes, real
-    numbers, with each feature named.
+    The lessons work in normalised units (r*omega, r*omega^2) while the
+    simulators plot raw mm/s and mm/s^2, and nothing connected the two. These
+    figures are the bridge, so a student reading -2632 on a chart can see it as
+    -1.33 r*omega^2 without doing the arithmetic in their head first.
+
+    ann: list of (x, y, dx, dy, [label lines], anchor).
     """
-    w = rpm * 2 * np.pi / 60.0
-    rw2 = r * w * w
-    th = np.linspace(0, 360, 721)
-    t = np.radians(th)
-    S = r * np.sin(t); Q = np.sqrt(l * l - S * S)
-    a = w * w * (-r * np.cos(t) + r * np.sin(t) * S / Q
-                 - r * r * np.cos(t) ** 2 * l * l / Q ** 3)
-
+    colour = colour or COL["piston"]
     W, H = 760, 430
     ml, mr, mt, mb = 74, 20, 30, 74
     pw, ph = W - ml - mr, H - mt - mb
-    # headroom above the humps so their label is not squeezed against the frame
-    ymin, ymax = -3000.0, 2400.0
+    ymin, ymax = yr
     MX = lambda x: ml + x / 360.0 * pw
-    MY = lambda y: (H - mb) - (y - ymin) / (ymax - ymin) * ph
+    MY = lambda v: (H - mb) - (v - ymin) / (ymax - ymin) * ph
 
     o = [f'<svg viewBox="0 0 {W} {H}" width="100%" xmlns="http://www.w3.org/2000/svg" '
-         f'role="img" aria-label="The slider-crank acceleration trace as the simulator '
-         f'plots it, in millimetres per second squared against crank angle, with the top '
-         f'dead centre peak, the two positive humps and the bottom dead centre dip '
-         f'labelled with both their raw values and their values as multiples of r omega '
-         f'squared">',
+         f'role="img" aria-label="{aria}">',
          plate(W, H), f'<defs>{_heads([COL["pt"]])}</defs>',
          f'<rect x="{ml}" y="{mt}" width="{pw}" height="{ph}" fill="none" '
          f'stroke="{COL["con"]}" stroke-width="1"/>']
     # gridlines and tick labels: the point of the figure is reading values off
-    for gy in range(-3000, 2001, 1000):
+    for gy in range(int(ymin), int(ymax) + 1, ystep):
         o.append(f'<line x1="{ml}" y1="{MY(gy):.1f}" x2="{W-mr}" y2="{MY(gy):.1f}" '
                  f'stroke="{COL["con"]}" stroke-width="{2 if gy==0 else 0.6}" '
                  f'stroke-dasharray="{"" if gy==0 else "2 4"}"/>')
@@ -1306,49 +1297,96 @@ def simulator_acceleration_annotated(r, l, rpm, fname):
                  f'stroke="{COL["con"]}" stroke-width="0.6" stroke-dasharray="2 4"/>')
         o.append(f'<text x="{MX(gx):.1f}" y="{H-mb+17}" fill="{COL["ground"]}" font-size="11.5" '
                  f'font-family="sans-serif" text-anchor="middle">{gx}</text>')
-    o.append('<polyline points="' + " ".join(f"{MX(x):.1f},{MY(y):.1f}" for x, y in zip(th, a))
-             + f'" fill="none" stroke="{COL["piston"]}" stroke-width="2.6"/>')
-
-    def call(x, y, dx, dy, lines, anchor="start"):
-        """A leader line from a point on the curve out to a stacked label."""
-        tx, ty = MX(x) + dx, MY(y) + dy
-        s = [f'<line x1="{MX(x):.1f}" y1="{MY(y):.1f}" x2="{tx:.1f}" y2="{ty:.1f}" '
-             f'stroke="{COL["pt"]}" stroke-width="1.1" stroke-dasharray="3 3"/>',
-             f'<circle cx="{MX(x):.1f}" cy="{MY(y):.1f}" r="4" fill="{COL["pt"]}"/>']
-        for k, ln in enumerate(lines):
-            s.append(f'<text x="{tx:.1f}" y="{ty + k*15:.1f}" fill="{COL["pt"]}" '
-                     f'font-size="12.5" font-family="sans-serif" font-weight="600" '
-                     f'text-anchor="{anchor}">{ln}</text>')
-        return "".join(s)
+    o.append('<polyline points="' + " ".join(f"{MX(x):.1f},{MY(v):.1f}" for x, v in zip(th, y))
+             + f'" fill="none" stroke="{colour}" stroke-width="2.6"/>')
 
     # Labels are placed into the empty regions either side of the curve; leaders
     # are routed so none of them crosses it.
-    i_h = int(np.argmax(a))
-    o.append(call(0, a[0], 180, -10,
-                  ["TDC: largest magnitude",
-                   f"{a[0]:,.0f} mm/s&#178; = &#8722;1.33 r&#969;&#178;"]))
-    o.append(call(180, a[360], 0, 58,
-                  ["BDC: a dip, not a peak",
-                   f"+{a[360]:,.0f} mm/s&#178; = +0.67 r&#969;&#178;"], "middle"))
-    o.append(call(th[i_h], a[i_h], 0, -36,
-                  ["the two positive humps",
-                   f"+{a[i_h]:,.0f} mm/s&#178; at {th[i_h]:.0f}&#176; and "
-                   f"{360-th[i_h]:.0f}&#176;"], "middle"))
+    for (x, v, dx, dy, lines, anchor) in ann:
+        tx, ty = MX(x) + dx, MY(v) + dy
+        o.append(f'<line x1="{MX(x):.1f}" y1="{MY(v):.1f}" x2="{tx:.1f}" y2="{ty:.1f}" '
+                 f'stroke="{COL["pt"]}" stroke-width="1.1" stroke-dasharray="3 3"/>')
+        o.append(f'<circle cx="{MX(x):.1f}" cy="{MY(v):.1f}" r="4" fill="{COL["pt"]}"/>')
+        for k, ln in enumerate(lines):
+            o.append(f'<text x="{tx:.1f}" y="{ty + k*15:.1f}" fill="{COL["pt"]}" '
+                     f'font-size="12.5" font-family="sans-serif" font-weight="600" '
+                     f'text-anchor="{anchor}">{ln}</text>')
     o.append(f'<text x="{ml+pw/2:.0f}" y="{H-mb+38}" fill="{COL["ground"]}" font-size="12" '
              f'font-family="sans-serif" text-anchor="middle">crank angle &#952; (degrees)</text>')
     o.append(f'<text x="16" y="{mt+ph/2:.0f}" fill="{COL["ground"]}" font-size="12" '
              f'font-family="sans-serif" text-anchor="middle" '
-             f'transform="rotate(-90 16 {mt+ph/2:.0f})">piston acceleration (mm/s&#178;)</text>')
+             f'transform="rotate(-90 16 {mt+ph/2:.0f})">{ylabel}</text>')
     o.append(f'<text x="{ml}" y="{H-10}" fill="{COL["ground"]}" font-size="11.5" '
-             f'font-family="sans-serif">r = {r:.0f}, l = {l:.0f}, e = 0 at {rpm:.0f} RPM, so '
-             f'r&#969;&#178; = {rw2:,.0f} mm/s&#178;. Negative means pointing back at the crank '
-             f'centre.</text>')
+             f'font-family="sans-serif">{caption}</text>')
     o.append("</svg>")
     write(fname, o)
 
 
+def simulator_acceleration_annotated(r, l, rpm, fname):
+    """Slider-crank acceleration, as the crank-slider simulator plots it."""
+    w = rpm * 2 * np.pi / 60.0
+    th = np.linspace(0, 360, 721); t = np.radians(th)
+    S = r * np.sin(t); Q = np.sqrt(l * l - S * S)
+    a = w * w * (-r * np.cos(t) + r * np.sin(t) * S / Q
+                 - r * r * np.cos(t) ** 2 * l * l / Q ** 3)
+    i_h = int(np.argmax(a))
+    ann = [(0, a[0], 180, -10,
+            ["TDC: largest magnitude",
+             f"{a[0]:,.0f} mm/s&#178; = &#8722;1.33 r&#969;&#178;"], "start"),
+           (180, a[360], 0, 58,
+            ["BDC: a dip, not a peak",
+             f"+{a[360]:,.0f} mm/s&#178; = +0.67 r&#969;&#178;"], "middle"),
+           (th[i_h], a[i_h], 0, -36,
+            ["the two positive humps",
+             f"+{a[i_h]:,.0f} mm/s&#178; at {th[i_h]:.0f}&#176; and "
+             f"{360-th[i_h]:.0f}&#176;"], "middle")]
+    _annotated_trace(
+        th, a, ann, (-3000.0, 2400.0), 1000, "piston acceleration (mm/s&#178;)",
+        f"r = {r:.0f}, l = {l:.0f}, e = 0 at {rpm:.0f} RPM, so r&#969;&#178; = "
+        f"{r*w*w:,.0f} mm/s&#178;. Negative means pointing back at the crank centre.",
+        "The slider-crank acceleration trace as the simulator plots it, in millimetres "
+        "per second squared against crank angle, with the top dead centre peak, the two "
+        "positive humps and the bottom dead centre dip labelled with both their raw "
+        "values and their values as multiples of r omega squared",
+        fname)
+
+
+def simulator_velocity_annotated(r, l, rpm, fname):
+    """Slider-crank piston velocity, as the crank-slider simulator plots it.
+
+    The readouts differ from the acceleration ones in a way worth naming: the
+    simulator takes Math.abs before reporting Maximum and Average Velocity, so
+    both come out positive even though the fastest instant is on the inward
+    stroke.
+    """
+    w = rpm * 2 * np.pi / 60.0
+    th = np.linspace(0, 360, 721); t = np.radians(th)
+    S = r * np.sin(t); Q = np.sqrt(l * l - S * S)
+    v = w * (-r * np.sin(t) - r * r * np.sin(t) * np.cos(t) / Q)
+    i_lo = int(np.argmin(v)); i_hi = int(np.argmax(v))
+    ann = [(th[i_lo], v[i_lo], 14, 14,
+            ["peak speed, before mid-stroke",
+             f"{abs(v[i_lo]):,.0f} mm/s = 1.05 r&#969; at {th[i_lo]:.0f}&#176;",
+             "reported as Maximum Velocity, unsigned"], "start"),
+           (180, 0.0, 0, -46,
+            ["dead centres: v = 0",
+             "at 0&#176;, 180&#176; and 360&#176;"], "middle"),
+           (th[i_hi], v[i_hi], -14, -30,
+            ["the return peak, mirrored",
+             f"+{v[i_hi]:,.0f} mm/s at {th[i_hi]:.0f}&#176;"], "end")]
+    _annotated_trace(
+        th, v, ann, (-500.0, 500.0), 250, "piston velocity (mm/s)",
+        f"r = {r:.0f}, l = {l:.0f}, e = 0 at {rpm:.0f} RPM, so r&#969; = {r*w:,.0f} mm/s. "
+        f"Average speed reads {np.mean(np.abs(v)):,.0f} mm/s, which is 2/&#960; of r&#969;.",
+        "The slider-crank piston velocity trace as the simulator plots it, in millimetres "
+        "per second against crank angle, with the peak speed before mid-stroke, the "
+        "mirrored return peak and the zeros at the dead centres labelled",
+        fname, COL["crank"])
+
+
 def main():
     simulator_acceleration_annotated(50, 150, 60, "l4-simulator-acceleration-annotated.svg")
+    simulator_velocity_annotated(50, 150, 60, "l3-simulator-velocity-annotated.svg")
     synthesis_construction(80, 100, 73.78, 91.79, "l6-synthesis-construction.svg")
     normal_tangential("l4-normal-tangential-components.svg")
     relative_acceleration("l4-relative-acceleration-equation.svg")
