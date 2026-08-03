@@ -320,10 +320,22 @@ def four_bar_omega(a, b, c, t2, t3, t4, w2=1.0):
 # ----------------------------------------------------------------------------
 # XY plots (cam SVAJ diagrams, pressure-angle curves) and the cam profile
 # ----------------------------------------------------------------------------
-def xy_plot(curves, xr, yr, xlabel, ylabel, caption, fname, aria, hlines=None):
-    """curves: list of (xs, ys, colour, label). xr/yr: (min, max) axis ranges."""
-    W, H = 470, 300
-    ml, mr, mt, mb = 48, 16, 42, 46
+def _tick_text(v):
+    """Tick labels without trailing noise: 0.5 stays 0.5, 40.0 becomes 40."""
+    return f"{v:,.0f}" if abs(v - round(v)) < 1e-9 else f"{v:,.2f}".rstrip("0").rstrip(".")
+
+
+def xy_plot(curves, xr, yr, xlabel, ylabel, caption, fname, aria, hlines=None,
+            shade=None, ticks=(5, 4)):
+    """curves: list of (xs, ys, colour, label). xr/yr: (min, max) axis ranges.
+
+    shade: list of (x0, x1) bands to tint, for marking a region the reader is
+    meant to notice (a below-guide zone, say).
+    ticks: (x divisions, y divisions). These carry numbers, without which a
+    reader can see a curve's shape but cannot read a single value off it.
+    """
+    W, H = 470, 316
+    ml, mr, mt, mb = 54, 16, 42, 62
     pw, ph = W - ml - mr, H - mt - mb
     xmin, xmax = xr
     ymin, ymax = yr
@@ -331,9 +343,28 @@ def xy_plot(curves, xr, yr, xlabel, ylabel, caption, fname, aria, hlines=None):
     MY = lambda y: (H - mb) - (y - ymin) / (ymax - ymin) * ph
     o = [f'<svg viewBox="0 0 {W} {H}" width="100%" xmlns="http://www.w3.org/2000/svg" '
          f'role="img" aria-label="{aria}">', plate(W, H)]
+    for (x0, x1) in (shade or []):
+        o.append(f'<rect x="{MX(x0):.1f}" y="{mt}" width="{MX(x1)-MX(x0):.1f}" '
+                 f'height="{ph}" fill="{COL["coupler"]}" opacity="0.10"/>')
     # axes box
     o.append(f'<rect x="{ml}" y="{mt}" width="{pw}" height="{ph}" fill="none" '
              f'stroke="{COL["con"]}" stroke-width="1"/>')
+    nx, ny = ticks
+    for i in range(nx + 1):
+        v = xmin + (xmax - xmin) * i / nx
+        o.append(f'<line x1="{MX(v):.1f}" y1="{H-mb}" x2="{MX(v):.1f}" y2="{H-mb+4}" '
+                 f'stroke="{COL["con"]}" stroke-width="1"/>')
+        if i:
+            o.append(f'<line x1="{MX(v):.1f}" y1="{mt}" x2="{MX(v):.1f}" y2="{H-mb}" '
+                     f'stroke="{COL["con"]}" stroke-width="0.5" stroke-dasharray="2 4"/>')
+        o.append(f'<text x="{MX(v):.1f}" y="{H-mb+16}" fill="{COL["ground"]}" font-size="10.5" '
+                 f'font-family="sans-serif" text-anchor="middle">{_tick_text(v)}</text>')
+    for i in range(ny + 1):
+        v = ymin + (ymax - ymin) * i / ny
+        o.append(f'<line x1="{ml-4}" y1="{MY(v):.1f}" x2="{ml}" y2="{MY(v):.1f}" '
+                 f'stroke="{COL["con"]}" stroke-width="1"/>')
+        o.append(f'<text x="{ml-7}" y="{MY(v)+3.5:.1f}" fill="{COL["ground"]}" font-size="10.5" '
+                 f'font-family="sans-serif" text-anchor="end">{_tick_text(v)}</text>')
     if ymin < 0 < ymax:                                   # zero line
         o.append(f'<line x1="{ml}" y1="{MY(0):.1f}" x2="{W-mr}" y2="{MY(0):.1f}" '
                  f'stroke="{COL["con"]}" stroke-width="1" stroke-dasharray="3 3"/>')
@@ -1473,9 +1504,10 @@ def main():
     xy_plot([(u, s_n, COL["crank"], "s / h"),
              (u, v_n, COL["follower"], "v / v_max"),
              (u, a_n, COL["coupler"], "a / a_max")],
-            (0, 1), (-1.15, 1.15), "cam angle &#952; / &#946;", "normalised",
+            (0, 1), (-1.2, 1.2), "cam angle &#952; / &#946;", "normalised",
             "Cycloidal rise: s, v and a are all smooth and begin and end at zero.",
-            "l5-svaj-cycloidal.svg", "Cycloidal rise displacement, velocity and acceleration diagram")
+            "l5-svaj-cycloidal.svg", "Cycloidal rise displacement, velocity and acceleration diagram",
+            ticks=(4, 4))
 
     cam_profile(45, 25, 90, "l5-cam-profile.svg")
 
@@ -1530,7 +1562,8 @@ def main():
     xy_plot([(th2s, np.array(mus), COL["follower"], "transmission angle")],
             (0, 360), (0, 90), "crank angle &#952;&#8322; (deg)", "transmission angle &#956; (deg)",
             "Transmission angle dips to about 26 deg twice per turn (poor-force zones).",
-            "l6-transmission-angle.svg", "Four-bar transmission angle over a full crank rotation",
+            "l6-transmission-angle.svg", "Four-bar transmission angle over a full crank rotation, with the zones below the 40 degree guide shaded",
+            shade=[(0, 46), (314, 360)], ticks=(8, 6),
             hlines=[(40, "40&#176; guide")])
 
     ths = np.linspace(10, 85, 120)
@@ -1538,7 +1571,8 @@ def main():
     xy_plot([(ths, Fa, COL["piston"], "actuator force")],
             (0, 90), (0, 3000), "scissor angle &#952; (deg)", "actuator force (N)",
             "Scissor actuator force F = W cot&#952; (W = 500 N): it spikes as the lift nears flat.",
-            "l6-actuator-force.svg", "Scissor-lift actuator force versus angle")
+            "l6-actuator-force.svg", "Scissor-lift actuator force versus angle",
+            ticks=(6, 4))
 
 
 if __name__ == "__main__":

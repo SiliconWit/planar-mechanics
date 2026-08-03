@@ -311,9 +311,15 @@ An angle on a chart is not yet an engineering answer. The coupler is a two-force
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/FBL](https://siwit.co/FBL)), set $a = 40$, $b = 120$, $c = 80$, $d = 100$, and read the transmission-angle trace: peak about $86\degree$, minimum about $26\degree$. ✅
+1. **Set it up.** Open the simulator ([siwit.co/FBL](https://siwit.co/FBL)) and set $a = 40$, $b = 120$, $c = 80$, $d = 100$. Transmission angle is already in degrees, so unlike the velocity and acceleration charts there is no conversion to do. ✅
 
-2. **Cross-check against mechanical advantage.** The mechanical-advantage trace should collapse at exactly the crank angles where $\mu$ dips, because both are measuring the same loss of leverage from two directions. ✅
+2. **Match the two readouts.** The panel reports **Min &micro;** and **Max &micro;** directly: ✅
+
+   $$\text{Min } \mu = 26.4\degree \quad (\text{at } \theta_2 = 0\degree), \qquad \text{Max } \mu = 86.4\degree \quad (\text{at } \theta_2 = 180\degree)$$
+
+3. **Locate the poor-force zones on the axis.** The trace crosses the $40\degree$ guide at $\theta_2 = 46\degree$ and again at $314\degree$, so the linkage is below the guide from $314\degree$ round through zero to $46\degree$: about **26% of every revolution**, shaded in the figure above. If your working stroke lives in that band, the design is wrong regardless of how good the motion looks. ✅
+
+4. **Cross-check against mechanical advantage.** The **Minimum MA** should bottom out at exactly the crank angles where $\mu$ dips, because both measure the same loss of leverage from opposite ends: $\mu$ from the geometry, MA from the force ratio. ✅
 
 </Steps>
 
@@ -412,11 +418,22 @@ Virtual work is quick, but only once you know which two lengths change and how. 
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/SLM](https://siwit.co/SLM)), set the platform load to $500$ N and the actuator type to **Horizontal Base**, then read the actuator-force trace at $\theta = 45\degree$, $30\degree$ and $10\degree$. They should land on $500$, $866$ and about $2840$ N. ✅
+1. **Set it up and read three points off the trace.** Open the simulator ([siwit.co/SLM](https://siwit.co/SLM)), set the platform load to $500$ N and the actuator type to **Horizontal Base**. Forces are already in newtons, so these are read directly with no conversion: ✅
 
-2. **Change the actuator placement.** Switch the actuator type to **Diagonal Base** and watch the low-angle end of the curve drop: the geometry factor has changed, so $\cot\theta$ no longer describes it, and the trade-off between the two ends of the stroke becomes visible. This is the mounting choice that makes low-angle work practical. ✅
+   | Scissor angle | $F = W\cot\theta$ | Trace reads |
+   |:---:|:---:|:---:|
+   | $75\degree$ | $0.27\,W$ | $134$ N |
+   | $45\degree$ | $1.00\,W$ | $500$ N |
+   | $30\degree$ | $1.73\,W$ | $866$ N |
+   | $10\degree$ | $5.67\,W$ | $2836$ N |
 
-3. **Check the link stress.** With the actuator force known, the arm stress follows as in Application 1. The lowest angles are the worst case for both force and stress at once, which is why a lift is rated from its lowest working height. ✅
+   The $45\degree$ row is the one to anchor on: it is the angle where the actuator force exactly equals the load, so the mechanical advantage is one and the curve crosses its own reference. Everything below that angle costs you, everything above it pays. ✅
+
+2. **Watch Max Actuator Force follow the lowest angle.** The panel's **Max Actuator Force** is not a property of the lift; it is whatever the force reaches at the *bottom* of the stroke you allow. Raise the minimum height and it falls immediately, which is the cheapest design fix available here. ✅
+
+3. **Change the actuator placement.** Switch the actuator type to **Diagonal Base** and watch the low-angle end of the curve drop: the geometry factor has changed, so $\cot\theta$ no longer describes it, and the trade-off between the two ends of the stroke becomes visible. This is the mounting choice that makes low-angle work practical. ✅
+
+4. **Check the link stress.** With the actuator force known, the arm stress follows as in Application 1. The lowest angles are the worst case for both force and stress at once, which is why a lift is rated from its lowest working height. ✅
 
 </Steps>
 

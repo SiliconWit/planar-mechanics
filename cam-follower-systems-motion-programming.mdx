@@ -223,11 +223,20 @@ Plot the three curves to scale against cam angle. Choose a vertical scale for ea
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/CFM](https://siwit.co/CFM)), set a cycloidal rise of $h = 25$ mm over $\beta = 90\degree$ with a knife-edge follower, and read the velocity and acceleration charts. ✅
+1. **Set it up, and set a speed.** Open the simulator ([siwit.co/CFM](https://siwit.co/CFM)), choose a cycloidal rise of $h = 25$ mm over $\beta = 90\degree$ with a knife-edge follower, and set the cam speed to **290 rpm**, the nearest step to the $\omega = 30$ rad/s used above. That gives $\omega = 30.4$ rad/s. ✅
 
-2. **Read the peaks.** Velocity peaks at about $31.8$ mm/rad at mid-rise and acceleration at about $63.7$ mm/rad², matching the hand calculation. The acceleration starts and ends the rise at zero, so the summary reports the fundamental law as obeyed. ✅
+2. **Expect real units, not per-radian ones.** The readout is **Peak velocity (at speed)**, in mm/s, and **Peak acceleration** in mm/s². The per-radian figures of Step 2 are pure geometry and never appear on screen; multiply them by $\omega$ and $\omega^2$ first: ✅
 
-3. **Break the law.** Switch the rise to simple harmonic: the peak acceleration drops to about $50$ mm/rad², but the acceleration now steps where the rise meets the dwell and the summary flags the fundamental-law violation. ✅
+   | Quantity | Geometry only | Panel reads at 290 rpm |
+   |---|---|---|
+   | Peak velocity | $31.8$ mm/rad | $967$ mm/s |
+   | Peak acceleration | $63.7$ mm/rad² | $58{,}700$ mm/s² |
+
+   Change the speed slider and the panel numbers move while the per-radian ones do not. That is the whole reason the working is done per radian. ✅
+
+3. **Find where each peak sits.** Go back to the normalised diagram of Step 1 and read the cam-angle axis: velocity peaks at mid-rise ($\theta/\beta = 0.5$) and acceleration at the quarter points ($0.25$ and $0.75$). Acceleration passes through zero at both ends of the rise, which is why the panel reports **Fundamental law** as obeyed. ✅
+
+4. **Break the law deliberately.** Switch the rise to simple harmonic. Peak acceleration falls to about $50$ mm/rad², *lower* than cycloidal, yet the acceleration now steps at the dwell boundary and the panel flags the violation. Lower peak, worse cam: it is the discontinuity, not the magnitude, that breaks a high-speed follower. ✅
 
 </Steps>
 
