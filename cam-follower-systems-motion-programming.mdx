@@ -24,7 +24,7 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-Every mechanism so far was a linkage you were handed and then analysed. The cam inverts the problem: you decide the exact motion the follower must make, its rise, its dwell, its return, and then you design the curved surface that delivers it. The danger is in the curve. Choose a motion law whose acceleration jumps, and the follower receives an infinite jerk at that instant: a hammer blow that wears the contact, makes noise, and shakes the machine at high speed. The whole craft of cam design is shaping the motion so that nothing jumps. In this lesson you program the motion with SVAJ diagrams, lay out the cam profile by hand, and size the base circle from the pressure angle. #CamDesign #MotionProgramming #Cycloidal
+A cam that is quiet at low speed can knock, wear and shake its machine at high speed. The cause is usually the motion that the designer chose, and not the metal. A cam is a shaped disc that turns, and a follower is the part that rests on its edge and moves up and down. With a cam you choose the motion of the follower first, and the shape of the cam follows from it. If the chosen motion has a sudden change of acceleration, the follower gets a hammer blow once in every turn. In this lesson you program the motion, draw the cam that produces it, and choose a cam size that does not jam the follower. #CamDesign #MotionProgramming #Cycloidal
 
 ## Learning Objectives
 
@@ -33,109 +33,112 @@ By the end of this lesson, you will be able to:
 1. **Program** a follower motion with the SVAJ diagrams (displacement, velocity, acceleration, jerk)
 2. **Compare** motion laws and explain why cycloidal motion is smooth where harmonic motion is not
 3. **Lay out** the cam profile graphically by the inversion method
-4. **Size** the base circle from the pressure angle
+4. **Size** the base circle, the smallest circle of the cam, from the pressure angle
 
-## Real-World System Problem: A Motion You Cannot Make from a Linkage
+## Real-World System Problem: a motion you cannot make from a linkage
 
 <InArticleAd />
 
 
-An engine valve must snap open, stay fully open while gas flows, then close, all in a fixed fraction of a crank revolution, and repeat without fail millions of times. A packaging machine must advance a film, pause precisely while a print head fires, then advance again. These are **dwell** motions: the output must hold still for part of the cycle and move on a programmed schedule for the rest. A linkage cannot dwell cleanly, but a cam can: its profile is a stored motion program that the follower reads off as the cam turns.
+An engine valve must open quickly, stay fully open while gas flows, then close, all within a fixed part of one turn of the crank. A packaging machine must move a film forward, wait while a print head works, then move it again. These motions contain a **dwell**: a part of the turn in which the output stays still. A linkage cannot hold still cleanly. A cam can, because its edge is a stored motion program that the follower reads as the cam turns.
 
-The cam-follower contact is the **higher pair** from the [joint classification](/education/planar-mechanics/kinematic-joints-constraint-analysis): line contact that both rolls and slides, removing only one degree of freedom. That single contact is where all the force passes, so the shape of the cam decides both the motion and whether the follower is driven smoothly or hammered.
+```text
+ lift s
+ 25 mm |          .-------------.
+       |       .-'               '-.
+       |    .-'                     '-.
+  0 mm |---'                           '----------------
+       +-----------+-----------+-----------+-----------+
+       0          90          180         270         360
+          rise        dwell        fall        dwell
+                    cam angle (degrees)
+```
+
+This is the program of this lesson: the follower rises, waits, falls and waits again, once in each turn of the cam.
+
+The cam touches the follower along one line, and all the force passes through that line. It is the **higher pair** of the [joint classification](/education/planar-mechanics/kinematic-joints-constraint-analysis/): a contact that rolls and slides. So the shape of the cam decides the motion, and also whether the follower is driven smoothly or hammered.
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1rem 0' }}>
   <TailwindWrapper>
-	![A rotating cam driving a translating follower through line contact](https://cdn.siliconwit.com/education/parametric-mechanical-CAD-with-FreeCAD/cam-and-follower-mechanism.gif)
+	![Animation of a cam and follower: a pear-shaped cam turns below, and a roller on a spring-loaded follower rod rests on its edge and moves up and down.](https://cdn.siliconwit.com/education/parametric-mechanical-CAD-with-FreeCAD/cam-and-follower-mechanism.gif)
   </TailwindWrapper>
 </div>
 
-### The Cam Design Problem
+### The cam design problem
 
 > **Engineering Question:** Given the motion the follower must make (its rises, dwells, and returns), what surface produces it, and is that motion smooth enough to run at speed?
 
-### Why Cam-Follower Systems Matter
-
-<CardGrid>
-  <Card title="Programmed motion" icon="rocket">
-  A cam stores an arbitrary motion law, including dwells, that no simple linkage can reproduce.
-  </Card>
-  <Card title="Smoothness sets the speed limit" icon="warning">
-  An acceleration jump is an infinite jerk: impact, noise, and wear. The motion law caps how fast a cam can run.
-  </Card>
-  <Card title="Force transmission" icon="setting">
-  The pressure angle decides how much of the contact force does useful work. Too large and the follower jams.
-  </Card>
-  <Card title="A higher pair" icon="puzzle">
-  The single rolling-sliding contact carries all the load, so its geometry and the base-circle size govern stress and life.
-  </Card>
-</CardGrid>
-
-## Fundamental Theory: SVAJ and Motion Laws
+## Fundamental Theory: SVAJ and motion laws
 
 <InArticleAd />
 
 
-### The Displacement Diagram and the SVAJ Family
+### The displacement diagram and the SVAJ family
+
+A bus that starts with a jolt has not yet gone far or fast. What you feel is the acceleration arriving all at once. The rate at which acceleration changes is called **jerk**, and a cam designer must control it.
 
 <Card title="S, V, A, J" icon="document">
-A cam motion is described by four diagrams against cam angle $\theta$:
+Four diagrams describe a cam motion. Each is drawn against the cam angle $\theta$ (rad), and each is the slope of the one before it:
 
-- **S**, displacement $s(\theta)$, the follower position;
-- **V**, velocity $v = ds/d\theta$ (multiply by $\omega$ for time rate);
-- **A**, acceleration $a = d^2s/d\theta^2$ (multiply by $\omega^2$);
-- **J**, jerk $j = d^3s/d\theta^3$ (multiply by $\omega^3$), the rate of change of acceleration.
+- **S**, displacement $s(\theta)$ in mm, the position of the follower
+- **V**, velocity $v = ds/d\theta$ in mm/rad. Multiply by the cam speed $\omega$ (rad/s) for mm/s
+- **A**, acceleration $a = d^2s/d\theta^2$ in mm/rad². Multiply by $\omega^2$ for mm/s²
+- **J**, jerk $j = d^3s/d\theta^3$, the rate of change of acceleration. Multiply by $\omega^3$ for mm/s³
 
-The **fundamental law of cam design**: for a cam to run at speed, the displacement and its first two derivatives ($s$, $v$, $a$) must be **continuous** across the whole cycle, including the joins to the dwells. A discontinuity in acceleration means an infinite jerk and an impulsive contact force.
+The **fundamental law of cam design**: for a cam that runs at speed, the displacement, the velocity and the acceleration must have **no step** anywhere in the turn, also where a rise or a fall meets a dwell. The force on the follower is its mass times its acceleration. So a step in acceleration is a step in force: a blow, with a jerk that is infinite for an instant.
 </Card>
 
-### Comparing the Motion Laws
+### Comparing the motion laws
 
-<Card title="Four Motion Laws for a Rise of Height h over Angle β" icon="document">
-Every peak below has the same shape: a pure number times $h/\beta$ for velocity, and a pure number times $h/\beta^2$ for acceleration. Those pure numbers are the **motion-law factors** $C_v$ and $C_a$. They depend only on the *law*, never on the rise height, the rise angle or the cam speed, which is what makes them worth memorising.
+A motion law is the formula chosen for the shape of a rise or a fall.
+
+<Card title="Four motion laws for a rise of height h over angle β" icon="document">
+For a rise of height $h$ (mm) over a cam angle $\beta$ (rad), the peak velocity is a pure number times $h/\beta$, and the peak acceleration is a pure number times $h/\beta^2$. These numbers are the **motion-law factors** $C_v$ and $C_a$. They depend only on the *law*, and not on the rise height, the rise angle or the cam speed.
 
 $$v_\text{max} = C_v\,\frac{h}{\beta}, \qquad a_\text{max} = C_a\,\frac{h}{\beta^2}$$
 
 | Motion law | $C_v$ | $C_a$ | Acceleration at the ends | Suitability |
 |------------|:-----:|:-----:|--------------------------|-------------|
-| Uniform (constant velocity) | $1.000$ | $\to\infty$ at the ends | infinite velocity jump | only with rounded ends |
-| Parabolic (constant accel) | $2.000$ | $4.000$ | jumps (finite, but step) | low speed |
-| Simple harmonic (SHM) | $\pi/2 = 1.571$ | $\pi^2/2 = 4.935$ | jumps from zero at a dwell | moderate speed |
+| Uniform (constant velocity) | $1.000$ | $\to\infty$ at the ends | infinite, because the velocity steps | only with rounded ends |
+| Parabolic (constant accel) | $2.000$ | $4.000$ | steps to a finite value | low speed |
+| Simple harmonic (SHM) | $\pi/2 = 1.571$ | $\pi^2/2 = 4.935$ | steps where it meets a dwell | moderate speed |
 | Cycloidal | $2.000$ | $2\pi = 6.283$ | zero at both ends | high speed, smoothest |
 
-Cycloidal motion has the **highest peak acceleration** of the four, yet it is the best for high speed because its acceleration **starts and ends at zero**, so it joins a dwell with no jump and no infinite jerk. Simple harmonic motion looks smooth but its acceleration is a cosine that is at full value at the ends, so where a rise meets a dwell the acceleration steps from a maximum to zero, an infinite jerk.
+Cycloidal motion has the **highest finite peak acceleration** of the four, and it is still the best for high speed. Its acceleration **starts and ends at zero**, so it meets a dwell with no step. Simple harmonic motion looks smooth, but its acceleration is a cosine, which is at full value at both ends. Where the rise meets a dwell, the acceleration steps between zero and that full value.
 
-:::tip[Read the units off the factor]
-$C_v$ and $C_a$ are dimensionless, so $C_v h/\beta$ carries the units of $h$ per **radian** of cam angle, and $C_a h/\beta^2$ per radian squared. $\beta$ must therefore be in radians, never degrees, before you divide. To reach millimetres per **second** you multiply by $\omega$; for mm/s² multiply by $\omega^2$. Keeping the factor and the speed separate means one calculation covers every cam speed.
+:::tip[Read the units from the factor]
+$C_v$ and $C_a$ have no units, so $C_v h/\beta$ is in mm per **radian** of cam angle and $C_a h/\beta^2$ is in mm per radian squared. Put $\beta$ in radians, never in degrees, before you divide. With the factor and the speed kept apart, one calculation serves every cam speed.
 :::
 </Card>
 
-### Pressure Angle and the Base Circle
+### Pressure angle and the base circle
 
-<Card title="Pressure Angle" icon="document">
-For a radial translating follower (no offset), the **pressure angle** $\phi$ between the contact normal and the follower motion is:
+Push a drawer straight in and it slides. Push it at an angle and it jams against its guides. A cam pushes its follower along the line at right angles to the cam surface at the contact point, and the follower can move only along its guide.
+
+<Card title="Pressure angle" icon="document">
+The **pressure angle** $\phi$ is the angle between the direction of the push and the direction in which the follower moves. For a follower that moves on a straight line through the cam centre (a radial translating follower), its tangent is the slope of the displacement diagram, in mm/rad, divided by the distance from the cam centre to the contact point, in mm:
 
 $$\tan\phi = \frac{ds/d\theta}{R_b + s}$$
 
-where $R_b$ is the **base-circle** radius (the smallest radius of the cam). A large pressure angle means most of the contact force pushes sideways on the follower stem rather than driving it, which causes jamming and wear. The standard guide is to keep $\phi \le 30\degree$ for a translating follower. The denominator shows the fix: **a larger base circle lowers the pressure angle**, at the cost of a bigger cam.
+$R_b$ (mm) is the radius of the **base circle**, the smallest circle of the cam, on which the follower rests in its lowest position. With a large pressure angle most of the push goes sideways into the guide: the follower wears and can jam. The usual guide is $\phi \le 30\degree$ for a translating follower. The lower line of the formula shows the remedy: **a larger base circle lowers the pressure angle**, and makes the cam bigger.
 
-For a **roller** follower, replace $R_b$ with the prime-circle radius $R_p = R_b + R_r$, where $R_r$ is the roller radius; the contact geometry is set by the roller centre path, not the cam surface.
+For a **roller** follower, replace $R_b$ with the prime-circle radius $R_p = R_b + R_r$, where $R_r$ is the roller radius, because the geometry follows the path of the roller centre.
 
-**Where the maximum falls.** The numerator $ds/d\theta$ peaks at mid-rise while the denominator keeps growing, so the true maximum of $\phi$ sits slightly *before* mid-rise. Evaluating at mid-rise is close enough for design and gives a formula you can use by hand. For a cycloidal rise, $s = h/2$ and $ds/d\theta = 2h/\beta$ there, so:
+**Where the maximum is.** The slope $ds/d\theta$ is largest at mid-rise, and the lower line still grows there, so the true maximum of $\phi$ is a little *before* mid-rise. The value at mid-rise is close enough for design and can be found by hand. For a cycloidal rise, $s = h/2$ and $ds/d\theta = 2h/\beta$ at mid-rise:
 
 $$\tan\phi_\text{max} \approx \frac{2h/\beta}{R_b + h/2}$$
 
-This runs about half a degree below the true peak, so treat it as a slight under-estimate and keep a little margin against the $30\degree$ guide. Turning it around gives the base circle a specification demands:
+For the cams of this lesson this is between half a degree and one degree below the true peak, so keep a small margin under $30\degree$. Solved for the base circle, it gives the size that a limit $\phi_\text{allow}$ requires:
 
 $$R_b \ge \frac{2h/\beta}{\tan\phi_\text{allow}} - \frac{h}{2}$$
 </Card>
 
-## Application 1: Program the Motion and Draw the SVAJ Diagram
+## Application 1: Program the motion and draw the SVAJ diagram
 
 <InArticleAd />
 
 
-This is the central worked example. We program a rise and draw its displacement, velocity, and acceleration to scale, the graphical heart of cam design. It follows the same [draw, solve, simulate](/education/planar-mechanics/position-analysis-planar-linkages#methods-of-kinematic-analysis) rhythm as the linkage lessons: draw the motion to scale, find its peaks analytically, then confirm in the simulator.
+You program a rise and draw its displacement, velocity and acceleration to scale. The work follows the [draw, solve, simulate](/education/planar-mechanics/position-analysis-planar-linkages/#methods-of-kinematic-analysis) order of the linkage lessons.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -149,303 +152,280 @@ This is the central worked example. We program a rise and draw its displacement,
 - **Configuration:** Radial translating follower, rise-dwell-fall-dwell cam
 - **Task:** Program a cycloidal rise and draw its S, V, A diagrams
 - **Specification:** rise $h = 25$ mm over $\beta = 90\degree$, then dwell $90\degree$, cycloidal fall $90\degree$, dwell $90\degree$
-- **Input:** constant cam speed $\omega = 30$ rad/s (about 287 rev/min)
+- **Input:** constant cam speed $\omega = 30$ rad/s (about $287 \text{ rev/min}$)
 
-**Key Question:** What motion law gives the rise with no acceleration jump at the dwells, and what are its peak velocity and acceleration?
+**Key Question:** Which motion law gives the rise with no step of acceleration at the dwells, and what are its peak velocity and acceleration?
 :::
 
-### Step 1: Draw the Displacement Diagram (S, V, A)
+### Step 1: Draw the displacement diagram (S, V, A)
 
-Plot the three curves to scale against cam angle. Choose a vertical scale for each (for example 1 cm = 5 mm of lift for $s$); the shapes are what matter.
+Plot the three curves to scale against the cam angle. Choose a vertical scale for each (for example $1 \text{ cm} = 5 \text{ mm}$ of lift for $s$). The shapes are what matter.
 
 <details>
 <summary>**Click to reveal the cycloidal motion equations and diagram**</summary>
 
 <Steps>
 
-1. **Displacement** of the cycloidal rise:
+1. **Displacement** of the cycloidal rise. It is a straight ramp, $h\theta/\beta$, with one sine wave subtracted, which makes the start and the end gentle:
 
    $$s = h\left[\frac{\theta}{\beta} - \frac{1}{2\pi}\sin\frac{2\pi\theta}{\beta}\right]$$ ✅
 
-2. **Velocity and acceleration** (per unit cam angle):
+2. **Velocity and acceleration** for each radian of cam angle, the first and second slopes of $s$:
 
    $$v = \frac{h}{\beta}\left[1 - \cos\frac{2\pi\theta}{\beta}\right], \qquad a = \frac{2\pi h}{\beta^2}\sin\frac{2\pi\theta}{\beta}$$ ✅
 
-3. **Read the diagram.** Plotted against $\theta/\beta$, displacement runs smoothly from 0 to $h$, velocity is a bell that starts and ends at zero, and acceleration is a full sine that **also starts and ends at zero**. Because the acceleration is zero at both ends, the rise joins the neighbouring dwells with no jump. ✅
+3. **Read the diagram.** Against $\theta/\beta$, the displacement runs smoothly from $0$ to $h$. The velocity is a single hump that starts and ends at zero. The acceleration is one full sine wave that **also starts and ends at zero**, so the rise meets the dwells on each side with no step. ✅
 
 </Steps>
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Cycloidal rise SVAJ diagram: displacement rising 0 to 1, a bell-shaped velocity, and a full-sine acceleration that begins and ends at zero](./images/l5-svaj-cycloidal.svg)
+	![Cycloidal rise against cam angle: the displacement rises smoothly from 0 to h, the velocity is one hump with its peak at mid-rise, and the acceleration is one sine wave, zero at both ends.](./images/l5-svaj-cycloidal.svg)
   </TailwindWrapper>
 </div>
 
+The note printed inside this picture says that all three curves begin and end at zero. The velocity and the acceleration do. The displacement begins at zero and ends at $h$.
+
 </details>
 
-### Step 2: Find the Peak Velocity and Acceleration
+### Step 2: Find the peak velocity and acceleration
 
 <details>
 <summary>**Click to reveal the peaks and the comparison with SHM**</summary>
 
 <Steps>
 
-1. **Convert the rise angle to radians first.** $\beta = 90\degree = \pi/2 = 1.5708$ rad. Every factor formula divides by $\beta$, so a rise angle left in degrees is the single most common way to lose these marks. ✅
+1. **Convert the rise angle to radians first.** $\beta = 90\degree = \pi/2 = 1.5708$ rad. Every factor formula divides by $\beta$, and a rise angle left in degrees is the most common error here. ✅
 
-2. **Write down the factors** for the cycloidal law: $C_v = 2.000$ and $C_a = 2\pi = 6.283$. ✅
+2. **Write the factors** for the cycloidal law: $C_v = 2.000$ and $C_a = 2\pi = 6.283$. ✅
 
-3. **Peak velocity per unit cam angle**, at mid-rise ($\theta = \beta/2$):
+3. **Peak velocity for each radian of cam angle**, at mid-rise ($\theta = \beta/2$):
 
-   $$v_\text{max} = C_v\frac{h}{\beta} = \frac{2(25)}{1.5708} = 31.8 \text{ mm/rad}$$ ✅
+   $$v_\text{max} = C_v\frac{h}{\beta} = \frac{2 \times 25 \text{ mm}}{1.5708 \text{ rad}} = 31.8 \text{ mm/rad}$$ ✅
 
-4. **Peak acceleration per unit cam angle**, at the quarter points:
+4. **Peak acceleration for each radian squared**, at the quarter points of the rise:
 
-   $$a_\text{max} = C_a\frac{h}{\beta^2} = \frac{6.283(25)}{(1.5708)^2} = 63.7 \text{ mm/rad}^2$$ ✅
+   $$a_\text{max} = C_a\frac{h}{\beta^2} = \frac{6.283 \times 25 \text{ mm}}{(1.5708 \text{ rad})^2} = 63.7 \text{ mm/rad}^2$$ ✅
 
-5. **Convert to real units at the cam speed** $\omega = 30$ rad/s. The per-radian figures are geometry alone; the speed enters only here:
+5. **Convert to real units at the cam speed** $\omega = 30$ rad/s. The values above depend on the geometry alone. The speed enters only here:
 
    $$v_\text{max} = 31.8 \times 30 = 955 \text{ mm/s} = 0.955 \text{ m/s}$$
 
    $$a_\text{max} = 63.7 \times 30^2 = 57{,}300 \text{ mm/s}^2 = 57.3 \text{ m/s}^2$$ ✅
 
-6. **Sanity-check the size of the answer.** $57.3$ m/s² is about $5.8g$. A follower of mass $0.2$ kg therefore needs roughly $11.5$ N just to be accelerated, before any spring or load force. Doubling the cam speed would quadruple it, which is exactly why acceleration, not velocity, sets the limit on how fast a cam can run. ✅
+6. **Check the size of the answer.** $57.3 \text{ m/s}^2$ is about $5.8$ times the acceleration of gravity. A follower of mass $0.2$ kg needs $0.2 \times 57.3 \approx 11.5$ N for this acceleration alone, before any spring or load force. At twice the cam speed it needs four times as much, so acceleration, and not velocity, limits the speed of a cam. ✅
 
-7. **Compare with simple harmonic motion.** SHM over the same rise peaks at $a_\text{max} = \pi^2 h/(2\beta^2) = 50.0$ mm/rad², lower than cycloidal. Yet SHM acceleration is a cosine at full value at the start of the rise: where it meets the preceding dwell it jumps from 0 to 50, an infinite jerk. The cycloidal law trades a slightly higher peak acceleration for zero jumps, which is the right trade for a high-speed cam. ✅
+7. **Compare with simple harmonic motion.** SHM over the same rise has a peak of $a_\text{max} = \pi^2 h/(2\beta^2) = 50.0 \text{ mm/rad}^2$, lower than cycloidal. But the SHM acceleration is a cosine, at full value at the start of the rise. Where the dwell ends it steps from $0$ to $50 \text{ mm/rad}^2$ in an instant: the hammer blow. The cycloidal law accepts a higher peak to have no step, which is the right choice for a high-speed cam. ✅
 
 </Steps>
 
 </details>
 
-### Step 3: Verify in the Simulator
+### Step 3: Verify in the simulator
 
 <details>
 <summary>**Click to reveal the simulator check**</summary>
 
 <Steps>
 
-1. **Set it up, and set a speed.** Open the simulator ([siwit.co/CFM](https://siwit.co/CFM)), choose a cycloidal rise of $h = 25$ mm over $\beta = 90\degree$ with a knife-edge follower, and set the cam speed to **290 rpm**, the nearest step to the $\omega = 30$ rad/s used above. That gives $\omega = 30.4$ rad/s. ✅
+1. **Set it up, and set a speed.** Open the simulator ([siwit.co/CFM](https://siwit.co/CFM)). Choose a cycloidal rise of $h = 25$ mm over $\beta = 90\degree$ with a knife-edge follower, and set the cam speed to **290 rpm**, the nearest step to $\omega = 30$ rad/s. That gives $\omega = 30.4$ rad/s. ✅
 
-2. **Expect real units, not per-radian ones.** The readout is **Peak velocity (at speed)**, in mm/s, and **Peak acceleration** in mm/s². The per-radian figures of Step 2 are pure geometry and never appear on screen; multiply them by $\omega$ and $\omega^2$ first: ✅
+2. **Expect real units.** The readouts are **Peak velocity (at speed)** in mm/s and **Peak acceleration** in $\text{mm/s}^2$. The values of Step 2 for each radian do not appear on the screen. Multiply them by $\omega$ and $\omega^2$ first: ✅
 
    | Quantity | Geometry only | Panel reads at 290 rpm |
    |---|---|---|
    | Peak velocity | $31.8$ mm/rad | $967$ mm/s |
-   | Peak acceleration | $63.7$ mm/rad² | $58{,}700$ mm/s² |
+   | Peak acceleration | $63.7 \text{ mm/rad}^2$ | $58{,}700 \text{ mm/s}^2$ |
 
-   Change the speed slider and the panel numbers move while the per-radian ones do not. That is the whole reason the working is done per radian. ✅
+   Move the speed slider. The panel numbers change, and the values for each radian do not. ✅
 
-3. **Find where each peak sits.** Go back to the normalised diagram of Step 1 and read the cam-angle axis: velocity peaks at mid-rise ($\theta/\beta = 0.5$) and acceleration at the quarter points ($0.25$ and $0.75$). Acceleration passes through zero at both ends of the rise, which is why the panel reports **Fundamental law** as obeyed. ✅
+3. **Find the place of each peak.** On the diagram of Step 1, the velocity peaks at mid-rise ($\theta/\beta = 0.5$) and the acceleration at the quarter points ($0.25$ and $0.75$). The acceleration is zero at both ends of the rise, so the panel reports **Fundamental law** as obeyed. ✅
 
-4. **Break the law deliberately.** Switch the rise to simple harmonic. Peak acceleration falls to about $50$ mm/rad², *lower* than cycloidal, yet the acceleration now steps at the dwell boundary and the panel flags the violation. Lower peak, worse cam: it is the discontinuity, not the magnitude, that breaks a high-speed follower. ✅
+4. **Break the law on purpose.** Change the rise to simple harmonic. The peak acceleration falls to about $50 \text{ mm/rad}^2$, *lower* than cycloidal. But the acceleration now steps where the rise meets the dwell, and the panel reports the violation. The peak is lower and the cam is worse: the step harms a high-speed follower, not the size of the peak. ✅
 
 </Steps>
 
 </details>
 
 :::note[Engineering Insight]
-The motion law is chosen before any cam shape is drawn, because the law sets the dynamics. Cycloidal motion is the workhorse for high-speed cams precisely because its acceleration vanishes at the ends, so the jerk stays finite. The scotch-yoke linked above is the mechanism that produces pure SHM, useful to feel the difference: smooth in the middle, but with that acceleration step at the extremes.
+Choose the motion law before you draw any cam shape, because the law decides the forces. The Scotch-yoke linked above produces pure SHM, and it shows the difference: smooth in the middle, with a step of acceleration at each end if a dwell follows.
 :::
 
-## Application 2: Lay Out the Cam Profile
+## Application 2: Lay out the cam profile
 
 <InArticleAd />
 
 
-With the motion programmed, the cam profile is laid out graphically by **inversion**: imagine the cam fixed and the follower walking around it. At each cam angle the follower sits a distance $s(\theta)$ beyond the base circle, and the locus of those points is the cam profile.
+With the motion programmed, you draw the cam profile by **inversion**: imagine that the cam stands still and the follower walks round it. At each cam angle the follower is at the distance $s(\theta)$ outside the base circle, and the line through all those points is the cam profile.
 
 <Card title="Build it and explore" icon="rocket">
-The [Cam and Follower Simulator](/product-development/cam-follower-mechanism-simulator/) draws this pitch curve and cam profile live as you set the program, so you can check your hand layout against it. Then reproduce the profile in CAD with the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) lesson, which generates the same profile from the same motion program.
+The [Cam and Follower Simulator](/product-development/cam-follower-mechanism-simulator/) draws this pitch curve and cam profile as you set the program, so you can check your hand drawing against it. Then make the profile in CAD with the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) lesson, which builds it from the same motion program.
 </Card>
 
 :::note[System Problem Statement]
-- **Configuration:** Radial translating follower, the rise-dwell-fall-dwell program from Application 1
-- **Task:** Lay out the cam pitch profile by inversion
+- **Configuration:** Radial translating follower, the rise-dwell-fall-dwell program of Application 1
+- **Task:** Draw the pitch curve of the cam by inversion
 - **Geometry:** base circle $R_b = 45$ mm, rise $h = 25$ mm
 :::
 
-### Step 1: Lay Out the Pitch Curve by Inversion
+### Step 1: Lay out the pitch curve by inversion
 
 <details>
 <summary>**Click to reveal the inversion construction**</summary>
 
 <Steps>
 
-1. **Draw the base circle** of radius $R_b = 45$ mm and mark the cam centre. Choose a length scale and mark it (for example 1 cm = 20 mm). ✅
+1. **Draw the base circle** of radius $R_b = 45$ mm and mark the cam centre. Choose a length scale and mark it (for example $1 \text{ cm} = 20 \text{ mm}$). ✅
 
-2. **Divide the cam angle** into convenient steps (every $30\degree$, say), measured **opposite** to the cam's rotation, because by inversion the follower travels backward around a fixed cam. ✅
+2. **Divide the cam angle** into steps (every $30\degree$, say), measured **against** the rotation of the cam. In the inversion the follower travels backward round a cam that stands still. ✅
 
-3. **Step off the displacement.** At each angle, read $s(\theta)$ from the displacement diagram of Application 1 and mark a point that distance radially beyond the base circle. During the rise the radius grows from $R_b$ to $R_b + h$; during the dwell it holds; during the fall it returns. ✅
+3. **Mark the displacement.** At each angle, read $s(\theta)$ from the displacement diagram of Application 1 and mark a point at that distance outside the base circle, on the line from the centre. During the rise the radius grows from $R_b$ to $R_b + h$. During the dwell it stays. During the fall it returns. ✅
 
-4. **Join the points** with a smooth curve. This is the **pitch curve**, the path of the follower centre. For a roller follower, the actual cam surface is offset inward from the pitch curve by the roller radius. ✅
+4. **Join the points** with a smooth curve. This is the **pitch curve**, the path of the follower centre. For a roller follower, the real cam surface lies inside the pitch curve by the roller radius. ✅
 
 </Steps>
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Cam pitch profile from a cycloidal rise-dwell-fall-dwell program: base circle dashed, with the profile swelling through the rise and dwell and returning on the fall](./images/l5-cam-profile.svg)
+	![Pitch curve of the cam round its dashed base circle: on the base circle at 0 degrees, out to the full lift at 90 degrees, out to 180 degrees, and back on the base circle at 270 degrees.](./images/l5-cam-profile.svg)
   </TailwindWrapper>
 </div>
 
+The note printed inside this picture writes the base-circle radius as $R_s$. It is the $R_b$ of this lesson, $45$ mm.
+
 </details>
 
-### Step 2: Read the Profile
+### Step 2: Read the profile
 
 <details>
 <summary>**Click to reveal what the profile shows**</summary>
 
 <Steps>
 
-1. **Pitch radius.** The profile radius at any angle is $R = R_b + s(\theta)$, so it is $R_b = 45$ mm through the low dwell and $R_b + h = 70$ mm through the high dwell. ✅
+1. **Pitch radius.** The radius of the curve at any angle is $R = R_b + s(\theta)$. It is $R_b = 45$ mm through the low dwell and $R_b + h = 45 + 25 = 70$ mm through the high dwell. ✅
 
-2. **The dwells are circular arcs.** Where the follower holds still, the profile is a constant-radius arc (concentric with the base circle). The rise and fall are the shaped transitions between them. ✅
+2. **The dwells are circular arcs.** Where the follower stays still, the curve is an arc of constant radius about the cam centre. The rise and the fall are the shaped parts between the two arcs. ✅
 
-3. **Roller offset.** Drawing the pitch curve first and offsetting by the roller radius is the standard route, and it is exactly what the CAD model does when you sweep the roller around the program. ✅
+3. **Roller offset.** The standard method is to draw the pitch curve first and then move inward by the roller radius. The CAD model does the same when it sweeps the roller round the program. ✅
 
-4. **The offset is not always possible.** Offsetting inward only works while the roller is smaller than the profile's tightest curve. Where the pitch curve is convex with radius of curvature $\rho$, a roller of radius $r_r$ cuts into the flanks either side once $r_r$ approaches $\rho$, and the cam can no longer deliver the motion you programmed. This is **undercutting**, and the usual working rule is $\rho_{min} > 1.5\,r_r$ or so. It is checked in Step 3, not assumed. ✅
+4. **The offset is not always possible.** $\rho$ is the radius of curvature, the radius of the circle that fits the curve at one point. Where the pitch curve bulges outward and the roller radius $r_r$ comes near $\rho$, the roller cuts into the surface on both sides, and the cam no longer gives the programmed motion. This is **undercutting**. The usual rule is $\rho_{min} > 1.5\,r_r$. Step 3 checks it. ✅
 
 </Steps>
 
 </details>
 
-### Step 3: Verify in the Simulator
+### Step 3: Verify in the simulator
 
 <details>
 <summary>**Click to reveal the profile and undercutting check**</summary>
 
 <Steps>
 
-1. **Rebuild the same cam.** Open the simulator ([siwit.co/CFM](https://siwit.co/CFM)), choose **cycloidal** for both rise and fall, and set the program of Application 1: lift $25$ mm, rise $90\degree$, dwell $90\degree$, fall $90\degree$, dwell $90\degree$, base radius $45$ mm. Tick **Show pitch curve**. ✅
+1. **Build the same cam.** Open the simulator ([siwit.co/CFM](https://siwit.co/CFM)), choose **cycloidal** for the rise and the fall, and set the program of Application 1: lift $25$ mm, rise $90\degree$, dwell $90\degree$, fall $90\degree$, dwell $90\degree$, base radius $45$ mm. Tick **Show pitch curve**. ✅
 
-2. **Check the two radii you drew.** The pitch curve should sit at a constant $45$ mm through the low dwell and a constant $70$ mm through the high dwell, with the rise and fall as the shaped transitions between the two arcs. Those are the same numbers as Step 2, read off a different construction. ✅
+2. **Check the two radii you drew.** The pitch curve is at a constant $45$ mm through the low dwell and a constant $70$ mm through the high dwell, the numbers of Step 2. ✅
 
-3. **Watch the roller offset appear.** Set the follower type to **Roller** and increase the roller radius from $10$ mm. The cam surface pulls inward from the pitch curve by exactly the roller radius, which is the offset you were told to apply by hand. ✅
+3. **See the roller offset.** Set the follower type to **Roller** and increase the roller radius from $10$ mm. The cam surface moves inward from the pitch curve by the roller radius, the offset that you apply by hand. ✅
 
-4. **Push it until it fails.** Read **Min radius of curvature**: for this program it is about $36$ mm. Keep raising the roller radius and watch the ratio to $\rho_{min}$ close up, until the **Undercut** result reports the profile is no longer usable. A $10$ mm roller is comfortable here ($\rho_{min}/r_r \approx 3.6$), $20$ mm is still workable, and by $30$ mm you are into trouble. ✅
+4. **Increase it until it fails.** Read **Min radius of curvature**: for this program it is about $36$ mm. Raise the roller radius and compare it with $\rho_{min}$, until the **Undercut** result reports that the profile cannot be used. A $10$ mm roller is safe here ($\rho_{min}/r_r \approx 3.6$), $20$ mm still works, and $30$ mm does not. ✅
 
-   This is worth doing once deliberately, because undercutting is invisible on the pitch curve you drew. The hand layout will happily give you a profile that no roller of the chosen size can actually trace. ✅
+   Do this once on purpose, because the pitch curve that you drew does not show undercutting. A hand drawing can give a profile that no roller of the chosen size can follow. ✅
 
 </Steps>
 
 </details>
 
 :::note[Engineering Insight]
-The cam profile is just the displacement diagram wrapped around a circle. Every feature of the motion (the smooth rise, the flat dwell, the return) appears directly as a feature of the shape, which is why laying it out by hand builds the intuition that makes the CAD model meaningful rather than magic.
+The cam profile is the displacement diagram wrapped round a circle.
 :::
 
-## Application 3: Size the Base Circle from the Pressure Angle
+## Application 3: Size the base circle from the pressure angle
 
 <InArticleAd />
 
 
-The base circle is not free: too small and the pressure angle grows until the follower jams. This is where the cam's size is actually decided.
+With a base circle that is too small, the pressure angle grows until the follower jams. This check decides the size of the cam.
 
 :::note[System Problem Statement]
 - **Configuration:** Radial translating follower, cycloidal rise $h = 25$ mm over $\beta = 90\degree$
 - **Task:** Check the pressure angle and choose a base circle that keeps it within the guide
 :::
 
-### Step 1: Plot the Pressure Angle and Iterate
+### Step 1: Plot the pressure angle and iterate
 
 <details>
 <summary>**Click to reveal the pressure-angle check**</summary>
 
 <Steps>
 
-1. **Check the first guess by hand.** Use the mid-rise form $\tan\phi_\text{max} \approx (2h/\beta)/(R_b + h/2)$, with $2h/\beta = 31.8$ mm/rad from Application 1. At $R_b = 30$ mm:
+1. **Check the first guess by hand.** Use the mid-rise form $\tan\phi_\text{max} \approx (2h/\beta)/(R_b + h/2)$, with $2h/\beta = 31.8$ mm/rad from Application 1 and $h/2 = 12.5$ mm. At $R_b = 30$ mm:
 
    $$\tan\phi_\text{max} \approx \frac{31.8}{30 + 12.5} = 0.749 \;\Rightarrow\; \phi_\text{max} \approx 36.8\degree$$
 
-   A full numerical sweep of the rise gives $37.8\degree$, so the hand estimate sits about a degree low, as expected. Either way it is well above the $30\degree$ guide and the follower would jam. ✅
+   A calculation at every point of the rise gives $37.8\degree$, so the hand estimate is about a degree low, as expected. Both are well above the $30\degree$ guide, and the follower would jam. ✅
 
-2. **Size the base circle directly** rather than guessing again. Rearranging for $\phi_\text{allow} = 30\degree$:
+2. **Size the base circle directly.** Solve the same form for $\phi_\text{allow} = 30\degree$:
 
    $$R_b \ge \frac{31.8}{\tan 30\degree} - 12.5 = 55.1 - 12.5 = 42.6 \text{ mm}$$
 
-   Because the hand form under-estimates by about a degree, round up rather than taking $42.6$ mm as final. ✅
+   The hand form is about a degree low, so round up from $42.6$ mm. ✅
 
-3. **Confirm the chosen size.** At $R_b = 45$ mm the hand form gives $\phi_\text{max} \approx 29.0\degree$ and the full sweep gives $29.4\degree$, just inside the guide with a little margin. This is why Application 2 used $R_b = 45$ mm. ✅
+3. **Confirm the chosen size.** At $R_b = 45$ mm the hand form gives $\phi_\text{max} \approx 29.0\degree$ and the calculation at every point gives $29.4\degree$, just inside the guide. This is why Application 2 used $R_b = 45$ mm. ✅
 
-4. **Read the trade-off** from the plot below: the larger base circle lowers the whole pressure-angle curve under the $30\degree$ line, at the cost of a physically larger cam. Note the direction of the lever, the base circle buys pressure angle back cheaply at small $R_b$ and expensively at large $R_b$, so there is little point oversizing far beyond the guide. ✅
+4. **Read the cost** from the plot below. The larger base circle brings the whole pressure-angle curve under the $30\degree$ line, and the cam is larger. Each added millimetre lowers the angle less than the one before, so a much larger base circle gains little. ✅
 
 </Steps>
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Pressure angle against cam angle for base circles of 30 and 45 mm; the 30 mm curve exceeds the 30 degree guide while the 45 mm curve stays below it](./images/l5-pressure-angle.svg)
+	![Pressure angle through the rise for two base circles: the 30 mm curve peaks near 38 degrees, above the 30 degree guide, and the 45 mm curve peaks just under it.](./images/l5-pressure-angle.svg)
   </TailwindWrapper>
 </div>
 
 </details>
 
-### Step 2: Verify in the Simulator
+### Step 2: Verify in the simulator
 
 <details>
 <summary>**Click to reveal the pressure-angle check**</summary>
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/CFM](https://siwit.co/CFM)) with the cycloidal rise and a knife-edge follower, set the base radius to $30$ mm, and read the pressure-angle chart: the peak is about $37.8\degree$, above the $30\degree$ guide line. ✅
+1. **Open the simulator** ([siwit.co/CFM](https://siwit.co/CFM)) with the cycloidal rise and a knife-edge follower. Set the base radius to $30$ mm and read the pressure-angle chart: the peak is about $37.8\degree$, above the $30\degree$ guide line. ✅
 
-2. **Enlarge the base circle.** Raise the base radius to $45$ mm and the peak pressure angle falls to about $29.4\degree$, just under the guide, matching the hand iteration. ✅
+2. **Enlarge the base circle.** Raise the base radius to $45$ mm. The peak pressure angle falls to about $29.4\degree$, just under the guide, as the hand calculation found. ✅
 
 </Steps>
 
 </details>
 
 :::note[Engineering Insight]
-The pressure angle ties the motion program to the cam's physical size. A faster rise (smaller $\beta$) or a taller lift (larger $h$) steepens the profile and raises the pressure angle, forcing a larger base circle. Cam design is the balance between a compact cam and a transmissible pressure angle, settled on exactly the kind of plot above.
+A faster rise (smaller $\beta$) or a higher lift (larger $h$) makes the profile steeper and raises the pressure angle, so the base circle must grow.
 :::
-
-## Design Guidelines for Cam Design
-
-<InArticleAd />
-
-
-<CardGrid>
-  <Card title="Program first, shape second" icon="rocket">
-  Choose the motion law and draw the SVAJ diagrams before laying out any profile. The law sets the dynamics.
-  </Card>
-  <Card title="No acceleration jumps" icon="warning">
-  Keep displacement, velocity, and acceleration continuous across the dwells. Cycloidal motion does this; uniform and plain parabolic do not.
-  </Card>
-  <Card title="Size from the pressure angle" icon="setting">
-  Pick the base circle so the peak pressure angle stays within the guide (about $30\degree$ for a translating follower).
-  </Card>
-  <Card title="Pitch curve then roller offset" icon="puzzle">
-  Lay out the pitch curve from the program, then offset by the roller radius for the cutting profile.
-  </Card>
-</CardGrid>
 
 ## Summary and Next Steps
 
 <InArticleAd />
 
 
-### Key Concepts Mastered
-
-1. **SVAJ diagrams:** a cam motion is its displacement and the first three derivatives; for high speed, $s$, $v$, and $a$ must be continuous.
-2. **Motion laws:** cycloidal motion is smoothest because its acceleration starts and ends at zero, unlike simple harmonic motion which steps at the dwells.
-3. **Cam profile by inversion:** the profile radius is $R_b + s(\theta)$, the displacement diagram wrapped around the base circle.
-4. **Pressure angle:** $\tan\phi = (ds/d\theta)/(R_b + s)$ sizes the base circle; a larger base circle lowers the pressure angle.
-
-### Cam Design at a Glance
+### Cam design at a glance
 
 | Quantity | Relation |
 |----------|----------|
 | Cycloidal displacement | $s = h[\theta/\beta - \tfrac{1}{2\pi}\sin(2\pi\theta/\beta)]$ |
 | Motion-law factors | $v_\text{max} = C_v h/\beta$, &nbsp; $a_\text{max} = C_a h/\beta^2$ &nbsp; ($\beta$ in radians) |
 | Factors: cycloidal / SHM / parabolic | $C_v = 2.000$ / $1.571$ / $2.000$; &nbsp; $C_a = 6.283$ / $4.935$ / $4.000$ |
-| Peaks at cam speed $\omega$ | $v_\text{max}\times\omega$ (mm/s), &nbsp; $a_\text{max}\times\omega^2$ (mm/s²) |
+| Peaks at cam speed $\omega$ | $v_\text{max}\times\omega$ ($\text{mm/s}$), &nbsp; $a_\text{max}\times\omega^2$ ($\text{mm/s}^2$) |
 | Pressure angle | $\tan\phi = (ds/d\theta)/(R_b + s)$; roller: use $R_p = R_b + R_r$ |
 | Max pressure angle (cycloidal) | $\tan\phi_\text{max} \approx (2h/\beta)/(R_b + h/2)$, slightly low |
 | Base circle for a given $\phi_\text{allow}$ | $R_b \ge (2h/\beta)/\tan\phi_\text{allow} - h/2$ |
 | Pitch-curve radius | $R = R_b + s(\theta)$ |
 
-### A Note on Tools
+### Where to go from here
 
-The SVAJ diagrams, cam profile, and pressure-angle curves here were drawn from the motion equations and reproduced with a few lines of Python (NumPy). To do all of it interactively, the **[Cam and Follower Mechanism Simulator](/product-development/cam-follower-mechanism-simulator/)** plots the live SVAJ chain, flags any motion law that violates the fundamental law, sizes the base circle against the pressure angle, and checks the radius of curvature for undercutting, the same analysis this lesson does by hand. The [Cam and Follower Experiments](/education/mechanism-design-simulation/cam-follower-experiments) turn it into structured, Python-verified exercises. To turn the profile into a part, build it in the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) CAD lesson, which sweeps the same program into a solid cam.
+The **[Cam and Follower Mechanism Simulator](/product-development/cam-follower-mechanism-simulator/)** does the analysis of this lesson as you change the program. The [Cam and Follower Experiments](/education/mechanism-design-simulation/cam-follower-experiments/) give exercises for it, and the [Cam and Follower Mechanism](/education/parametric-mechanical-cad-freecad/cam-and-follower-mechanism/) CAD lesson turns the profile into a solid part.
 
-Next, [Force Analysis and Mechanism Synthesis](/education/planar-mechanics/force-analysis-mechanism-synthesis) returns to the linkages and closes the course: free-body diagrams and force polygons give the joint reactions, the transmission angle measures force quality, and synthesis runs the whole process backward to design a mechanism that meets a force and motion specification.
+Next, [Force Analysis and Mechanism Synthesis](/education/planar-mechanics/force-analysis-mechanism-synthesis/) returns to the linkages: you find the forces at the joints, and then you design a mechanism to meet a target.
 
 
 

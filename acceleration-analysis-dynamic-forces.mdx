@@ -24,75 +24,61 @@ import { Card, CardGrid, Badge, Steps, LinkButton, FileTree } from '@astrojs/sta
 
 
 
-Velocity tells you how fast a part moves; acceleration tells you how hard its motion is changing, and that is what creates force. A piston at 6000 rpm reverses direction a hundred times a second, and the force to turn its motion around comes straight from the engine structure, which is why a poorly balanced engine shakes itself apart. Acceleration analysis is one more differentiation of the loop you already have, and then Newton's second law turns those accelerations into the inertia forces that size bearings and the shaking forces that engineers spend so much effort balancing. In this lesson you build acceleration polygons and convert them into dynamic forces. #AccelerationAnalysis #InertiaForces #EngineBalancing
+A machine that runs quietly at low speed can shake its mounts loose at high speed, and a velocity analysis gives no warning. The cause is acceleration. Velocity says how fast a part moves. Acceleration says how quickly that velocity changes, and every change needs a force. A piston at 6000 rpm goes up and down 100 times a second, and the force that stops it and sends it back passes through the engine structure. In this lesson you find the acceleration of every part of a mechanism with an acceleration polygon. Then you turn those accelerations into the inertia forces that load the bearings and the shaking forces that reach the mounts. #AccelerationAnalysis #InertiaForces #EngineBalancing
 
 ## Learning Objectives
 
 By the end of this lesson, you will be able to:
 
-1. **Differentiate** the velocity loop to find accelerations, splitting each into normal and tangential parts
+1. **Differentiate** the velocity loop to find accelerations, and split each into a part towards the centre (normal) and a part along the path (tangential)
 2. **Construct** acceleration polygons for the slider-crank and four-bar
-3. **Convert** accelerations into inertia and shaking forces with d'Alembert's principle
-4. **Predict** the primary and secondary shaking forces that drive engine balancing, and verify each result in a simulator
+3. **Convert** accelerations into inertia forces and shaking forces with d'Alembert's principle
+4. **Predict** the primary and secondary shaking forces that engine balancing must cancel, and verify each result in a simulator
 
-## Real-World System Problem: The Forces That Shake an Engine
+## Real-World System Problem: the forces that shake an engine
 
 <InArticleAd />
 
 
-An engine, compressor, or pump runs steadily, yet its piston never moves at a steady speed. It accelerates hardest at the top of the stroke, where it reverses, and the force to reverse it is large: at high speed the inertia force on a piston can exceed the gas pressure force. That force is reacted through the connecting rod, the crank, the bearings, and finally the engine mounts, where it appears as vibration. Designers must predict these accelerations to size the bearings, choose the connecting-rod ratio, and add the counterweights and balance shafts that keep the machine smooth.
+An engine, compressor or pump runs at a steady speed, but its piston does not. The piston stops and reverses at each end of its stroke. The force needed to reverse it is large: at high speed it can be greater than the force of the gas pressure.
 
-### The Acceleration Problem
+That force passes through the connecting rod, the crank and the bearings to the engine mounts, where it is felt as vibration. A designer needs these accelerations to size the bearings and to balance the machine.
+
+### The acceleration problem
 
 > **Engineering Question:** Given the input speed, what is the acceleration of every part, and what inertia forces do those accelerations create?
 
-For the slider-crank the headline result is the piston acceleration and the shaking force it produces. For the four-bar it is the angular accelerations of the coupler and follower, which set the inertia torques. For the scissor lift it is the platform acceleration that the actuator must overcome.
-
-### Why Acceleration Analysis Matters
-
-<CardGrid>
-  <Card title="Inertia forces" icon="warning">
-  Every acceleration demands a force, $F = ma$. At speed these inertia forces dominate the loads on pins and bearings.
-  </Card>
-  <Card title="Vibration and balancing" icon="setting">
-  Unbalanced inertia forces shake the machine. Predicting them is the first step to counterweights and balance shafts.
-  </Card>
-  <Card title="Smoothness and jerk" icon="puzzle">
-  The rate of change of acceleration (jerk) governs how harsh a motion feels and how much a structure rings.
-  </Card>
-  <Card title="Actuator sizing" icon="rocket">
-  An actuator must supply both the static load and the inertia load. The acceleration sets the dynamic part.
-  </Card>
-</CardGrid>
-
-## Fundamental Theory: Acceleration by Differentiating the Loop
+## Fundamental Theory: acceleration by differentiating the loop
 
 <InArticleAd />
 
 
-### One More Derivative
+### One more derivative
 
-Acceleration analysis differentiates the velocity loop exactly as velocity analysis differentiated the position loop. Each link's acceleration splits into two parts:
+Start with a stone on a string. Swing it in a circle at a steady speed. The string stays tight: it pulls the stone towards your hand the whole time. Release the string and the stone leaves in a straight line. So the stone accelerates even at a steady speed, because its direction changes at every instant, and that acceleration points towards the centre.
 
-<Card title="Normal and Tangential Components" icon="document">
-A point on a link rotating at angular velocity $\omega$ and angular acceleration $\alpha$, a distance $r$ from the pivot, has acceleration with two parts:
+Now swing the stone faster and faster. While its speed rises, something must also push it forward along its circle. That is a second acceleration, along the path, and it exists only while the speed changes.
 
-$$a^n = \omega^2 r \quad (\text{normal, toward the pivot}), \qquad a^t = \alpha r \quad (\text{tangential, perpendicular to the link})$$
+Every point on a turning link behaves like that stone. The link is the string.
 
-The **normal** (centripetal) part exists whenever the link rotates, even at constant speed. The **tangential** part exists only when the link speeds up or slows down. Their vector sum is the link's acceleration.
+<Card title="Normal and tangential components" icon="document">
+Take a point at a distance $r$ (mm) from the pivot of a link. The link turns with angular velocity $\omega$ (rad/s), which is how fast it turns. Its angular acceleration is $\alpha$ (rad/s²), which is how quickly that turning speeds up or slows down.
+
+- The **normal** (centripetal) part points along the link towards the pivot. Its size is the angular velocity squared, times the distance. It exists whenever the link turns, even at constant speed: the pull of the string.
+- The **tangential** part lies across the link, along the path of the point. Its size is the angular acceleration times the distance. It exists only while the link speeds up or slows down.
+
+$$a^n = \omega^2 r, \qquad a^t = \alpha r$$
+
+With $r$ in mm, both are in mm/s². The two parts are at right angles, so the total is the diagonal of their rectangle: $a = \sqrt{(a^n)^2 + (a^t)^2}$.
 </Card>
-
-The two parts are easiest to keep straight by where they point rather than by their formulas. The normal part always aims back down the link at the pivot; the tangential part always lies across it. Whatever the mechanism, those two directions are at right angles, so the resultant is the diagonal of a rectangle:
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![A link turning about a fixed pivot O with a point P at its end: the normal component of P's acceleration points back along the link toward O with magnitude omega squared times r, the tangential component is perpendicular to the link with magnitude alpha times r, and their resultant is the diagonal](./images/l4-normal-tangential-components.svg)
+	![A link of length r turns about the pivot O. At its end P the normal arrow points along the link towards O, the tangential arrow is at right angles to it, and the total is their diagonal.](./images/l4-normal-tangential-components.svg)
   </TailwindWrapper>
 </div>
 
-The figure shows both parts because the link drawn is both turning and speeding up. That is the general case, not a rule: the two conditions are independent, so a part of a mechanism may carry both, one, or neither.
-
-One misreading is worth heading off before the applications. When a problem says **constant crank speed**, that sets $\alpha_2 = 0$ for the crank **and for nothing else**. The coupler and follower are dragged through a changing geometry, so their own angular speeds rise and fall through the cycle and their tangential parts are very much alive. In the slider-crank at $\theta = 60\degree$, with the crank held at a rigidly constant speed, the rod's tangential part is nearly **ten times** its normal part.
+When a problem says **constant crank speed**, the angular acceleration is zero for the crank and for no other link. The crank pulls the other links through a geometry that changes, so their angular speeds rise and fall. In the slider-crank at $\theta = 60\degree$ the tangential part of the rod is nearly **ten times** its normal part.
 
 | Part of the mechanism | Turning? | Its own $\omega$ constant? | $a^n = \omega^2 r$ | $a^t = \alpha r$ |
 |---|:---:|:---:|:---:|:---:|
@@ -100,99 +86,90 @@ One misreading is worth heading off before the applications. When a problem says
 | Coupler, rod or follower | yes | no, it is dragged | yes | yes |
 | Piston or slider | no, it translates | not applicable | no | no |
 
-The piston row is the one people forget: a part that only slides has no $\omega$ and no $\alpha$, so it has neither component. Its acceleration is a single vector along the slide, which is why the polygon closes on a plain horizontal line.
+People forget the piston row. A part that only slides has neither part: its acceleration is one vector along the slide.
 
-Nor is either part permanent for a link that does turn. The rod's **normal** part vanishes at $\theta = 90\degree$ and $270\degree$, where $\omega_3$ passes through zero and the rod is momentarily translating rather than turning; its **tangential** part vanishes at top and bottom dead centre, where $\omega_3$ is at a maximum and so is instantaneously not changing. The two never vanish at the same instant, which is why the polygon never collapses.
+### Two points on one link
 
-<Card title="The Relative-Acceleration Equation" icon="document">
-For two points on the same rigid link,
+A connecting rod has no fixed pivot: it moves as a whole and also turns. Take one end $A$, whose acceleration you know, and add the acceleration of the other end $B$ as seen from $A$. Seen from $A$, point $B$ only goes round $A$ in a circle, so that added acceleration has the same two parts as the stone.
+
+<Card title="The relative-acceleration equation" icon="document">
+For two points $A$ and $B$ on the same rigid link of length $L_{AB}$ (mm):
 
 $$\vec a_B = \vec a_A + \vec a_{B/A}^{\,n} + \vec a_{B/A}^{\,t}$$
 
-where $a_{B/A}^{n} = \omega^2 L_{AB}$ points from $B$ to $A$, and $a_{B/A}^{t} = \alpha L_{AB}$ is perpendicular to $AB$. This is the equation the acceleration polygon draws.
+- $\vec a_{B/A}^{\,n}$ has the size $\omega^2 L_{AB}$ and points from $B$ to $A$.
+- $\vec a_{B/A}^{\,t}$ has the size $\alpha L_{AB}$ and is at right angles to $AB$.
+
+Here $\omega$ and $\alpha$ are the angular velocity and angular acceleration of that link.
 </Card>
 
-That last sentence is the one worth dwelling on, because the equation and the drawing look like separate objects and are not. Each term on the right is one vector; laying those same vectors head to tail from a pole *is* the polygon, and the side that closes it back to the pole is $\vec a_B$. The figure below draws both from one set of numbers, so you can read across:
+The acceleration polygon is this equation drawn to scale. Each term on the right is one arrow. Draw the arrows one after another, each starting where the last one ended, from a starting point called the pole $o'$. The arrow from the pole to the last point is $\vec a_B$.
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Left: a rigid link AB with the acceleration of A drawn at A, and at B the normal part pointing from B toward A along the link and the tangential part perpendicular to the link. Right: the same vectors laid head to tail from a pole, acceleration of A then normal then tangential, closing on the acceleration of B](./images/l4-relative-acceleration-equation.svg)
+	![Left: a link AB with the acceleration of A drawn at A, and at B the normal part pointing towards A and the tangential part at right angles to the link. Right: the same arrows drawn one after another from the pole, ending at b prime.](./images/l4-relative-acceleration-equation.svg)
   </TailwindWrapper>
 </div>
 
-Read the right-hand panel term by term against the equation: $\vec a_A$ from the pole $o'$, then $\vec a_{B/A}^{\,n}$ head to tail from there, then $\vec a_{B/A}^{\,t}$, arriving at $b'$. The line $o'b'$ you have not drawn is $\vec a_B$, and it is the answer. Every acceleration polygon in this lesson is that same figure with one or two magnitudes unknown.
+### The acceleration polygon
 
-:::note[A note on Coriolis]
-When a block slides along a link that is itself rotating, a third term appears: the **Coriolis acceleration** $a^{c} = 2\,\omega v_{\text{slip}}$, perpendicular to the slip velocity. The **four canonical mechanisms of this course have no Coriolis term**: the slider-crank's piston slides on the fixed frame, and the four-bar, scissor lift and toggle clamp have no sliding-on-a-turning-link joint at all. The **quick-return shaper, introduced later as a fifth mechanism precisely for this purpose, does**. That is not a contradiction between the theory and Application 5; it is why the fifth mechanism is in the course.
-:::
+Acceleration uses the same [methods](/education/planar-mechanics/position-analysis-planar-linkages/#methods-of-kinematic-analysis) as position and velocity: draw, solve, simulate.
 
-### The Acceleration Polygon
+You build the polygon like the velocity polygon, to a chosen acceleration scale (for example $1 \text{ cm} = 10 \text{ mm/s}^2$). Each link now adds up to two arrows:
 
-Acceleration uses the same [methods](/education/planar-mechanics/position-analysis-planar-linkages#methods-of-kinematic-analysis) in the same **draw, solve, simulate** rhythm as position and velocity: the graphical acceleration polygon and the analytical acceleration loop are the two core routes, and the simulator confirms them. (There is no instantaneous-center shortcut for acceleration; that helper is velocity-only.)
+1. First the **normal** part. You know its size, $\omega^2 L$, from the velocity analysis, and its direction, along the link towards the centre it turns about.
+2. Then the **tangential** part. You know only its direction, at right angles to the link. Draw it as a long thin construction line.
 
-The **acceleration polygon** is built with the drawing set exactly like the velocity polygon, on the same page and to a chosen acceleration scale (e.g. 1 cm = 10 mm/s²), but each relative-acceleration vector now has up to *two* parts laid down in sequence: first the **normal** part (known from the velocity analysis, since $a^n = \omega^2 L$, directed along the link toward the centre it turns about), then the **tangential** part (unknown magnitude, but known direction, perpendicular to the link). Which of the two are present follows the table above, so a constant-speed crank contributes only a normal part while the links it drives contribute both. Where the tangential construction lines cross closes the polygon, and you **measure** the unknown tangential accelerations and the output acceleration off it.
+The polygon closes where the construction lines cross, and you **measure** the unknown tangential parts and the output acceleration from the drawing.
 
 :::note[The Coriolis component: when a part slides along a turning link]
-Normal and tangential parts describe a point fixed on a rigid link. When instead a point **slides along a link that is itself turning** (a block moving in a rotating slot, as in the quick-return shaper), its acceleration gains a **third** part, the **Coriolis** component:
+Walk from the centre of a turning roundabout to its edge. You walk straight at a steady pace, and still you feel a push to one side. A point that **slides along a link while the link turns** (a block in a turning slot) has that sideways acceleration. It is a **third** part, the **Coriolis** component: twice the angular velocity $\omega$ (rad/s) of the slotted link, times the sliding speed $v_\text{slip}$ (mm/s) along the slot.
 
 $$a^{c} = 2\,\omega\,v_\text{slip}$$
 
-where $\omega$ is the angular velocity of the slotted link and $v_\text{slip}$ the sliding speed along it. Its **direction** is the slip-velocity vector turned $90\degree$ in the sense of $\omega$ (that is, **perpendicular to the slot**). The Coriolis part appears only at a sliding-and-turning joint: the plain slider-crank, four-bar, scissor lift, and toggle clamp have none, which is why it first shows up in the quick-return application below.
+It is at right angles to the slot: the slip velocity turned $90\degree$ the way the link turns. In this lesson only the quick-return shaper of Application 5 has such a joint.
 :::
 
-#### Where the Factor of 2 Comes From
+#### Where the factor of 2 comes from
 
-Almost everyone memorises the $2$ and then cannot decide, in an unfamiliar mechanism, whether the term applies at all. It is worth six lines to see it appear, because once you have watched it arise you can always reconstruct it.
-
-Let a point sit at distance $s$ along a link that is turning at $\omega$. Put $\hat u$ along the link and $\hat n$ perpendicular to it. Because these directions rotate with the link:
+Let a point sit at distance $s$ along a link that turns at $\omega$. A dot over a symbol means its rate of change with time, so $\dot s$ is the sliding speed. Put the unit direction $\hat u$ along the link and $\hat n$ at right angles to it. Both turn with the link:
 
 $$\dot{\hat u} = \omega\,\hat n, \qquad \dot{\hat n} = -\omega\,\hat u$$
 
-The position is $\vec r = s\,\hat u$. Differentiate once, using the product rule:
+The position is $\vec r = s\,\hat u$. Differentiate once with the product rule:
 
 $$\vec v = \dot s\,\hat u + s\,\dot{\hat u} = \underbrace{\dot s\,\hat u}_{\text{slip}} + \underbrace{s\omega\,\hat n}_{\text{transport}}$$
 
-Differentiate again, applying the product rule to **both** of those terms:
+Differentiate again, with the product rule on **both** terms:
 
 $$\vec a = \ddot s\,\hat u + \dot s\,\dot{\hat u} + \dot s\omega\,\hat n + s\dot\omega\,\hat n + s\omega\,\dot{\hat n} = \ddot s\,\hat u + \dot s\omega\,\hat n + \dot s\omega\,\hat n + s\alpha\,\hat n - s\omega^2\,\hat u$$
 
-Collecting gives the four-term acceleration of a point that both slides and turns:
+Collect the terms:
 
 $$\vec a = \underbrace{-s\omega^2\,\hat u}_{\text{normal}} + \underbrace{s\alpha\,\hat n}_{\text{tangential}} + \underbrace{2\dot s\omega\,\hat n}_{\text{Coriolis}} + \underbrace{\ddot s\,\hat u}_{\text{slip}}$$
 
-:::tip[The answer to "why 2?"]
-The term $\dot s\omega\,\hat n$ appeared **twice**, from two different places in the product rule:
+The term $\dot s\omega\,\hat n$ appears **twice**: once from the slip term, because the direction $\hat u$ turns, and once from the transport term, because the distance $s$ changes. Their sum gives the $2$. This is also the test for any mechanism: the Coriolis part exists only when something slides ($\dot s \ne 0$) **and** the part it slides on turns ($\omega \ne 0$). A piston slides in a cylinder that does not turn, and at a pin joint nothing slides, so neither has it.
 
-- once from differentiating the **slip** term $\dot s\,\hat u$, because the direction $\hat u$ is itself turning;
-- once from differentiating the **transport** term $s\omega\,\hat n$, because the distance $s$ is itself changing.
+### From acceleration to force: d'Alembert
 
-Two independent physical effects, of equal size, pointing the same way. That, and nothing else, is where the $2$ comes from. It also tells you exactly when the term exists: you need $\dot s \ne 0$ (something is sliding) **and** $\omega \ne 0$ (the thing it slides on is turning). Kill either and the term vanishes, which is the test to apply to any unfamiliar mechanism.
-:::
+When a car accelerates, the seat pushes you forward, and you feel pressed back into it. That feeling is the idea of an inertia force.
 
-| Situation | Coriolis present? |
-|---|:---:|
-| Piston sliding on a fixed cylinder (slider-crank) | No: the frame does not rotate |
-| Pin joint between two rotating links (four-bar) | No: nothing slides |
-| Scissor lift, toggle clamp | No |
-| Block sliding in a rotating slot (quick-return shaper) | **Yes** |
-| Pin sliding in a moving slot (Geneva mechanism) | **Yes** |
+<Card title="Inertia force and d'Alembert's principle" icon="document">
+Newton's second law says that the sum of the forces on a part equals its mass $m$ (kg) times its acceleration $a$ (m/s²): $\sum \vec F = m\vec a$.
 
-### From Acceleration to Force: d'Alembert
-
-<Card title="Inertia Force and d'Alembert's Principle" icon="document">
-Newton's second law says $\sum \vec F = m\vec a$. d'Alembert rewrites this as a statics problem by adding an **inertia force** $-m\vec a$ (and an inertia torque $-I\alpha$) to each link, so that the link is treated as if in equilibrium:
+D'Alembert's principle writes the same law as a balance. Add one imaginary force to the part, the **inertia force**, equal to the mass times the acceleration and pointing against the acceleration. Then all the forces sum to zero, as if the part stood still:
 
 $$\sum \vec F + (-m\vec a) = 0$$
 
-The inertia force acts opposite to the acceleration, through the centre of mass. Once the accelerations are known, the dynamic bearing loads follow from a static force balance with these inertia forces included (the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis) carries this through to the joint reactions).
+The inertia force acts through the centre of mass. A link whose turning speed changes also gets an inertia torque $-I\alpha$, where $I$ (kg·m²) is its mass moment of inertia. The [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis/) lesson then finds the bearing loads with an ordinary force balance.
 </Card>
 
-## Application 1: Piston Acceleration of the Slider-Crank
+## Application 1: Piston acceleration of the slider-crank
 
 <InArticleAd />
 
 
-This is the central worked example. We build the acceleration polygon on top of the velocity polygon, then confirm with the closed-form acceleration and the simulator.
+Two names are used throughout: **top dead centre** (TDC) is the crank position where the piston is farthest from the crank centre, and **bottom dead centre** (BDC) is where it is nearest.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -206,186 +183,178 @@ This is the central worked example. We build the acceleration polygon on top of 
 - **Configuration:** In-line slider-crank, offset $e = 0$
 - **Task:** Find the piston acceleration over a full rotation and locate its peak
 - **Geometry:** crank $r = 50$ mm, connecting rod $l = 150$ mm ($l/r = 3$)
-- **Input:** constant crank speed $\omega$ (so the crank has no angular acceleration)
+- **Input:** constant crank speed $\omega$, so the crank has no angular acceleration. The drawings use $\omega = 1$ rad/s, and Step 4 converts to a real speed.
 
-**Key Question:** Where is the piston acceleration largest, and how does the connecting rod split it into two harmonics?
+**Key Question:** Where is the piston acceleration largest, and why is it larger at one end of the stroke than at the other?
 :::
 
-### Step 1: Redraw the Space Diagram and the Velocity Polygon
+### Step 1: Redraw the space diagram and the velocity polygon
 
-An acceleration polygon cannot be started from a blank page. Its normal components are $\omega^2 L$, so every one of them needs an angular velocity that only the velocity polygon can give, and the velocity polygon in turn needs the link directions that only the space diagram can give. The three drawings are one chain, and this is the instant where it pays to have all three side by side on the same sheet.
+The normal parts are $\omega^2 L$, so each needs an angular velocity from the velocity polygon. That polygon needs the directions of the links from the space diagram, the scale drawing of the mechanism. Keep the three drawings on one sheet.
 
 <details>
 <summary>**Click to reveal the two drawings the acceleration polygon is built on**</summary>
 
 <Steps>
 
-1. **Space diagram.** Choose and mark a length scale, say 1 cm = 20 mm. Draw the crank $OA = r = 50$ mm at $\theta = 60\degree$, then strike an arc of $l = 150$ mm from $A$ to cut the centre-line at the piston $B$. Measure the rod angle: $\phi = 16.8\degree$ below the centre-line. ✅
+1. **Space diagram.** Choose and mark a length scale, say $1 \text{ cm} = 20 \text{ mm}$. Draw the crank $OA = r = 50$ mm at $\theta = 60\degree$. With compasses set to $l = 150$ mm, draw an arc from $A$ that cuts the centre-line at the piston $B$. Measure the rod angle: $\phi = 16.8\degree$ below the centre-line. ✅
 
    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
      <TailwindWrapper>
-   	![Slider-crank space diagram: crank OA at 60 degrees, connecting rod AB to piston B on the centre-line](./images/l3-slider-crank-1-space-diagram.svg)
+   	![Space diagram of the slider-crank: crank OA at 60 degrees, connecting rod AB, and the piston B on the centre-line through O.](./images/l3-slider-crank-1-space-diagram.svg)
      </TailwindWrapper>
    </div>
 
-2. **Velocity polygon.** On a chosen velocity scale, say 1 cm = 10 mm/s, draw $oa = v_A = r\omega = 50$ mm/s perpendicular to the crank. From $a$ draw the direction perpendicular to the rod, and through $o$ the horizontal the piston must move along. They meet at $b$. ✅
+2. **Velocity polygon.** On a chosen velocity scale, say $1 \text{ cm} = 10 \text{ mm/s}$, draw $oa = v_A = r\omega = 50 \times 1 = 50$ mm/s at right angles to the crank. From $a$ draw a line at right angles to the rod. Through $o$ draw the horizontal line along which the piston must move. The two lines meet at $b$. ✅
 
    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
      <TailwindWrapper>
-   	![Slider-crank velocity polygon: v(A) from the pole perpendicular to the crank, the relative velocity v(B/A) perpendicular to the rod, and the piston velocity v(B) along the centre-line](./images/l3-slider-crank-2-velocity-polygon.svg)
+   	![Velocity polygon of the slider-crank: v A from the pole o to a, v B/A from a to b, and the horizontal piston velocity v B from o to b.](./images/l3-slider-crank-2-velocity-polygon.svg)
      </TailwindWrapper>
    </div>
 
-3. **Take the one number the next drawing needs.** Measuring the polygon gives $v_B = 50.8$ mm/s and $v_{B/A} = 26.1$ mm/s. That last one is the whole reason for this step, because it fixes the rod's angular velocity: ✅
+3. **Take the one number the next drawing needs.** The polygon measures $v_B = 50.8$ mm/s and $v_{B/A} = 26.1$ mm/s. The second value gives the angular velocity of the rod, which is its speed round $A$ divided by its length: ✅
 
-   $$\omega_3 = \frac{v_{B/A}}{l} = \frac{26.1}{150} = 0.174 \text{ rad/s}$$
+   $$\omega_3 = \frac{v_{B/A}}{l} = \frac{26.1 \text{ mm/s}}{150 \text{ mm}} = 0.174 \text{ rad/s}$$
 
-   The rod turns slowly compared with the crank, which is why its normal acceleration will come out small in Step 2. ✅
+   The rod turns about six times more slowly than the crank, so its normal acceleration will be small in Step 2. ✅
 
 </Steps>
 
 </details>
 
-### Step 2: Build the Acceleration Polygon
+### Step 2: Build the acceleration polygon
 
-Construct it beside the velocity polygon from Step 1, at the same instant $\theta = 60\degree$, on a chosen acceleration scale (say 1 cm = 10 mm/s²).
+Draw it beside the velocity polygon of Step 1, at the same instant $\theta = 60\degree$, to a chosen acceleration scale (say $1 \text{ cm} = 10 \text{ mm/s}^2$).
 
 <details>
 <summary>**Click to reveal the acceleration-polygon construction**</summary>
 
 <Steps>
 
-1. **Crank-pin acceleration.** With the crank at constant speed, the crank pin $A$ has only a normal (centripetal) acceleration $a_A = \omega^2 r = 50$ mm/s², directed from $A$ toward the centre $O$. From the pole $o'$ draw $o'a' = a_A$. ✅
+1. **Crank-pin acceleration.** The crank turns at constant speed, so the crank pin $A$ has only a normal acceleration, $a_A = \omega^2 r = 1^2 \times 50 = 50 \text{ mm/s}^2$, pointing from $A$ towards the centre $O$. From the pole $o'$ draw $o'a' = a_A$. ✅
 
-2. **Normal part of the rod.** This is where Step 1 is spent. The rod's relative-acceleration normal part is $a_{B/A}^{\,n} = \omega_3^2\,l$, directed from $B$ toward $A$, and $\omega_3$ came off the velocity polygon: ✅
+2. **Normal part of the rod.** This part is $a_{B/A}^{\,n} = \omega_3^2\,l$, pointing from $B$ towards $A$. It uses the $\omega_3$ of Step 1: ✅
 
-   $$a_{B/A}^{\,n} = (0.174)^2 \times 150 = 4.5 \text{ mm/s}^2$$
+   $$a_{B/A}^{\,n} = (0.174 \text{ rad/s})^2 \times 150 \text{ mm} = 4.5 \text{ mm/s}^2$$
 
-   Add it from $a'$. At about a **tenth** of $a_A$ it is nearly invisible on the drawing, because the rod turns slowly. Small is not the same as ignorable: it is what tips the polygon off the crank line. ✅
+   Add it from $a'$. It is about a **tenth** of $a_A$, so it is hard to see on the drawing. Do not leave it out: it moves the end point of the polygon. ✅
 
-3. **Tangential part and closure.** From the end of the normal part, draw the tangential direction (perpendicular to the rod). Its magnitude $\alpha_3 l$ is unknown, so this is a construction line, not a measured length. The piston acceleration $a_B$ is horizontal (the piston slides), so draw the horizontal through $o'$. Their intersection is $b'$, and it fixes both unknowns at once. ✅
+3. **Tangential part and closure.** From the end of the normal part, draw the tangential direction, at right angles to the rod. Its size $\alpha_3 l$ is unknown, so draw a long construction line. The piston can only slide, so its acceleration $a_B$ is horizontal: draw the horizontal through $o'$. The two lines cross at $b'$, and that one point gives both unknowns. ✅
 
-4. **Measure.** $o'b' = a_B$ is the piston acceleration, reading about $16.7$ mm/s² toward the crank, or $0.33\,r\omega^2$ in magnitude. Step 3 gets the same number from the formula. ✅
+4. **Measure.** $o'b' = a_B$ is the piston acceleration. It reads about $16.7 \text{ mm/s}^2$ towards the crank, which is $0.33\,r\omega^2$. Step 3 gets the same number from a formula. ✅
 
 </Steps>
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Slider-crank acceleration polygon at 60 degrees: a_A from the pole, the small normal and the tangential relative components, closing to the piston acceleration a_B](./images/l4-slider-crank-accel-polygon.svg)
+	![Acceleration polygon of the slider-crank at 60 degrees: the long arrow a A from the pole to a prime, a very short normal part, a long tangential part up to b prime, and the short horizontal piston acceleration a B.](./images/l4-slider-crank-accel-polygon.svg)
   </TailwindWrapper>
 </div>
 
 </details>
 
-### Step 3: Confirm by Differentiation
+### Step 3: Confirm by differentiation
 
 <details>
 <summary>**Click to reveal the closed-form piston acceleration**</summary>
 
 <Steps>
 
-1. **Start from the exact piston position.** Project the loop onto the centre-line. The crank contributes $r\cos\theta$ and the rod contributes the remaining horizontal reach: ✅
+1. **Start from the exact piston position** $x$, measured from the crank centre along the centre-line. The crank gives $r\cos\theta$ and the rod gives the rest: ✅
 
    $$x = r\cos\theta + \sqrt{l^2 - r^2\sin^2\theta}$$
 
-2. **Make the square root differentiable by hand.** Since $r/l$ is small, $\sqrt{l^2 - r^2\sin^2\theta} = l\sqrt{1 - (r/l)^2\sin^2\theta} \approx l - \dfrac{r^2}{2l}\sin^2\theta$, keeping the first two terms of the binomial expansion. Then use $\sin^2\theta = \tfrac{1}{2}(1 - \cos 2\theta)$, which is what makes the second harmonic appear: ✅
+2. **Make the square root easy to differentiate.** The ratio $r/l$ is small, so $\sqrt{l^2 - r^2\sin^2\theta} = l\sqrt{1 - (r/l)^2\sin^2\theta} \approx l - \dfrac{r^2}{2l}\sin^2\theta$, which keeps the first two terms of the binomial expansion. Then use $\sin^2\theta = \tfrac{1}{2}(1 - \cos 2\theta)$. This step brings in a term in $2\theta$: ✅
 
    $$x \approx r\cos\theta + l - \frac{r^2}{4l}\left(1 - \cos 2\theta\right)$$
 
-3. **Differentiate twice with respect to $\theta$**, then multiply by $\omega^2$. Because $\omega$ is constant, $\dfrac{d}{dt} = \omega\dfrac{d}{d\theta}$, so no extra terms appear: ✅
+3. **Differentiate twice with respect to $\theta$**, then multiply by $\omega^2$. The speed $\omega$ is constant, so $\dfrac{d}{dt} = \omega\dfrac{d}{d\theta}$ and no other terms appear: ✅
 
    $$\frac{dx}{d\theta} = -r\sin\theta - \frac{r^2}{2l}\sin 2\theta, \qquad \frac{d^2x}{d\theta^2} = -r\cos\theta - \frac{r^2}{l}\cos 2\theta$$
 
    $$a_P = \omega^2\frac{d^2x}{d\theta^2} = -r\omega^2\left(\cos\theta + \frac{r}{l}\cos 2\theta\right)$$ ✅
 
-   The first term is the **primary** acceleration (once per revolution); the second is the **secondary** (twice per revolution), and it exists only because the rod has finite length. Let $l \to \infty$ and it vanishes.
+   Here $a_P$ is the piston acceleration (the $a_B$ of the polygon), in mm/s² when $r$ is in mm and $\omega$ in rad/s. The first term repeats once in each turn of the crank: the **primary** part. The second repeats twice in each turn: the **secondary** part. Such parts are called harmonics. The secondary part exists only because the rod has a limited length: with a very long rod, $r/l$ goes to zero and so does this part.
 
    :::note[How good is the approximation?]
-   Only the square root was approximated, and only for $l/r = 3$. Across a full revolution the result stays within about **1.5% of the peak acceleration**, and at top and bottom dead centre it is exact, which is why the peaks below can be quoted as exact expressions.
-
-   The one place to expect a visible gap is near $\theta = 90\degree$, where the exact value is $0.354\,r\omega^2$ against the $0.333\,r\omega^2$ tabulated here. The simulator solves the exact form, so if you compare there and see $0.35$, the simulator is not wrong and neither is the table.
+   For $l/r = 3$ the result stays within about **1.5% of the peak acceleration** over the whole turn, and it is exact at TDC and BDC. The largest gap is near $\theta = 90\degree$, where the exact value is $0.354\,r\omega^2$ and this formula gives $0.333\,r\omega^2$. The simulator solves the exact form, so a reading of $0.35$ there is correct.
    :::
 
-2. **Tabulate** $a_P/(r\omega^2)$ for $l/r = 3$: ✅
+4. **Tabulate** $a_P/(r\omega^2)$ for $l/r = 3$: ✅
 
    | Crank $\theta$ | $a_P/(r\omega^2)$ |
    |:---:|:---:|
-   | 0&#176; (TDC) | **-1.333** (peak) |
-   | 30&#176; | -1.033 |
-   | 60&#176; | -0.333 |
-   | 90&#176; | +0.333 |
-   | 120&#176; | +0.667 |
-   | 180&#176; (BDC) | +0.667 |
+   | $0^\circ$ (TDC) | **-1.333** (peak) |
+   | $30^\circ$ | -1.033 |
+   | $60^\circ$ | -0.333 |
+   | $90^\circ$ | +0.333 |
+   | $120^\circ$ | +0.667 |
+   | $180^\circ$ (BDC) | +0.667 |
 
-3. **Read the peaks.** The largest acceleration is at **top-dead-centre**, $a_P = (1 + r/l)\,r\omega^2 = 1.33\,r\omega^2$, and at bottom-dead-centre it is $(1 - r/l)\,r\omega^2 = 0.67\,r\omega^2$. The two ends differ because the secondary term adds at TDC and subtracts at BDC. At $\theta = 60\degree$, $a_P = -0.33\,r\omega^2$, matching the polygon. ✅
+5. **Read the peaks.** The largest acceleration is at **TDC**: $a_P = (1 + r/l)\,r\omega^2 = (1 + \tfrac{1}{3})\,r\omega^2 = 1.33\,r\omega^2$ in size. At BDC it is $(1 - r/l)\,r\omega^2 = 0.67\,r\omega^2$. The two ends differ because the secondary part adds to the primary part at TDC and subtracts from it at BDC. At $\theta = 60\degree$, $a_P = -(0.5 + \tfrac{1}{3} \times (-0.5))\,r\omega^2 = -0.33\,r\omega^2$, the same as the polygon. ✅
 
 </Steps>
 
 </details>
 
-### Step 4: Verify in the Simulator
+### Step 4: Verify in the simulator
 
-Everything above is in units of $r\omega^2$, because that keeps the result true for any speed. The simulator plots raw mm/s². Converting between the two is one multiplication, and doing it once makes the whole chart readable.
+The results above are multiples of $r\omega^2$, so they hold for any speed. The simulator plots $\text{mm/s}^2$.
 
 <details>
 <summary>**Click to reveal the simulator check**</summary>
 
 <Steps>
 
-1. **Set it up and fix a speed.** Open the simulator ([siwit.co/CSM](https://siwit.co/CSM)) and set $r = 50$, $l = 150$, $e = 0$ and $60$ RPM. A speed must be chosen before any absolute number exists: ✅
+1. **Set it up and choose a speed.** Open the simulator ([siwit.co/CSM](https://siwit.co/CSM)) and set $r = 50$, $l = 150$, $e = 0$ and $60$ RPM. Convert the speed to rad/s, then find $r\omega^2$: ✅
 
-   $$\omega = \frac{2\pi (60)}{60} = 6.283 \text{ rad/s}, \qquad r\omega^2 = 50 (6.283)^2 = 1974 \text{ mm/s}^2$$
+   $$\omega = \frac{2\pi \times 60}{60 \text{ s}} = 6.283 \text{ rad/s}, \qquad r\omega^2 = 50 \text{ mm} \times (6.283 \text{ rad/s})^2 = 1974 \text{ mm/s}^2$$
 
-   That single number converts every result in this Application into what the chart shows. ✅
+   Every result of this application, times $1974$, is a value on the chart. ✅
 
 2. **Predict before you look.** Multiply the values already found by $1974$: ✅
 
    | Where | This lesson | The chart should read |
    |---|---|---|
-   | TDC ($\theta = 0\degree$) | $-1.333\,r\omega^2$ | $-2632$ mm/s² |
-   | BDC ($\theta = 180\degree$) | $+0.667\,r\omega^2$ | $+1316$ mm/s² |
-   | $\theta = 60\degree$ | $-0.333\,r\omega^2$ | $-659$ mm/s² |
+   | TDC ($\theta = 0\degree$) | $-1.333\,r\omega^2$ | $-2632 \text{ mm/s}^2$ |
+   | BDC ($\theta = 180\degree$) | $+0.667\,r\omega^2$ | $+1316 \text{ mm/s}^2$ |
+   | $\theta = 60\degree$ | $-0.333\,r\omega^2$ | $-659 \text{ mm/s}^2$ |
 
-3. **Mind what the readouts are called.** This is where most people go wrong. The panel reports **Maximum Acceleration** and **Minimum Acceleration**, and because the top-dead-centre value is *negative*, the biggest acceleration in the machine appears under **Minimum**: ✅
+3. **Check which readout is which.** The panel reports **Maximum Acceleration** and **Minimum Acceleration**. The TDC value is *negative*, so the largest acceleration in the machine appears under **Minimum**: ✅
 
-   $$\text{Minimum Acceleration} = -2632 \text{ mm/s}^2 \quad (\text{this is the TDC peak, the one that sizes the parts})$$
+   $$\text{Minimum Acceleration} = -2632 \text{ mm/s}^2 \quad (\text{the TDC peak, the one that sizes the parts})$$
 
    $$\text{Maximum Acceleration} = +1377 \text{ mm/s}^2 \quad (\text{a hump at } 138\degree, \textbf{not} \text{ the BDC value})$$
 
-   **Peak-to-Peak** then reads about $4009$ mm/s², the distance between them. ✅
+   **Peak-to-Peak** then reads about $4009 \text{ mm/s}^2$, the distance between the two. ✅
 
-4. **Read the sign as a direction.** Negative means the acceleration points back toward the crank centre. At top-dead-centre the piston is being hauled to a stop and reversed, which is why the number is both negative and the largest. ✅
+4. **Read the sign as a direction.** Negative means the acceleration points towards the crank centre. At TDC the piston is stopped and sent back, so the value there is negative and also the largest. ✅
 
-5. **Find the twin humps.** The positive side has two peaks with a shallow dip between them at bottom-dead-centre, not a single peak. Differentiating the two-harmonic result gives $\sin\theta\,(1 + \tfrac{4}{3}\cos\theta) = 0$, so besides the dead centres there are turning points at $\cos\theta = -3/4$, that is $138.6\degree$ and $221.4\degree$. This is the feature students most often mistake for an error in the simulator. ✅
+5. **Find the two humps.** On the positive side the chart has two peaks with a shallow dip between them at BDC. The formula of Step 3 has turning points where $\sin\theta\,(1 + \tfrac{4}{3}\cos\theta) = 0$: at the dead centres, and at $\cos\theta = -3/4$, which is $138.6\degree$ and $221.4\degree$. Students often take this dip for an error in the simulator. It is correct. ✅
 
 </Steps>
 
-The chart you should be looking at, with the same three landmarks named:
-
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![The slider-crank acceleration trace as the simulator plots it, in millimetres per second squared against crank angle, with the top dead centre peak, the two positive humps and the bottom dead centre dip labelled with both their raw values and their values as multiples of r omega squared](./images/l4-simulator-acceleration-annotated.svg)
+	![Piston acceleration against crank angle at 60 RPM: lowest at TDC, minus 2,632 mm/s², then two humps of plus 1,377 mm/s² at 138 and 222 degrees, with a dip of plus 1,316 mm/s² at BDC between them.](./images/l4-simulator-acceleration-annotated.svg)
   </TailwindWrapper>
 </div>
 
 <Steps>
 
-6. **Lengthen the rod.** Increasing $l/r$ shrinks the secondary term, bringing the two peaks closer together and smoothing the motion. Watch **Peak-to-Peak** fall as you do it. ✅
+6. **Lengthen the rod.** A larger $l/r$ makes the secondary part smaller, so the two ends of the stroke become more alike. Look at **Peak-to-Peak**: it falls. ✅
 
 </Steps>
 
 </details>
 
-:::note[Engineering Insight]
-The connecting rod splits the piston acceleration into a primary and a secondary harmonic, and the secondary makes the top-dead-centre acceleration larger than the bottom. This asymmetry is the root of engine vibration and is taken up as a force in Application 4.
-:::
-
-## Application 2: Angular Accelerations of the Four-Bar
+## Application 2: Angular accelerations of the four-bar
 
 <InArticleAd />
 
 
-For the four-bar we differentiate the velocity loop once more and build the acceleration polygon to find the coupler and follower angular accelerations.
+The four-bar has three moving links: the driven crank, the follower on the other fixed pivot, and the coupler that joins them. The polygon gives the angular accelerations of the coupler, $\alpha_3$, and the follower, $\alpha_4$.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -398,163 +367,159 @@ For the four-bar we differentiate the velocity loop once more and build the acce
 :::note[System Problem Statement]
 - **Configuration:** Crank-rocker four-bar (the standard four-bar geometry), constant crank speed
 - **Task:** Find the coupler and follower angular accelerations $\alpha_3$, $\alpha_4$
-- **Link lengths:** $a = 40$, $b = 120$, $c = 80$, $d = 100$ mm
-- **Input:** $\theta_2 = 120\degree$, with $\omega_3/\omega_2 = 0.139$, $\omega_4/\omega_2 = 0.514$ from the velocity analysis
+- **Link lengths:** crank $a = 40$, coupler $b = 120$, follower $c = 80$, ground $d = 100$ mm
+- **Input:** crank angle $\theta_2 = 120\degree$, crank speed $\omega_2 = 1$ rad/s. From the velocity analysis $\omega_3/\omega_2 = 0.139$ and $\omega_4/\omega_2 = 0.514$
 :::
 
-### Step 1: Redraw the Space Diagram and the Velocity Polygon
-
-The four-bar needs this step more than the slider-crank did, because here **two** angular velocities feed the acceleration polygon rather than one, and they enter squared.
+### Step 1: Redraw the space diagram and the velocity polygon
 
 <details>
 <summary>**Click to reveal the two drawings the acceleration polygon is built on**</summary>
 
 <Steps>
 
-1. **Space diagram.** Choose and mark a length scale, say 1 cm = 20 mm. Draw the ground $O_2O_4 = 100$ mm, the crank $O_2A = 40$ mm at $\theta_2 = 120\degree$, then intersect an arc of $b = 120$ mm from $A$ with an arc of $c = 80$ mm from $O_4$. The upper intersection is $B$. Measure $\theta_3 = 22.0\degree$ and $\theta_4 = 96.3\degree$. ✅
+1. **Space diagram.** Choose and mark a length scale, say $1 \text{ cm} = 20 \text{ mm}$. Draw the ground $O_2O_4 = 100$ mm and the crank $O_2A = 40$ mm at $\theta_2 = 120\degree$. Draw an arc of $b = 120$ mm from $A$ and an arc of $c = 80$ mm from $O_4$. The arcs cross at two points, and the upper one is $B$. Measure the coupler angle $\theta_3 = 22.0\degree$ and the follower angle $\theta_4 = 96.3\degree$. ✅
 
    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
      <TailwindWrapper>
-   	![Four-bar space diagram at crank angle 120 degrees, found by intersecting the coupler and follower arcs at B](./images/l3-four-bar-1-space-diagram.svg)
+   	![Space diagram of the four-bar at a crank angle of 120 degrees: ground O2 O4, crank O2 A, coupler AB and follower from B to O4.](./images/l3-four-bar-1-space-diagram.svg)
      </TailwindWrapper>
    </div>
 
-2. **Velocity polygon.** Draw $oa = v_A = a\omega_2 = 40$ mm/s perpendicular to the crank. From $a$ draw perpendicular to the coupler, from $o$ draw perpendicular to the follower, and mark $b$ where they cross. ✅
+2. **Velocity polygon.** Draw $oa = v_A = a\omega_2 = 40 \times 1 = 40$ mm/s at right angles to the crank. From $a$ draw a line at right angles to the coupler. From $o$ draw a line at right angles to the follower. Mark $b$ where the two lines cross. ✅
 
    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
      <TailwindWrapper>
-   	![Four-bar velocity polygon at 120 degrees: v(A) perpendicular to the crank, v(B/A) perpendicular to the coupler, and v(B) perpendicular to the follower](./images/l3-four-bar-2-velocity-polygon.svg)
+   	![Velocity polygon of the four-bar: v A from the pole o to a, v B/A from a to b, and v B from o to b.](./images/l3-four-bar-2-velocity-polygon.svg)
      </TailwindWrapper>
    </div>
 
-3. **Take the two numbers the next drawing needs.** Measuring gives $v_{B/A} = 16.7$ mm/s and $v_B = 41.1$ mm/s, so ✅
+3. **Take the two numbers the next drawing needs.** The polygon measures $v_{B/A} = 16.7$ mm/s and $v_B = 41.1$ mm/s. Divide each by the length of its link: ✅
 
-   $$\omega_3 = \frac{v_{B/A}}{b} = \frac{16.7}{120} = 0.139 \text{ rad/s}, \qquad \omega_4 = \frac{v_B}{c} = \frac{41.1}{80} = 0.514 \text{ rad/s}$$
+   $$\omega_3 = \frac{v_{B/A}}{b} = \frac{16.7 \text{ mm/s}}{120 \text{ mm}} = 0.139 \text{ rad/s}, \qquad \omega_4 = \frac{v_B}{c} = \frac{41.1 \text{ mm/s}}{80 \text{ mm}} = 0.514 \text{ rad/s}$$
 
-   Note how different these are. Squared, they make the follower's normal component nearly ten times the coupler's, which is what gives the acceleration polygon its lopsided shape. ✅
+   The follower turns almost four times faster than the coupler. After squaring, the normal part of the follower is nearly ten times that of the coupler, so the acceleration polygon has one long normal arrow and one very short one. ✅
 
 </Steps>
 
 </details>
 
-### Step 2: Build the Acceleration Polygon
+### Step 2: Build the acceleration polygon
 
 <details>
 <summary>**Click to reveal the acceleration-polygon construction**</summary>
 
 <Steps>
 
-1. **Crank pin.** At constant crank speed, $a_A = \omega_2^2\,a = 40$ mm/s² directed from $A$ to $O_2$. Draw $o'a'$. ✅
+1. **Crank pin.** The crank speed is constant, so $a_A = \omega_2^2\,a = 1^2 \times 40 = 40 \text{ mm/s}^2$, pointing from $A$ to $O_2$. Draw $o'a'$. ✅
 
-2. **Coupler normal.** Add $a_{B/A}^{\,n} = \omega_3^2\,b = (0.139)^2 \times 120 = 2.3$ mm/s² from $a'$, directed $B$ to $A$. ✅
+2. **Coupler normal.** From $a'$, add $a_{B/A}^{\,n} = \omega_3^2\,b = (0.139)^2 \times 120 = 2.3 \text{ mm/s}^2$, pointing from $B$ to $A$. ✅
 
-3. **Follower normal.** From the pole, the follower contributes $a_B^{\,n} = \omega_4^2\,c = (0.514)^2 \times 80 = 21.2$ mm/s², directed $B$ to $O_4$. ✅
+3. **Follower normal.** From the pole, draw $a_B^{\,n} = \omega_4^2\,c = (0.514)^2 \times 80 = 21.2 \text{ mm/s}^2$, pointing from $B$ to $O_4$. ✅
 
-4. **Tangentials close it.** Two unknown magnitudes remain, and two construction lines supply them: the direction perpendicular to the coupler drawn from the end of the coupler normal, and the direction perpendicular to the follower drawn from the end of the follower normal. They intersect at $b'$. ✅
+4. **The tangential parts close it.** Two sizes are still unknown, and two construction lines give them. Draw one at right angles to the coupler from the end of the coupler normal. Draw the other at right angles to the follower from the end of the follower normal. They cross at $b'$. ✅
 
-5. **Measure and convert.** The two tangential lengths read $a_{B/A}^{\,t} = 16.7$ and $a_{B}^{\,t} = 9.3$ mm/s². Divide each by its link length to get an angular acceleration: ✅
+5. **Measure and convert.** The two tangential lengths read $a_{B/A}^{\,t} = 16.7$ and $a_{B}^{\,t} = 9.3 \text{ mm/s}^2$. Divide each by the length of its link to get an angular acceleration: ✅
 
-   $$\alpha_3 = \frac{16.7}{120} = 0.139 \text{ rad/s}^2, \qquad \alpha_4 = \frac{9.3}{80} = 0.117 \text{ rad/s}^2$$
+   $$\alpha_3 = \frac{16.7 \text{ mm/s}^2}{120 \text{ mm}} = 0.139 \text{ rad/s}^2, \qquad \alpha_4 = \frac{9.3 \text{ mm/s}^2}{80 \text{ mm}} = 0.117 \text{ rad/s}^2$$
 
-   The drawing gives magnitudes; the **sense** comes from which way each tangential vector points on it. Here the follower's points opposite to $\omega_4$, so $\alpha_4$ is negative, which Step 3 confirms and the callout there explains. ✅
+   The drawing gives sizes. The direction of each tangential arrow gives the sign. Here the tangential arrow of the follower points against $\omega_4$, so $\alpha_4$ is negative. Step 3 confirms this and explains it. ✅
 
 </Steps>
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Four-bar acceleration polygon at 120 degrees: crank centripetal acceleration, the coupler and follower normals drawn from the pole, and the two tangentials meeting at b prime](./images/l4-four-bar-accel-polygon.svg)
+	![Acceleration polygon of the four-bar at 120 degrees: a A from the pole to a prime, the follower normal part from the pole to m, the short coupler normal part at a prime, and the two tangential parts meeting at b prime.](./images/l4-four-bar-accel-polygon.svg)
   </TailwindWrapper>
 </div>
 
+The note printed inside this picture says that both normal parts start at $o'$. Only the follower normal starts there. The coupler normal starts at $a'$, as in step 2.
+
 </details>
 
-### Step 3: Confirm by the Acceleration Loop
+### Step 3: Confirm by the acceleration loop
 
 <details>
 <summary>**Click to reveal the closed-form angular accelerations**</summary>
 
 <Steps>
 
-1. **Start from the loop you already closed.** In complex form the four-bar loop is one line, and every equation below is a derivative of it: ✅
+1. **Start from the position loop.** Go from $O_2$ to $B$ by the crank and the coupler, or by the ground and the follower: both ways end at the same point. With each link written as a length and a direction $e^{i\theta}$, this is one line, and every equation below is a derivative of it: ✅
 
    $$a\,e^{i\theta_2} + b\,e^{i\theta_3} = d + c\,e^{i\theta_4}$$
 
-2. **Differentiate once** for velocity. Each $\theta$ depends on time, so the chain rule brings down $i\dot\theta = i\omega$: ✅
+2. **Differentiate once** for velocity. Each $\theta$ depends on time, so the chain rule gives a factor $i\dot\theta = i\omega$: ✅
 
    $$i\,a\omega_2 e^{i\theta_2} + i\,b\omega_3 e^{i\theta_3} = i\,c\omega_4 e^{i\theta_4}$$
 
-3. **Differentiate again** for acceleration, applying the product rule to each term. Every term produces two: one from differentiating $\omega$ (giving $\alpha$) and one from differentiating $e^{i\theta}$ again (giving $-\omega^2$, since $i \times i = -1$). With $\alpha_2 = 0$ the crank keeps only its $-\omega^2$ term: ✅
+3. **Differentiate again** for acceleration, with the product rule on each term. Each term gives two: one from $\omega$ (it gives $\alpha$) and one from $e^{i\theta}$ (it gives $-\omega^2$, because $i \times i = -1$). With $\alpha_2 = 0$ the crank keeps only its $-\omega^2$ term: ✅
 
    $$\underbrace{-a\omega_2^2 e^{i\theta_2}}_{\text{crank, normal only}} + \underbrace{i\,b\alpha_3 e^{i\theta_3} - b\omega_3^2 e^{i\theta_3}}_{\text{coupler: tangential} + \text{normal}} = \underbrace{i\,c\alpha_4 e^{i\theta_4} - c\omega_4^2 e^{i\theta_4}}_{\text{follower: tangential} + \text{normal}}$$
 
-   Those six terms are exactly the six vectors in the polygon of Step 2. The $-\omega^2$ terms are the normals you could draw straight away; the $i\alpha$ terms are the tangentials you had to close the figure to find.
+   These five terms are the five arrows of the polygon in Step 2. The $-\omega^2$ terms are the normal parts, which you drew at once. The $i\alpha$ terms are the tangential parts, which you found by closing the figure.
 
-4. **Split into real and imaginary parts** using $e^{i\theta} = \cos\theta + i\sin\theta$, and collect the two unknowns on the left. Note that multiplying by $i$ swaps sine and cosine, which is why the $\alpha$ terms carry the opposite trig function to the $\omega^2$ terms: ✅
+4. **Split into real and imaginary parts** with $e^{i\theta} = \cos\theta + i\sin\theta$, and put the two unknowns on the left. Multiplying by $i$ exchanges sine and cosine, so the $\alpha$ terms carry the other function from the $\omega^2$ terms: ✅
 
    $$-b\,\alpha_3\sin\theta_3 + c\,\alpha_4\sin\theta_4 = a\omega_2^2\cos\theta_2 + b\omega_3^2\cos\theta_3 - c\omega_4^2\cos\theta_4$$
    $$b\,\alpha_3\cos\theta_3 - c\,\alpha_4\cos\theta_4 = a\omega_2^2\sin\theta_2 + b\omega_3^2\sin\theta_3 - c\omega_4^2\sin\theta_4$$
 
-   Everything on the right is already known, so this is just two linear equations in two unknowns: the same $2 \times 2$ solve as the velocity analysis, with a different right-hand side. ✅
+   Everything on the right is known. These are two linear equations in two unknowns, as in the velocity analysis. ✅
 
-5. **Solve** at $\theta_2 = 120\degree$ ($\omega_2 = 1$ rad/s), substituting $\theta_3 = 21.96\degree$, $\theta_4 = 96.25\degree$, $\omega_3 = 0.139$, $\omega_4 = 0.514$:
+5. **Solve** at $\theta_2 = 120\degree$ ($\omega_2 = 1$ rad/s), with $\theta_3 = 21.96\degree$, $\theta_4 = 96.25\degree$, $\omega_3 = 0.139$, $\omega_4 = 0.514$:
 
    $$\alpha_3 = +0.139 \text{ rad/s}^2, \qquad \alpha_4 = -0.117 \text{ rad/s}^2$$ ✅
 
-   These match the $16.7$ and $9.3$ mm/s² measured off the polygon, divided by $b$ and $c$. Drawing and algebra agree, which is the point of doing both. ✅
+   These agree with the $16.7$ and $9.3 \text{ mm/s}^2$ measured from the polygon, divided by $b$ and $c$. ✅
 
    :::tip[A positive ω₄ with a negative α₄ is not an error]
-   From the velocity analysis, $\omega_4 = +0.514$ rad/s: the follower is turning **counterclockwise**. Here $\alpha_4 = -0.117$ rad/s²: its angular acceleration points **clockwise**. Both are correct at once, and the combination is worth pausing on because it looks wrong to most students the first time.
+   $\omega_4 = +0.514$ rad/s: the follower turns **counterclockwise**. $\alpha_4 = -0.117 \text{ rad/s}^2$: its angular acceleration is **clockwise**. Both are correct. The follower still turns counterclockwise but is **slowing down**, like a car that moves forward with the brakes on.
 
-   Velocity says which way it is going. Acceleration says how that is changing. Opposite signs simply mean the follower is still turning counterclockwise but is **slowing down**, exactly as a car moving forward with the brakes on has positive velocity and negative acceleration. Had both been positive, the follower would be speeding up.
-
-   The rule: **same sign means speeding up, opposite signs mean slowing down.** Nothing about the two signs disagreeing indicates a mistake.
+   The rule: **same sign means speeding up, opposite signs mean slowing down.**
    :::
-
-   So the follower is decelerating at this instant even though it is still driving the output forward, which the simulator's angular-acceleration trace confirms.
 
 </Steps>
 
 </details>
 
-### Step 4: Verify in the Simulator
+### Step 4: Verify in the simulator
 
 <details>
 <summary>**Click to reveal the simulator check**</summary>
 
 <Steps>
 
-1. **Set it up and fix a speed.** Open the simulator ([siwit.co/FBL](https://siwit.co/FBL)), set $a = 40$, $b = 120$, $c = 80$, $d = 100$, the assembly to **open**, and $60$ RPM, so $\omega_2 = 6.283$ rad/s and $\omega_2^2 = 39.48$. Everything solved above was per unit crank speed, and these two factors convert it to what the simulator reports. The assembly setting matters as much as the link lengths: the crossed circuit is a different linkage with different angles and a different $\alpha_4$, so check it before comparing anything. ✅
+1. **Set it up and choose a speed.** Open the simulator ([siwit.co/FBL](https://siwit.co/FBL)), set $a = 40$, $b = 120$, $c = 80$, $d = 100$, the assembly to **open**, and $60$ RPM, so $\omega_2 = 6.283$ rad/s and $\omega_2^2 = 39.48$. These two factors convert the work above, done at 1 rad/s. The crossed assembly is a different linkage, with another $\alpha_4$, so check that setting first. ✅
 
-2. **Check the velocities on screen first.** The $\omega_3$ and $\omega_4$ charts are tabs in the simulator. At $\theta_2 = 120\degree$ they should read about ✅
+2. **Check the velocities first.** The $\omega_3$ and $\omega_4$ charts are tabs in the simulator. At $\theta_2 = 120\degree$ they read about ✅
 
    $$\omega_3 = 0.876 \text{ rad/s}, \qquad \omega_4 = 3.231 \text{ rad/s}$$
 
-   Divide each by $\omega_2 = 6.283$ and you recover the $0.139$ and $0.514$ of Step 1. ✅
+   Divide each by $\omega_2 = 6.283$: the results are the $0.139$ and $0.514$ of Step 1. ✅
 
-3. **Open the angular-acceleration tabs.** Alongside $\theta_3$, $\theta_4$, $\omega_3$ and $\omega_4$ the simulator plots $\alpha_3$ and $\alpha_4$ against crank angle. Select the $\alpha_3$ tab, then $\alpha_4$. (The same values are in the downloadable CSV as `Alpha3 (rad/s2)` and `Alpha4 (rad/s2)` if you would rather read exact numbers than measure off a curve.) ✅
+3. **Open the angular-acceleration tabs.** The simulator also plots $\alpha_3$ and $\alpha_4$ against crank angle. Select the $\alpha_3$ tab, then $\alpha_4$. For exact numbers, the CSV file that the simulator can download has the same values as `Alpha3 (rad/s2)` and `Alpha4 (rad/s2)`. ✅
 
 4. **Read the value at 120 degrees.** Expect ✅
 
    $$\alpha_3 \approx +5.50 \text{ rad/s}^2, \qquad \alpha_4 \approx -4.61 \text{ rad/s}^2$$
 
-   Divide by $\omega_2^2 = 39.48$ to get $+0.139$ and $-0.117$ rad/s², matching the loop solution exactly. The signs survive the conversion, so the follower is still decelerating while turning forward. ✅
+   Divide by $\omega_2^2 = 39.48$ to get $+0.139$ and $-0.117 \text{ rad/s}^2$, the loop solution. The signs do not change, so the follower still slows down while it turns forward. ✅
 
-   Angular acceleration scales with the **square** of crank speed, so doubling the RPM quadruples every one of these numbers while leaving the per-unit values untouched. That is why the working above is done per unit crank speed. ✅
+   Angular acceleration grows with the **square** of the crank speed: at twice the RPM every one of these numbers is four times larger. ✅
 
 </Steps>
 
 </details>
 
 :::note[Engineering Insight]
-Each angular acceleration multiplied by a link's mass moment of inertia is an inertia torque, and each link's mass times its centre-of-mass acceleration is an inertia force. The acceleration polygon is therefore the direct input to the [dynamic force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis).
+Each angular acceleration gives an inertia torque, and each acceleration of a centre of mass gives an inertia force. So the acceleration polygon is the input to the [dynamic force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis/), a force balance that includes the inertia forces. A static force analysis leaves them out.
 :::
 
-## Application 3: Platform Acceleration of the Scissor Lift
+## Application 3: Platform acceleration of the scissor lift
 
 <InArticleAd />
 
 
-The scissor lift shows that a constant actuator rate does not give a constant platform motion: a centripetal-type term appears from the geometry.
+In a scissor lift, crossed arms open like scissors and push a platform straight up. Here the arms turn at a steady rate and the platform still accelerates, for the same reason as the stone on the string.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -566,37 +531,37 @@ The scissor lift shows that a constant actuator rate does not give a constant pl
 
 :::note[System Problem Statement]
 - **Configuration:** Single-stage scissor lift, arm $L = 300$ mm, $n = 1$
-- **Task:** Relate platform acceleration to the scissor angular rate and its rate of change
+- **Task:** Relate the platform acceleration to the rate at which the arms turn, and to the change of that rate
 :::
 
-### Step 1: Differentiate the Velocity Twice
+### Step 1: Differentiate the height twice
+
+The platform height is $h = nL\sin\theta$, with $n$ the number of stages, $L$ the arm length (mm) and $\theta$ the angle of the arms above the base. Two derivatives of this one equation replace the polygon.
 
 <details>
 <summary>**Click to reveal the platform acceleration**</summary>
 
 <Steps>
 
-1. **From the platform velocity** $v = nL\cos\theta\,\dot\theta$, differentiate again:
+1. **From the platform velocity** $v = nL\cos\theta\,\dot\theta$, where $\dot\theta$ (rad/s) is the rate at which the arms turn, differentiate again. $\ddot\theta$ (rad/s²) is the rate of change of $\dot\theta$:
 
    $$a_\text{platform} = nL\left(\cos\theta\,\ddot\theta - \sin\theta\,\dot\theta^2\right)$$ ✅
 
-2. **Read the two terms.** The first, $nL\cos\theta\,\ddot\theta$, is the tangential part, present only when the scissor angle is speeding up. The second, $-nL\sin\theta\,\dot\theta^2$, is a centripetal-type term present **even at a constant angular rate** ($\ddot\theta = 0$), and it always acts downward. So a lift raised at a steady angular rate still decelerates as it nears full height. ✅
+2. **Read the two terms.** The first, $nL\cos\theta\,\ddot\theta$, is the tangential part. It exists only while the arms turn faster or slower. The second, $-nL\sin\theta\,\dot\theta^2$, is a normal part. It exists **even at a constant rate** ($\ddot\theta = 0$), and it always points down. So a platform raised with the arms turning at a steady rate still slows down as it nears full height. ✅
 
-3. **Actuator consequence.** The actuator must supply the platform weight plus the inertia force $m\,a_\text{platform}$. Near the flat position, where the mechanical advantage is poor ([force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis)), this dynamic term adds appreciably to the actuator load. ✅
+3. **What it means for the actuator.** The actuator (the cylinder or screw that drives the lift) must supply the weight on the platform and also the inertia force $m\,a_\text{platform}$. Near the flat position the mechanical advantage, the output force divided by the input force, is poor (see the [force analysis](/education/planar-mechanics/force-analysis-mechanism-synthesis/)), so this added load matters most there. ✅
 
 </Steps>
 
-The scissor closes on the single scalar relation $h = nL\sin\theta$, so its acceleration is that one line differentiated twice rather than a polygon: the scaled space diagram below is the geometric reference the two derivatives rest on.
-
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Single-stage scissor lift drawn to scale at 30 degrees: base, crossed arms of length L, and platform at height h = L sin theta](./images/l3-scissor-1-space-diagram.svg)
+	![Scale drawing of a single-stage scissor lift at 30 degrees: base, two crossed arms of length L = 300 mm, and the platform at the height h = L sin theta = 150 mm.](./images/l3-scissor-1-space-diagram.svg)
   </TailwindWrapper>
 </div>
 
 </details>
 
-### Step 2: Verify in the Simulator
+### Step 2: Verify in the simulator
 
 <details>
 <summary>**Click to reveal the simulator check**</summary>
@@ -605,22 +570,18 @@ The scissor closes on the single scalar relation $h = nL\sin\theta$, so its acce
 
 1. **Open the simulator** ([siwit.co/SLM](https://siwit.co/SLM)) and run it at a fixed actuator speed. ✅
 
-2. **Confirm** that the platform acceleration is non-zero even where the angular rate is steady, and that the power trace rises where acceleration and velocity are both large. ✅
+2. **Look at the acceleration chart.** The platform acceleration is not zero, although the actuator speed is constant: the geometry alone accelerates the platform. The power chart is highest where acceleration and velocity are both large. ✅
 
 </Steps>
 
 </details>
 
-:::note[Engineering Insight]
-The $-\sin\theta\,\dot\theta^2$ term is the same kind of centripetal acceleration the normal component captures in the polygons: a consequence of rotation that exists without any speeding up. It is why even smooth, constant-rate machines still impose inertia loads.
-:::
-
-## Application 4: Inertia and Shaking Forces
+## Application 4: Inertia and shaking forces
 
 <InArticleAd />
 
 
-Acceleration becomes force through $F = ma$. For the slider-crank this produces the shaking force that engine balancing is designed to cancel.
+Newton's second law, $F = ma$, turns acceleration into force. For the slider-crank the result is the shaking force, the force that the moving piston puts on the engine block. Engine balancing exists to cancel it.
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
@@ -631,197 +592,160 @@ Acceleration becomes force through $F = ma$. For the slider-crank this produces 
 </Card>
 
 :::note[System Problem Statement]
-- **Configuration:** Slider-crank with reciprocating mass $m$ at the piston, constant crank speed
-- **Task:** Find the shaking force along the cylinder axis and its two harmonics
+- **Configuration:** Slider-crank with a reciprocating mass $m$ (kg) at the piston, constant crank speed. The reciprocating mass is the mass that moves up and down with the piston
+- **Task:** Find the shaking force along the cylinder axis, and its primary and secondary parts
 :::
 
-### Step 1: From Acceleration to Shaking Force
+### Step 1: From acceleration to shaking force
 
 <details>
 <summary>**Click to reveal the shaking-force harmonics**</summary>
 
 <Steps>
 
-1. **Apply d'Alembert** to the reciprocating mass, using the piston acceleration from Application 1. The force the *rod* must apply to the piston to accelerate it is $m\,a_P$; the shaking force is the equal and opposite reaction the piston applies back to the engine, which is the inertia force $-m\,a_P$: ✅
+1. **Apply d'Alembert** to the reciprocating mass, with the piston acceleration of Application 1. The rod must push on the piston with the force $m\,a_P$ to accelerate it. The piston pushes back on the engine with an equal and opposite force, the inertia force $-m\,a_P$. That is the shaking force: ✅
 
    $$F_\text{shake} = -m\,a_P = m r\omega^2\left(\cos\theta + \frac{r}{l}\cos 2\theta\right)$$
 
-   The minus sign is not bookkeeping. At top-dead-centre $a_P$ is at its most negative, so $F_\text{shake}$ is at its **positive** peak: the piston is being hauled downward hardest exactly when it yanks the engine upward hardest. That is the force felt at the mounts. ✅
+   With $m$ in kg, $r$ in metres and $\omega$ in rad/s, the force is in newtons. The minus sign has a meaning. At TDC $a_P$ is most negative, so $F_\text{shake}$ is at its **positive** peak: the piston is pulled down hardest at the instant when it pulls the engine up hardest. The mounts feel that force. ✅
 
-2. **Split into harmonics:**
+2. **Split it into its two parts:**
 
    $$F_\text{primary} = m r\omega^2\cos\theta \quad (\text{once per rev}), \qquad F_\text{secondary} = m r\omega^2\frac{r}{l}\cos 2\theta \quad (\text{twice per rev})$$ ✅
 
-3. **Balancing.** The **primary** force can be largely cancelled by a counterweight on the crank. The **secondary** force runs at twice engine speed and cannot be cancelled by a simple counterweight; it is why inline-four engines use **balance shafts** spinning at twice crank speed. The secondary is smaller by the factor $r/l$, so a longer rod also reduces it. ✅
+3. **Balancing.** A counterweight on the crank can cancel most of the **primary** force, because the counterweight also goes round once in each turn. The **secondary** force repeats twice in each turn, so no weight on the crank can follow it. Inline four-cylinder engines therefore use **balance shafts**, weighted shafts geared to turn at twice the crank speed. The secondary force is smaller than the primary by the factor $r/l$, so a longer rod also reduces it. ✅
 
 </Steps>
 
-Plotted over one revolution, the balancing argument becomes obvious. The blue primary curve rises and falls once, so anything turning with the crank can be arranged to oppose it. The green secondary curve completes two full cycles in the same revolution, so no counterweight on the crank can follow it, and only a shaft geared to twice crank speed can:
-
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Shaking force against crank angle over one revolution: the primary component completes one cycle, the secondary completes two, and their sum peaks higher at top dead centre than at bottom dead centre](./images/l4-shaking-force-harmonics.svg)
+	![Shaking force against crank angle for l/r = 3: the primary curve makes one wave in a turn, the secondary makes two, and their total is larger at 0 degrees than at 180 degrees.](./images/l4-shaking-force-harmonics.svg)
   </TailwindWrapper>
 </div>
 
-The asymmetry of the black total curve is the same one Application 1 found in the acceleration: it reaches $1.33\,mr\omega^2$ at top-dead-centre ($\theta = 0\degree$ and $360\degree$) but only $0.67\,mr\omega^2$ at bottom-dead-centre ($\theta = 180\degree$), because the secondary adds at one end and subtracts at the other.
+As in Application 1, the total reaches $1.33\,mr\omega^2$ at TDC and only $0.67\,mr\omega^2$, in the opposite direction, at BDC ($\theta = 180\degree$).
 
 </details>
 
-### Step 2: Verify in the Simulator
+### Step 2: Verify in the simulator
 
 <details>
 <summary>**Click to reveal the simulator check**</summary>
 
 <Steps>
 
-1. **Open the simulator** ([siwit.co/CSM](https://siwit.co/CSM)) and read the force and crank-torque charts. ✅
+1. **Open the simulator** ([siwit.co/CSM](https://siwit.co/CSM)) and read the force chart and the crank-torque chart. ✅
 
-2. **Confirm** that the force trace peaks at top-dead-centre (where acceleration peaks) and that its shape is the primary cosine plus a smaller twice-frequency ripple. ✅
+2. **Look for two things in the force chart.** Its peak is at TDC, where the acceleration peaks. Its shape is one large wave in each turn with a smaller wave of twice the frequency added: the primary and the secondary parts. ✅
 
 </Steps>
 
 </details>
 
-:::note[Engineering Insight]
-The shaking force is the inertia force of Application 1 seen from the engine block. Its primary part sets the size of the crank counterweights; its secondary part, at twice the running frequency, is the reason high-refinement engines carry balance shafts. Every number traces back to the piston acceleration you drew in the polygon.
-:::
-
-## Application 5: Coriolis Acceleration of the Quick-Return Shaper
+## Application 5: Coriolis acceleration of the quick-return shaper
 
 <InArticleAd />
 
 
-The shaper of the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers#application-5-ram-velocity-of-the-quick-return-shaper) is the one mechanism in this course whose acceleration is *wrong* if you use only normal and tangential parts. Its crank pin is a **block sliding inside a turning slot**, and that joint adds the **Coriolis** component defined in the theory above. This application is where that term earns its place.
+A shaper is a machine tool whose cutting tool sits on a ram that slides forward and back. Its drive, from the [velocity analysis](/education/planar-mechanics/velocity-analysis-instantaneous-centers/#application-5-ram-velocity-of-the-quick-return-shaper), is the one mechanism in this course whose acceleration is *wrong* with normal and tangential parts alone. Its crank pin carries a **block that slides in a turning slot**, so the **Coriolis** component must be added.
 
 <Card title="Hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
   <LinkButton href="/product-development/crank-slider-mechanism-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Crank-Slider Simulator</LinkButton>
 </div>
 
-**Hands-on lab:** This inversion has no simulator of its own; the drawing and the calculation confirm each other. The related pin-in-slot Coriolis effect also drives the Geneva indexing motion noted below.
+**Hands-on lab:** This mechanism has no simulator of its own. The drawing and the calculation check each other.
 </Card>
 
 :::note[System Problem Statement]
-- **Configuration:** Crank-and-slotted-lever quick-return (shaper ram drive)
-- **Task:** Find the ram-drive acceleration at the instant drawn, showing the Coriolis contribution
-- **Geometry:** crank $r = 120$ mm, $AC = 300$ mm, $AP = 450$ mm
-- **Input:** constant crank speed $\omega_2 = 1$ rad/s ($\alpha_2 = 0$); from the velocity analysis $\omega_\text{lever} = 0.399$ rad/s and slip $v_\text{slip} = 87.8$ mm/s
+- **Configuration:** Crank and slotted lever quick-return, the drive of a shaper ram. The lever swings about the fixed pivot $A$. The crank turns about the fixed centre $C$, and the block $B$ on its pin slides in the slot of the lever. The far end $P$ of the lever drives the ram
+- **Task:** Find the acceleration of $P$ at the instant drawn, and show the share of the Coriolis part
+- **Geometry:** crank $r = CB = 120$ mm, $AC = 300$ mm, $AP = 450$ mm, and $AB = 205$ mm at this instant
+- **Input:** constant crank speed $\omega_2 = 1$ rad/s ($\alpha_2 = 0$). From the velocity analysis the lever turns at $\omega_\text{lever} = 0.399$ rad/s and the block slides at $v_\text{slip} = 87.8$ mm/s
 :::
 
-### Step 1: Redraw the Space Diagram and the Velocity Polygon
+### Step 1: Redraw the space diagram and the velocity polygon
 
-Here the earlier drawings are not merely convenient, they are indispensable: the Coriolis term is $2\,\omega\,v_\text{slip}$, and **both** of those numbers come off the velocity polygon. There is no way to write down this acceleration without having drawn the velocity first.
+The Coriolis part is $2\,\omega\,v_\text{slip}$, and **both** of those numbers are measured from the velocity polygon. So the velocity must be drawn first.
 
 <details>
 <summary>**Click to reveal the two drawings the acceleration polygon is built on**</summary>
 
 <Steps>
 
-1. **Space diagram.** Choose and mark a length scale, say 1 cm = 40 mm. Set out the fixed centres $A$ and $C$ with $AC = 300$ mm, draw the crank $CB = 120$ mm to the given angle, and run the lever from $A$ through the block $B$ out to the driving point $P$ at $AP = 450$ mm. Measure $AB = 205$ mm. ✅
+1. **Space diagram.** Choose and mark a length scale, say $1 \text{ cm} = 40 \text{ mm}$. Mark the fixed centres $A$ and $C$ with $AC = 300$ mm. Draw the crank $CB = 120$ mm at the angle of the picture, then draw the lever from $A$ through the block $B$ to the driving point $P$ at $AP = 450$ mm. Measure $AB = 205$ mm. ✅
 
    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
      <TailwindWrapper>
-   	![Quick-return space diagram: fixed centres A and C, crank CB with the sliding block at B, and the slotted lever running from A through B to the driving point P](./images/l3-quick-return-1-space-diagram.svg)
+   	![Space diagram of the quick-return drive: fixed pivot A below the fixed centre C, the crank from C to the block B, and the slotted lever from A through B to P, which drives the ram.](./images/l3-quick-return-1-space-diagram.svg)
      </TailwindWrapper>
    </div>
 
-2. **Velocity polygon.** Draw $ob_2 = r\omega_2 = 120$ mm/s perpendicular to the crank. Through $o$ draw the direction perpendicular to the lever (where $B_3$, the coincident point *on the lever*, must lie); through $b_2$ draw the direction parallel to the slot (where the block slides). They cross at $b_3$. ✅
+2. **Velocity polygon.** The block and the lever touch at $B$, but they move differently. Call the point on the block $B_2$ and the point of the lever under it $B_3$. Draw $ob_2 = r\omega_2 = 120 \times 1 = 120$ mm/s at right angles to the crank. Through $o$ draw a line at right angles to the lever: $B_3$ can only move that way. Through $b_2$ draw a line parallel to the slot: the block can only slide that way. The lines cross at $b_3$. ✅
 
    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
      <TailwindWrapper>
-   	![Quick-return velocity polygon: v(B2) from the crank, v(B3) of the coincident lever point, and the slip v(B2/B3) along the slot](./images/l3-quick-return-2-velocity-polygon.svg)
+   	![Velocity polygon of the quick-return drive: v B2 from the pole o to b2, v B3 from o to b3, and the slip velocity from b3 to b2.](./images/l3-quick-return-2-velocity-polygon.svg)
      </TailwindWrapper>
    </div>
 
-3. **Take the two numbers the Coriolis term needs.** Measuring gives $v_{B_3} = 81.8$ mm/s and $v_\text{slip} = 87.8$ mm/s, so $\omega_\text{lever} = 81.8/205 = 0.399$ rad/s. ✅
+3. **Take the two numbers the Coriolis part needs.** The polygon measures $v_{B_3} = 81.8$ mm/s and $v_\text{slip} = 87.8$ mm/s, so $\omega_\text{lever} = 81.8/205 = 0.399$ rad/s. ✅
 
-   A useful check before going on: those two are perpendicular (one across the lever, one along it), so they must satisfy $\sqrt{81.8^2 + 87.8^2} = 120$ mm/s, the crank-pin speed. They do, to the last digit. If your polygon fails this, the error is in the drawing, not in what follows. ✅
+   Check before you continue. The two velocities are at right angles, one across the lever and one along it, so $\sqrt{81.8^2 + 87.8^2}$ must equal the speed of the crank pin, $120$ mm/s. It does. If your polygon fails this check, the error is in the drawing. ✅
 
 </Steps>
 
 </details>
 
-### Step 2: Build the Acceleration Polygon with the Coriolis Term
+### Step 2: Build the acceleration polygon with the Coriolis term
 
-The block's acceleration on the crank splits, on the lever side, into four parts laid head to tail from the pole $o'$: the lever point's **normal** and **tangential** parts, the **Coriolis** part, and the **slip** part. Together they must close on the crank-pin acceleration.
+Four arrows from the pole $o'$ must end at the crank-pin acceleration: the **normal** and **tangential** parts of the lever point, the **Coriolis** part and the **slip** part.
 
 <details>
 <summary>**Click to reveal the acceleration-polygon construction**</summary>
 
 <Steps>
 
-1. **Crank-pin acceleration (the target).** With constant crank speed the block on the crank has only a normal acceleration $a_{B_2} = \omega_2^2\,r = 1^2 \times 120 = 120$ mm/s², directed from $B$ toward $C$. The construction must reproduce this vector. ✅
+1. **Crank-pin acceleration (the target).** The crank speed is constant, so the block has only a normal acceleration $a_{B_2} = \omega_2^2\,r = 1^2 \times 120 = 120 \text{ mm/s}^2$, pointing from $B$ towards $C$. The construction must end on this vector. ✅
 
-2. **Normal part of the lever point.** $a_{B_3}^{\,n} = \omega_\text{lever}^2 \times AB = 0.399^2 \times 205 \approx 32.6$ mm/s², directed from $B$ toward the fulcrum $A$. Lay it from $o'$. ✅
+2. **Normal part of the lever point.** $a_{B_3}^{\,n} = \omega_\text{lever}^2 \times AB = 0.399^2 \times 205 \approx 32.6 \text{ mm/s}^2$, pointing from $B$ towards the pivot $A$. Draw it from $o'$. ✅
 
-3. **Coriolis part.** $a^{c} = 2\,\omega_\text{lever}\,v_\text{slip} = 2 \times 0.399 \times 87.8 \approx 70$ mm/s², directed **perpendicular to the slot** (the slip velocity turned $90\degree$ in the sense of $\omega_\text{lever}$). This is the part a plain slider-crank never has. ✅
+3. **Coriolis part.** $a^{c} = 2\,\omega_\text{lever}\,v_\text{slip} = 2 \times 0.399 \text{ rad/s} \times 87.8 \text{ mm/s} \approx 70 \text{ mm/s}^2$, **at right angles to the slot** (the slip velocity turned $90\degree$ the way the lever turns). A slider-crank never has this part. ✅
 
-4. **Close with the two unknown directions.** The lever's **tangential** part is **perpendicular to the lever** (unknown magnitude); the **slip** acceleration is **parallel to the slot** (unknown magnitude). Drawing those two directions to close the polygon onto $a_{B_2}$ fixes both. Measuring gives the tangential part $a_{B_3}^{\,t} \approx 158$ mm/s² and the slip acceleration $\approx 114$ mm/s². ✅
+4. **Close with the two unknown directions.** The **tangential** part of the lever is **at right angles to the lever**, and the **slip** acceleration is **parallel to the slot**. Both sizes are unknown. Draw the two directions so that the polygon ends on $a_{B_2}$. Then measure: the tangential part is $a_{B_3}^{\,t} \approx 158 \text{ mm/s}^2$ and the slip acceleration is $\approx 114 \text{ mm/s}^2$. ✅
 
-5. **Lever angular acceleration.** $\alpha_\text{lever} = \dfrac{a_{B_3}^{\,t}}{AB} = \dfrac{158}{205} \approx 0.77$ rad/s². ✅
+5. **Lever angular acceleration.** $\alpha_\text{lever} = \dfrac{a_{B_3}^{\,t}}{AB} = \dfrac{158 \text{ mm/s}^2}{205 \text{ mm}} \approx 0.77 \text{ rad/s}^2$. ✅
 
 </Steps>
 
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '1.25rem 0' }}>
   <TailwindWrapper>
-	![Quick-return acceleration polygon: normal, tangential, Coriolis and slip parts closing on the crank-pin acceleration, with the Coriolis component highlighted](./images/l4-quick-return-accel-polygon.svg)
+	![Acceleration polygon of the quick-return drive: from the pole, the short normal part, the long tangential part, the Coriolis part of 70 mm/s² back along the same line, and the slip part up to b2 prime.](./images/l4-quick-return-accel-polygon.svg)
   </TailwindWrapper>
 </div>
 
+In this picture the blue tangential arrow runs to the far left point, and the purple Coriolis arrow comes back along the same line. Both are at right angles to the lever, and here they point in opposite directions.
+
 </details>
 
-### Step 3: Ram Acceleration and Analytical Check
+### Step 3: Ram acceleration and analytical check
 
 <details>
 <summary>**Click to reveal the ram acceleration and confirmation**</summary>
 
 <Steps>
 
-1. **Ram-drive acceleration.** The driving point $P$ on the lever has a normal part $\omega_\text{lever}^2\,AP$ (toward $A$) and a tangential part $\alpha_\text{lever}\,AP$ (perpendicular to the lever):
+1. **Acceleration of the driving point.** The point $P$ of the lever has a normal part $\omega_\text{lever}^2\,AP$ (towards $A$) and a tangential part $\alpha_\text{lever}\,AP$ (at right angles to the lever). They are at right angles, so the total is the diagonal:
 
    $$a_P = AP\sqrt{\omega_\text{lever}^4 + \alpha_\text{lever}^2} = 450\sqrt{0.399^4 + 0.77^2} \approx 354 \text{ mm/s}^2$$ ✅
 
-2. **The Coriolis term is not optional.** At $70$ mm/s² it is a large share of the closing polygon; drop it and the tangential part, and hence $\alpha_\text{lever}$ and the ram acceleration, come out wrong. Any mechanism with a block sliding in a moving slot (this shaper, a Whitworth drive, a Geneva index) must carry it. ✅
+2. **You cannot leave out the Coriolis part.** At $70 \text{ mm/s}^2$ it is a large share of the polygon. Without it the tangential part is wrong, and so are $\alpha_\text{lever}$, the ram acceleration and the inertia forces. Every mechanism with a block or pin that slides in a moving slot needs it: this shaper, a Whitworth drive, a Geneva indexing mechanism. ✅
 
-3. **Analytical confirmation.** Writing the loop $\vec r_{AB} = \vec r_{AC} + \vec r_{CB}$ and differentiating twice, with the block distance $AB$ as a changing length, produces the same four terms: the second derivative of $AB$ is the slip acceleration, and the cross term $2\,\dot{(AB)}\,\omega_\text{lever}$ is exactly the Coriolis part. The numbers match the polygon. ✅
+3. **Analytical confirmation.** Write the loop $\vec r_{AB} = \vec r_{AC} + \vec r_{CB}$ and differentiate it twice, with the distance $AB$ as a length that changes. The same four parts appear: the second derivative of $AB$ is the slip acceleration, and the term $2\,\dot{(AB)}\,\omega_\text{lever}$ is the Coriolis part. The numbers agree with the polygon. ✅
 
 </Steps>
 
 </details>
-
-:::note[Engineering Insight]
-The Coriolis component is the signature of a part that both slides and turns. Here it is a real contributor to the ram-drive acceleration, so the inertia forces on the shaper's slotted lever and ram cannot be found without it. The same term returns wherever a pin slides in a moving slot, which is why the [Geneva indexer](#a-note-on-intermittent-motion-mechanisms) below, and the quick-return itself, are the acceleration problems that most reward drawing the full polygon rather than reaching for a formula.
-:::
-
-## A Note on Intermittent-Motion Mechanisms
-
-<InArticleAd />
-
-
-:::note[Geneva mechanisms and high acceleration]
-Not every mechanism runs smoothly. A **Geneva mechanism** converts continuous rotation into a step-and-dwell indexing motion, and during each index the driven wheel accelerates and decelerates sharply. Because the motion starts and stops, the acceleration peaks (and the jerk) are high, and they involve a Coriolis term as the drive pin slides in the slot. The same acceleration-then-force method applies: the sharp accelerations create large inertia torques that the indexing drive and its bearings must withstand, which is why high-speed indexers move to modified Geneva profiles or servo-driven cams. The four canonical mechanisms of this course carry the methods; the Geneva is where they are pushed hardest.
-:::
-
-## Design Guidelines for Acceleration and Dynamic Forces
-
-<InArticleAd />
-
-
-<CardGrid>
-  <Card title="Differentiate, don't restart" icon="rocket">
-  The acceleration loop is the differentiated velocity loop. Reuse the positions and velocities; only the tangential accelerations are new unknowns.
-  </Card>
-  <Card title="Size for the peak" icon="warning">
-  Inertia loads peak where acceleration peaks (top-dead-centre for the slider-crank). Size pins, rods, and bearings for that worst case.
-  </Card>
-  <Card title="Mind the second harmonic" icon="setting">
-  The secondary term scales with $r/l$ and runs at twice speed. A longer connecting rod or a balance shaft tames it.
-  </Card>
-  <Card title="Constant rate is not constant motion" icon="puzzle">
-  Centripetal and normal terms create acceleration even at steady input speed. Never assume a smoothly driven machine is inertia-free.
-  </Card>
-</CardGrid>
 
 ## Summary and Next Steps
 
@@ -829,17 +753,10 @@ Not every mechanism runs smoothly. A **Geneva mechanism** converts continuous ro
 
 
 :::tip[Instrument it]
-Shaking forces are just $F = ma$ acting on the frame, and they reach you as vibration you can measure. Bolt a MEMS accelerometer to the machine frame near the bearings, an ADXL345 for a first look or the wider-band ADXL1002 to resolve the secondary harmonic, and add a shaft encoder or a Hall sensor for the crank angle so every spike lines up with a position. An [ESP32 or STM32](/education/sensor-actuator-interfacing-stm32/) samples both, and once the primary and secondary peaks are tagged it can [flag a balance problem on siliconwit.io](https://siliconwit.io) before the mounts crack.
+A shaking force reaches you as vibration, and you can measure it. Fix a MEMS accelerometer (a small chip that measures acceleration) to the machine frame near the bearings: an ADXL345 for a first look, or the wider-band ADXL1002 to see the secondary part. Add a Hall sensor for the crank angle, so that each peak has a position. An [ESP32 or STM32](/education/sensor-actuator-interfacing-stm32/) samples both, and it can [flag a balance problem on siliconwit.io](https://siliconwit.io) before the mounts crack.
 :::
 
-### Key Concepts Mastered
-
-1. **Acceleration loop:** one more derivative of the velocity loop, with normal ($\omega^2 r$) and tangential ($\alpha r$) components.
-2. **Acceleration polygon:** the normal parts are known from the velocity analysis; the tangential parts close the polygon.
-3. **Piston acceleration:** $a_P = -r\omega^2(\cos\theta + \tfrac{r}{l}\cos 2\theta)$, peaking at top-dead-centre at $(1 + r/l)\,r\omega^2$.
-4. **Inertia and shaking forces:** $F = ma$ turns accelerations into the loads that vibrate machines, split into a primary and a balance-shaft-requiring secondary harmonic.
-
-### Acceleration Results at a Glance
+### Acceleration results at a glance
 
 | Mechanism | What you solve for | Key relation | Simulator |
 |-----------|--------------------|--------------|-----------|
@@ -847,13 +764,9 @@ Shaking forces are just $F = ma$ acting on the frame, and they reach you as vibr
 | Four-bar | $\alpha_3$, $\alpha_4$ | acceleration loop (linear) | [siwit.co/FBL](https://siwit.co/FBL) |
 | Scissor lift | platform acceleration | $a = nL(\cos\theta\,\ddot\theta - \sin\theta\,\dot\theta^2)$ | [siwit.co/SLM](https://siwit.co/SLM) |
 | Slider-crank | shaking force | primary $+$ secondary harmonics | [siwit.co/CSM](https://siwit.co/CSM) |
-| Quick-return (shaper) | Coriolis, ram acceleration | $a^{c} = 2\,\omega\,v_\text{slip}$ | drawing $+$ calc |
+| Quick-return (shaper) | Coriolis, ram acceleration | $a^{c} = 2\,\omega\,v_\text{slip}$ | drawing and calculation |
 
-### A Note on Tools
-
-Every acceleration here was drawn as a polygon, confirmed by hand calculation, and reproduced with a few lines of Python (NumPy). The simulators confirm the same profiles. No specialised dynamics software is needed; the method is one derivative beyond velocity.
-
-Next, [Cam-Follower Systems and Motion Programming](/education/planar-mechanics/cam-follower-systems-motion-programming) inverts the problem: instead of analysing a given linkage, you specify the motion you want (its displacement, velocity, acceleration, and jerk) and design the cam surface that produces it.
+Next, [Cam-Follower Systems and Motion Programming](/education/planar-mechanics/cam-follower-systems-motion-programming/) turns the problem round. You state the motion you want, and you design the cam surface that produces it.
 
 
 
