@@ -66,7 +66,7 @@ Watch a wheel roll along the ground without slipping. The point of the wheel tha
               I   speed 0
 ```
 
-Every rigid link that moves in a plane has such a point at each instant, even where no pin exists. It is the **instantaneous center** (IC). In words: the speed of any point of the link is the angular velocity of the link times the distance of the point from the IC. The direction of that velocity is at right angles to the line from the IC to the point.
+Every rigid link that moves in a plane has such a point at each instant, even where no pin exists: the **instantaneous center** (IC). The speed of any point of the link is the angular velocity of the link times the distance of the point from the IC, at right angles to the line from the IC to the point.
 
 $$v = \omega \times (\text{distance from the IC})$$
 
@@ -117,7 +117,7 @@ The position equations had the unknown angles inside sines and cosines. The velo
 
 ### Ways to get the velocity
 
-Velocity uses the same [methods](/education/planar-mechanics/position-analysis-planar-linkages/#methods-of-kinematic-analysis) as position, in the same order: **draw, solve, simulate**. The drawing is the **velocity polygon**: each velocity is an arrow to scale, one arrow starts where the last one ended, and the arrows form a closed figure on which you measure the unknowns. The solution is the differentiated loop. The instantaneous center is a quick check on both.
+Velocity uses the same [methods](/education/planar-mechanics/position-analysis-planar-linkages/#methods-of-kinematic-analysis) as position, in the same order: **draw, solve, simulate**. The drawing is the **velocity polygon**: velocities drawn to scale as arrows, each starting where the last one ended, closing into a figure on which you measure the unknowns. The solution is the differentiated loop. The instantaneous center is a quick check on both.
 
 :::note[Reading the notation, and the two direction rules]
 **Relative velocity** is the velocity of one point as seen from another. The symbol $\vec V_{B/A}$ is read "**the velocity of $B$ relative to $A$**": how $B$ appears to move if you ride on $A$ and watch. The full velocity of $B$ is the velocity of $A$ plus this relative part:
@@ -153,7 +153,7 @@ This ratio is the **mechanical advantage**. The [force analysis](/education/plan
 <InArticleAd />
 
 
-This is the main worked example. It starts from the slider position of the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages/).
+This worked example starts from the slider position of the [position analysis](/education/planar-mechanics/position-analysis-planar-linkages/).
 
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>

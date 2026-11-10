@@ -57,7 +57,7 @@ Velocity is the rate of change of position, and acceleration is the rate of chan
 <InArticleAd />
 
 
-Position, velocity and acceleration are each found by **two methods**, graphical and analytical, and then **confirmed in a simulator**. The methods answer the same question in different ways, so each checks the others. The lessons on [velocity](/education/planar-mechanics/velocity-analysis-instantaneous-centers/) and [acceleration](/education/planar-mechanics/acceleration-analysis-dynamic-forces/) use the same set on the same mechanisms.
+Position, velocity and acceleration are each found by **two methods**, graphical and analytical, and then **confirmed in a simulator**, so each checks the others. The lessons on [velocity](/education/planar-mechanics/velocity-analysis-instantaneous-centers/) and [acceleration](/education/planar-mechanics/acceleration-analysis-dynamic-forces/) use the same set on the same mechanisms.
 
 <CardGrid>
   <Card title="Graphical (drawing-instrument) method" icon="pencil">
@@ -76,7 +76,7 @@ Position, velocity and acceleration are each found by **two methods**, graphical
 
 ### How the methods fit together
 
-Use them in order: **draw, solve, simulate**. The drawing shows the mechanism and gives a quick answer at one instant. The equations make that answer exact and give the whole cycle. The simulator animates the motion and confirms both. When all three agree, you can trust the result. When they disagree, one of them contains a mistake, and you have found it early.
+Use them in order: **draw, solve, simulate**. The drawing gives a quick answer at one instant, the equations make it exact for the whole cycle, and the simulator animates the motion and confirms both. When all three agree, trust the result. When they disagree, one contains a mistake, and you have found it early.
 
 :::note[The draughtsman's drawing set]
 The graphical method needs four instruments: a **scale rule** (to mark lengths at a chosen scale, for example 1 cm = 20 mm), a **compass** (to draw arcs and carry lengths), two **set squares** (to draw lines at right angles) and a **protractor** (to set and read angles). Choose a scale and write it on the drawing first, because every length you measure later depends on it.
@@ -150,8 +150,6 @@ The unknown angles sit inside sines and cosines, so the two equations cannot be 
 <InArticleAd />
 
 
-This is the main worked example of the lesson.
-
 <Card title="Simulator and hands-on lab" icon="rocket">
 <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '0.25rem 0 1rem' }}>
   <LinkButton href="/product-development/four-bar-linkage-simulator/" target="_blank" variant="primary" icon="rocket" iconPlacement="start">Open the Four-Bar Linkage Simulator</LinkButton>
@@ -177,7 +175,7 @@ This is the main worked example of the lesson.
 
 ### Step 1: Draw the space diagram and measure
 
-A space diagram is a scale drawing of the mechanism at one instant. The [graphical method](#methods-of-kinematic-analysis) finds the position from it with no equations, and the result checks the algebra that follows. The idea is this. The coupler has a fixed length $b$, so joint $B$ is on a circle of radius $b$ about $A$. The follower has a fixed length $c$, so $B$ is also on a circle of radius $c$ about $O_4$. Joint $B$ is where the two circles cross.
+A space diagram is a scale drawing of the mechanism at one instant. The [graphical method](#methods-of-kinematic-analysis) finds the position from it with no equations, and checks the algebra that follows. Joint $B$ is on a circle of radius $b$ about $A$ (the coupler length) and on a circle of radius $c$ about $O_4$ (the follower length), so it is where the two circles cross, like a knot tied to two nails by two strings.
 
 <details>
 <summary>**Click to reveal the graphical position solution (arc-intersection)**</summary>
@@ -394,9 +392,7 @@ The two roots of the quadratic are the **open** and **crossed** assembly modes. 
 Can the crank of a four-bar turn a full circle, or will it stop part of the way? If a motor is to drive it, you must know before you build. The **Grashof condition** answers from the link lengths alone, with no position solved.
 
 <Card title="The Grashof condition" icon="document">
-In words: add the shortest link to the longest. If that sum is not more than the sum of the other two, at least one link can turn fully.
-
-Let $s$ be the shortest link, $l$ the longest, and $p, q$ the other two (all in mm). The linkage is **Grashof** when:
+Let $s$ be the shortest link, $l$ the longest, and $p, q$ the other two (all in mm). The linkage is **Grashof**, and at least one link can turn fully, when the shortest plus the longest is not more than the other two:
 
 $$s + l \le p + q$$
 
